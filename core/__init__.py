@@ -1,0 +1,1 @@
+"""Camada core — infraestrutura compartilhada."""
