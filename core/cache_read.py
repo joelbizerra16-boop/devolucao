@@ -22,7 +22,7 @@ def limpar_cache_leitura() -> None:
     funcoes = (
         dashboard_service.carregar_dashboard,
         dashboard_service.carregar_listview_dashboard,
-        dashboard_service.obter_graficos,
+        dashboard_service.obter_graficos_cache,
         dashboard_service.obter_anos_disponiveis_cache,
         dashboard_service.obter_periodo_padrao_cache,
         dashboard_service.listar_devolucoes_periodo_cache,
