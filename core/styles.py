@@ -452,7 +452,7 @@ def inject_global_css() -> None:
             box-shadow: {SHADOW_CARD};
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             box-sizing: border-box;
-            min-height: 8.5rem;
+            min-height: 10.5rem;
             padding: 0.95rem 1.15rem;
             height: 100%;
             display: flex;
@@ -564,6 +564,29 @@ def inject_listview_premium_css() -> None:
             display: flex;
             flex-direction: column;
             gap: 0.45rem;
+            max-height: min(52vh, 480px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 0.35rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(139, 148, 158, 0.4) rgba(255, 255, 255, 0.04);
+        }}
+        .lista-premium-body::-webkit-scrollbar {{
+            width: 8px;
+        }}
+        .lista-premium-body::-webkit-scrollbar-track {{
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+        }}
+        .lista-premium-body::-webkit-scrollbar-thumb {{
+            background: rgba(139, 148, 158, 0.38);
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }}
+        .lista-premium-body::-webkit-scrollbar-thumb:hover {{
+            background: rgba(139, 148, 158, 0.58);
+            background-clip: padding-box;
         }}
         .lista-premium-body .lista-premium-row {{
             background: rgba(17,24,39,0.35);
