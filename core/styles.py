@@ -23,6 +23,7 @@ from core.theme import (
     TYPE_BASE,
     KPI_CARD_MIN_HEIGHT,
     KPI_TITLE_VALUE_GAP,
+    LISTVIEW_SCROLL_PX,
     TYPE_CARD_LABEL,
     TYPE_KPI,
     TYPE_KPI_DEVOLUCOES,
@@ -592,35 +593,45 @@ def inject_listview_premium_css() -> None:
             padding: 0.35rem 0.24rem 0.32rem 0.24rem;
             margin-bottom: 0.55rem;
         }}
-        .lista-premium-body {{
-            display: flex;
-            flex-direction: column;
-            gap: 0.45rem;
-            max-height: min(52vh, 480px);
-            overflow-y: auto;
-            overflow-x: hidden;
+        /* Listagem — área rolável (st.container height + fallback) */
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) {{
+            max-height: min(52vh, {LISTVIEW_SCROLL_PX}px) !important;
+            height: min(52vh, {LISTVIEW_SCROLL_PX}px) !important;
+            overflow: hidden !important;
+            border: none !important;
+            background: transparent !important;
+        }}
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) > div[data-testid="stVerticalBlock"] {{
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.45rem !important;
+            max-height: min(52vh, {LISTVIEW_SCROLL_PX}px) !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
             padding-right: 0.35rem;
             scrollbar-width: thin;
             scrollbar-color: rgba(139, 148, 158, 0.4) rgba(255, 255, 255, 0.04);
         }}
-        .lista-premium-body::-webkit-scrollbar {{
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) > div[data-testid="stVerticalBlock"]::-webkit-scrollbar {{
             width: 8px;
         }}
-        .lista-premium-body::-webkit-scrollbar-track {{
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) > div[data-testid="stVerticalBlock"]::-webkit-scrollbar-track {{
             background: rgba(255, 255, 255, 0.04);
             border-radius: 8px;
         }}
-        .lista-premium-body::-webkit-scrollbar-thumb {{
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) > div[data-testid="stVerticalBlock"]::-webkit-scrollbar-thumb {{
             background: rgba(139, 148, 158, 0.38);
             border-radius: 8px;
             border: 2px solid transparent;
             background-clip: padding-box;
         }}
-        .lista-premium-body::-webkit-scrollbar-thumb:hover {{
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) > div[data-testid="stVerticalBlock"]::-webkit-scrollbar-thumb:hover {{
             background: rgba(139, 148, 158, 0.58);
             background-clip: padding-box;
         }}
-        .lista-premium-body .lista-premium-row {{
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) .lista-premium-row {{
             background: rgba(17,24,39,0.35);
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: {RADIUS_LG};
@@ -628,7 +639,7 @@ def inject_listview_premium_css() -> None:
             box-shadow: {SHADOW_SUBTLE};
             transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
         }}
-        .lista-premium-body .lista-premium-row:last-child {{
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) .lista-premium-row:last-child {{
             border-bottom: 1px solid rgba(255,255,255,0.06);
         }}
         .lista-premium-row:hover {{

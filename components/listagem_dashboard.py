@@ -11,6 +11,7 @@ import streamlit as st
 from core.auth import get_current_user
 from core.permissions import pode_editar
 from core.styles import inject_listview_premium_css
+from core.theme import LISTVIEW_SCROLL_PX
 from repositories import devolucao_repository
 from services.csv_repository import listar_motivos
 from core.cache_read import limpar_cache_leitura
@@ -306,15 +307,15 @@ def render_listagem_operacional(rows: list) -> None:
     _render_cabecalho_tabela()
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown('<div class="lista-premium-body">', unsafe_allow_html=True)
-    for row in rows:
-        _render_linha(
-            row,
-            pode_alterar=pode_alterar,
-            on_edit=_abrir_editar,
-            on_delete=_abrir_excluir,
-        )
-    st.markdown("</div></div>", unsafe_allow_html=True)
+    with st.container(height=LISTVIEW_SCROLL_PX, border=False):
+        for row in rows:
+            _render_linha(
+                row,
+                pode_alterar=pode_alterar,
+                on_edit=_abrir_editar,
+                on_delete=_abrir_excluir,
+            )
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if not pode_alterar:
         st.caption("Perfil somente leitura — edição e exclusão disponíveis para administrador.")
