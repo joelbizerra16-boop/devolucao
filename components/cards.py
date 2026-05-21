@@ -8,13 +8,13 @@ from core.styles import COLORS
 
 OPERATIONAL_CARD_CONFIG = [
     ("impacto_financeiro", "Impacto", "💰", "op-card-accent-pendente", COLORS["warning"]),
-    ("devolucoes", "Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent"]),
+    ("devolucoes", "Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent_light"]),
     ("principal_motivo", "Principal Motivo", "📊", "op-card-accent-finalizada", COLORS["success"]),
 ]
 
 DASHBOARD_CARD_CONFIG = [
     ("impacto_financeiro", "Impacto", "💰", "op-card-accent-pendente", COLORS["warning"]),
-    ("devolucoes", "Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent"]),
+    ("devolucoes", "Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent_light"]),
     ("principal_motivo", "Principal Motivo", "📊", "op-card-accent-finalizada", COLORS["success"]),
 ]
 
@@ -38,6 +38,8 @@ def _render_card(
     value_class = "op-card-value"
     if key == "impacto_financeiro":
         value_class += " op-card-value--impacto"
+    elif key == "devolucoes":
+        value_class += " op-card-value--devolucoes"
     elif key == "principal_motivo" and wide:
         value_class += " op-card-value--wide"
     wrap = "word-wrap:break-word;" if wide else ""

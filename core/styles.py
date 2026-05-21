@@ -25,6 +25,8 @@ from core.theme import (
     KPI_TITLE_VALUE_GAP,
     TYPE_CARD_LABEL,
     TYPE_KPI,
+    TYPE_KPI_DEVOLUCOES,
+    TYPE_KPI_IMPACTO,
     TYPE_KPI_MONEY,
     TYPE_KPI_SM,
     TYPE_KPI_WIDE,
@@ -44,6 +46,7 @@ COLORS = {
     "border": "#30363d",
     "accent": "#1f6feb",
     "accent_hover": "#388bfd",
+    "accent_light": "#79c0ff",
     "success": "#3fb950",
     "warning": "#d29922",
     "danger": "#f85149",
@@ -442,6 +445,7 @@ def inject_global_css() -> None:
             flex-direction: column !important;
             height: 100% !important;
             min-height: {KPI_CARD_MIN_HEIGHT} !important;
+            max-height: {KPI_CARD_MIN_HEIGHT} !important;
         }}
         div[data-testid="column"]:has(.op-card) [data-testid="stMarkdown"] > div {{
             flex: 1 1 auto !important;
@@ -459,13 +463,15 @@ def inject_global_css() -> None:
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             box-sizing: border-box;
             min-height: {KPI_CARD_MIN_HEIGHT};
-            height: 100%;
+            max-height: {KPI_CARD_MIN_HEIGHT};
+            height: {KPI_CARD_MIN_HEIGHT};
             width: 100%;
-            padding: 0.7rem 1.05rem 0.65rem;
+            padding: 0.55rem 1.05rem 0.5rem;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             flex: 1 1 auto;
+            overflow: hidden;
         }}
         .op-card:hover {{
             border-color: {COLORS["accent"]};
@@ -493,9 +499,14 @@ def inject_global_css() -> None:
             flex: 0 0 auto;
         }}
         .op-card-value--impacto {{
-            font-size: {TYPE_KPI_MONEY} !important;
-            letter-spacing: -0.025em;
-            line-height: 1.1;
+            font-size: {TYPE_KPI_IMPACTO} !important;
+            letter-spacing: -0.03em;
+            line-height: 0.92;
+        }}
+        .op-card-value--devolucoes {{
+            font-size: {TYPE_KPI_DEVOLUCOES} !important;
+            letter-spacing: -0.03em;
+            line-height: 0.92;
         }}
         .op-card-value--wide {{
             font-size: {TYPE_KPI_WIDE} !important;
@@ -524,7 +535,7 @@ def inject_global_css() -> None:
             flex: 0 0 auto;
         }}
         .op-card-accent-pendente {{ border-left: 4px solid {COLORS["warning"]}; }}
-        .op-card-accent-conferencia {{ border-left: 4px solid {COLORS["accent"]}; }}
+        .op-card-accent-conferencia {{ border-left: 4px solid {COLORS["accent_light"]}; }}
         .op-card-accent-finalizada {{ border-left: 4px solid {COLORS["success"]}; }}
         .op-card-accent-coleta {{ border-left: 4px solid {COLORS["danger"]}; }}
 
