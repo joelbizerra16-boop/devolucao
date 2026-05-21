@@ -23,6 +23,7 @@ from core.theme import (
     TYPE_BASE,
     TYPE_CARD_LABEL,
     TYPE_KPI,
+    TYPE_KPI_MONEY,
     TYPE_KPI_SM,
     TYPE_KPI_WIDE,
     TYPE_LG,
@@ -451,7 +452,7 @@ def inject_global_css() -> None:
             box-shadow: {SHADOW_CARD};
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             box-sizing: border-box;
-            min-height: 7.25rem;
+            min-height: 8.5rem;
             padding: 0.95rem 1.15rem;
             height: 100%;
             display: flex;
@@ -481,12 +482,13 @@ def inject_global_css() -> None:
             flex: 1 1 auto;
         }}
         .op-card-value--impacto {{
-            font-size: {TYPE_KPI_SM};
+            font-size: {TYPE_KPI_MONEY};
+            letter-spacing: -0.02em;
         }}
         .op-card-value--wide {{
             font-size: {TYPE_KPI_WIDE};
             line-height: {LINE_HEIGHT_NORMAL};
-            font-weight: {FONT_WEIGHT_MEDIUM};
+            font-weight: {FONT_WEIGHT_SEMIBOLD};
         }}
         .op-card-sub {{
             display: block;
