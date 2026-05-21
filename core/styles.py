@@ -451,7 +451,7 @@ def inject_global_css() -> None:
             box-shadow: {SHADOW_CARD};
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             box-sizing: border-box;
-            min-height: 6.75rem;
+            min-height: 7.25rem;
             padding: 0.95rem 1.15rem;
             height: 100%;
             display: flex;
