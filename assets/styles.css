@@ -1,0 +1,100 @@
+/**
+ * Refinamento premium — tipografia e densidade (paleta inalterada).
+ * Carregado via core/styles.py
+ */
+
+/* Base tipográfica */
+html, body, [class*="css"] {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+  font-weight: 600 !important;
+  letter-spacing: -0.02em;
+}
+
+/* Subheaders Streamlit */
+[data-testid="stHeader"] {
+  font-weight: 500 !important;
+}
+
+/* Labels de formulário */
+[data-testid="stWidgetLabel"] p,
+[data-testid="stTextInput"] label p,
+[data-testid="stSelectbox"] label p,
+[data-testid="stDateInput"] label p,
+[data-testid="stTextArea"] label p {
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em;
+}
+
+/* Inputs — altura e tipografia refinada */
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input,
+[data-testid="stDateInput"] input,
+textarea {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+  min-height: 2.25rem !important;
+  padding: 0.4rem 0.75rem !important;
+}
+
+[data-testid="stTextInput"] input::placeholder,
+textarea::placeholder {
+  color: rgba(139, 148, 158, 0.85) !important;
+  font-weight: 400 !important;
+}
+
+/* Select */
+div[data-baseweb="select"] > div {
+  font-size: 0.875rem !important;
+  min-height: 2.25rem !important;
+}
+
+/* Botões secundários */
+.stButton > button[kind="secondary"],
+.stButton > button:not([kind="primary"]) {
+  font-weight: 500 !important;
+  font-size: 0.8125rem !important;
+}
+
+/* Tabelas / dataframes */
+[data-testid="stDataFrame"] div {
+  font-size: 0.8125rem !important;
+}
+
+/* Alerts */
+[data-testid="stAlert"] {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+}
+
+/* Sidebar — navegação */
+section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+/* Reduz negrito agressivo herdado */
+strong, b {
+  font-weight: 600 !important;
+}
+
+/* Expander */
+[data-testid="stExpander"] summary {
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+}
+
+/* Subheaders de página Streamlit nativos */
+.stSubheader {
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+}

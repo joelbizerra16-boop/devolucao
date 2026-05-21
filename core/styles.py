@@ -1,10 +1,35 @@
 """
-Estilos globais — tema corporativo dark ERP/WMS.
+Estilos globais — tema corporativo dark ERP/WMS (refinamento tipográfico premium).
 """
 
 from __future__ import annotations
 
 import streamlit as st
+
+from core.theme import (
+    FONT_FAMILY,
+    FONT_IMPORT_URL,
+    FONT_WEIGHT_MEDIUM,
+    FONT_WEIGHT_REGULAR,
+    FONT_WEIGHT_SEMIBOLD,
+    LINE_HEIGHT_NORMAL,
+    LINE_HEIGHT_TIGHT,
+    RADIUS_LG,
+    RADIUS_MD,
+    RADIUS_SM,
+    SHADOW_CARD,
+    SHADOW_CARD_HOVER,
+    SHADOW_SUBTLE,
+    TYPE_BASE,
+    TYPE_KPI,
+    TYPE_KPI_SM,
+    TYPE_LG,
+    TYPE_MD,
+    TYPE_SM,
+    TYPE_XL,
+    TYPE_XS,
+    load_asset_styles,
+)
 
 # Paleta corporativa
 COLORS = {
@@ -23,11 +48,15 @@ COLORS = {
 
 
 def _base_css() -> str:
+    asset_css = load_asset_styles()
     return f"""
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('{FONT_IMPORT_URL}');
 
         html, body, [class*="css"] {{
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: {FONT_FAMILY};
+            font-size: {TYPE_BASE};
+            font-weight: {FONT_WEIGHT_REGULAR};
+            line-height: {LINE_HEIGHT_NORMAL};
         }}
 
         .stApp {{
@@ -38,6 +67,8 @@ def _base_css() -> str:
             position: relative;
             z-index: 2;
         }}
+
+        {asset_css}
 """
 
 
@@ -178,29 +209,32 @@ def inject_login_css(background_url: str | None = None) -> None:
         }}
         div[data-testid="column"]:has(.login-form-col) [data-testid="stFormSubmitButton"] button,
         div[data-testid="stColumn"]:has(.login-form-col) [data-testid="stFormSubmitButton"] button {{
-            min-height: 2.25rem !important;
-            font-size: 0.95rem !important;
-            font-weight: 600 !important;
+            min-height: 2.2rem !important;
+            font-size: {TYPE_BASE} !important;
+            font-weight: {FONT_WEIGHT_MEDIUM} !important;
         }}
         .login-title {{
             color: {COLORS["text"]};
-            font-size: 1.2rem;
-            font-weight: 700;
+            font-size: {TYPE_LG};
+            font-weight: {FONT_WEIGHT_SEMIBOLD};
             text-align: center;
             margin: 0 0 0.2rem 0;
-            line-height: 1.25;
+            line-height: {LINE_HEIGHT_TIGHT};
+            letter-spacing: -0.02em;
         }}
         .login-subtitle {{
             color: {COLORS["text_muted"]};
             text-align: center;
-            font-size: 0.88rem;
+            font-size: {TYPE_SM};
             margin: 0;
-            line-height: 1.25;
+            line-height: {LINE_HEIGHT_NORMAL};
+            font-weight: {FONT_WEIGHT_REGULAR};
         }}
         .login-module-name {{
             color: {COLORS["text_muted"]};
-            font-weight: 600;
-            letter-spacing: 0.06em;
+            font-weight: {FONT_WEIGHT_MEDIUM};
+            letter-spacing: 0.05em;
+            font-size: {TYPE_XS};
         }}
         #MainMenu, footer {{
             visibility: hidden;
@@ -217,8 +251,9 @@ def inject_login_css(background_url: str | None = None) -> None:
         .stButton > button[kind="primary"] {{
             background: linear-gradient(135deg, {COLORS["accent"]}, #1158c7);
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: {RADIUS_SM};
+            font-weight: {FONT_WEIGHT_MEDIUM};
+            font-size: {TYPE_BASE};
         }}
         </style>
         """,
@@ -251,10 +286,10 @@ def inject_global_css() -> None:
         }}
 
         .main .block-container {{
-            padding-top: 1.5rem;
+            padding-top: 1.25rem;
             max-width: 100%;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
         }}
 
 
@@ -321,25 +356,28 @@ def inject_global_css() -> None:
         div[data-testid="stMetric"] {{
             background: {COLORS["bg_card"]};
             border: 1px solid {COLORS["border"]};
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+            border-radius: {RADIUS_LG};
+            padding: 0.75rem 1rem;
+            box-shadow: {SHADOW_SUBTLE};
         }}
         div[data-testid="stMetric"] label {{
             color: {COLORS["text_muted"]} !important;
-            font-size: 0.8rem;
+            font-size: {TYPE_XS} !important;
+            font-weight: {FONT_WEIGHT_MEDIUM} !important;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.05em;
         }}
         div[data-testid="stMetric"] div[data-testid="stMetricValue"] {{
             color: {COLORS["text"]} !important;
-            font-weight: 700;
+            font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
+            font-size: {TYPE_KPI} !important;
+            letter-spacing: -0.02em;
         }}
 
         /* Dataframes */
         div[data-testid="stDataFrame"] {{
             border: 1px solid {COLORS["border"]};
-            border-radius: 10px;
+            border-radius: {RADIUS_MD};
             overflow: hidden;
         }}
 
@@ -348,16 +386,19 @@ def inject_global_css() -> None:
             background: {COLORS["bg_card"]} !important;
             border-color: {COLORS["border"]} !important;
             color: {COLORS["text"]} !important;
-            border-radius: 8px !important;
+            border-radius: {RADIUS_SM} !important;
+            font-size: {TYPE_BASE} !important;
+            font-weight: {FONT_WEIGHT_REGULAR} !important;
         }}
 
         /* Botão primário */
         .stButton > button[kind="primary"] {{
             background: linear-gradient(135deg, {COLORS["accent"]}, #1158c7);
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            padding: 0.55rem 1.5rem;
+            border-radius: {RADIUS_SM};
+            font-weight: {FONT_WEIGHT_MEDIUM};
+            font-size: {TYPE_BASE};
+            padding: 0.45rem 1.25rem;
             transition: all 0.2s ease;
         }}
         .stButton > button[kind="primary"]:hover {{
@@ -387,13 +428,13 @@ def inject_global_css() -> None:
         .op-card {{
             background: {COLORS["bg_card"]};
             border: 1px solid {COLORS["border"]};
-            border-radius: 14px;
-            padding: 1.25rem 1.5rem;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            transition: transform 0.15s ease, border-color 0.15s ease;
+            border-radius: {RADIUS_LG};
+            padding: 0.85rem 1.1rem;
+            margin-bottom: 0.4rem;
+            box-shadow: {SHADOW_CARD};
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             box-sizing: border-box;
-            min-height: 7.75rem;
+            min-height: 6.25rem;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -401,32 +442,41 @@ def inject_global_css() -> None:
         }}
         .op-card:hover {{
             border-color: {COLORS["accent"]};
-            transform: translateY(-2px);
+            transform: translateY(-1px);
+            box-shadow: {SHADOW_CARD_HOVER};
         }}
         .op-card-title {{
             color: {COLORS["text_muted"]};
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: {TYPE_XS};
+            font-weight: {FONT_WEIGHT_MEDIUM};
             text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin: 0 0 0.35rem 0;
+            letter-spacing: 0.05em;
+            margin: 0 0 0.3rem 0;
         }}
         .op-card-value {{
             color: {COLORS["text"]};
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: {TYPE_KPI};
+            font-weight: {FONT_WEIGHT_SEMIBOLD};
             margin: 0;
-            line-height: 1.1;
+            line-height: {LINE_HEIGHT_TIGHT};
+            letter-spacing: -0.02em;
             flex: 1 1 auto;
+        }}
+        .op-card-value--impacto {{
+            font-size: {TYPE_KPI_SM};
+        }}
+        .op-card-value--wide {{
+            font-size: {TYPE_MD};
+            line-height: {LINE_HEIGHT_NORMAL};
         }}
         .op-card-sub {{
             display: block;
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-size: {TYPE_SM};
+            font-weight: {FONT_WEIGHT_REGULAR};
             color: {COLORS["text_muted"]};
-            line-height: 1.25;
-            min-height: 1.15rem;
-            margin-top: 0.2rem;
+            line-height: {LINE_HEIGHT_NORMAL};
+            min-height: 1rem;
+            margin-top: 0.15rem;
         }}
         .op-card-sub-placeholder {{
             visibility: hidden;
@@ -437,26 +487,30 @@ def inject_global_css() -> None:
         .op-card-accent-coleta {{ border-left: 4px solid {COLORS["danger"]}; }}
 
         .page-header {{
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.15rem;
         }}
         .page-header h1 {{
             color: {COLORS["text"]};
-            font-size: 1.75rem;
-            font-weight: 700;
+            font-size: {TYPE_XL};
+            font-weight: {FONT_WEIGHT_SEMIBOLD};
             margin: 0;
+            letter-spacing: -0.025em;
+            line-height: {LINE_HEIGHT_TIGHT};
         }}
         .page-header p {{
             color: {COLORS["text_muted"]};
-            margin: 0.25rem 0 0 0;
-            font-size: 0.95rem;
+            margin: 0.2rem 0 0 0;
+            font-size: {TYPE_SM};
+            font-weight: {FONT_WEIGHT_REGULAR};
+            line-height: {LINE_HEIGHT_NORMAL};
         }}
 
         .badge-status {{
             display: inline-block;
-            padding: 0.2rem 0.65rem;
+            padding: 0.15rem 0.55rem;
             border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: {TYPE_XS};
+            font-weight: {FONT_WEIGHT_MEDIUM};
         }}
         </style>
         """,
@@ -481,21 +535,21 @@ def inject_listview_premium_css() -> None:
             background: rgba(255,255,255,0.02);
             border-top: 1px solid rgba(255,255,255,0.08);
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 0.42rem 0.28rem 0.38rem 0.28rem;
-            margin-bottom: 0.8rem;
+            border-radius: {RADIUS_LG};
+            padding: 0.35rem 0.24rem 0.32rem 0.24rem;
+            margin-bottom: 0.55rem;
         }}
         .lista-premium-body {{
             display: flex;
             flex-direction: column;
-            gap: 0.7rem;
+            gap: 0.45rem;
         }}
         .lista-premium-body .lista-premium-row {{
             background: rgba(17,24,39,0.35);
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 0.42rem 0.42rem;
-            box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+            border-radius: {RADIUS_LG};
+            padding: 0.36rem 0.38rem;
+            box-shadow: {SHADOW_SUBTLE};
             transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
         }}
         .lista-premium-body .lista-premium-row:last-child {{
@@ -509,19 +563,20 @@ def inject_listview_premium_css() -> None:
         }}
         .lista-dash-th {{
             color: {COLORS["text_muted"]};
-            font-size: 0.73rem;
-            font-weight: 600;
-            letter-spacing: 0.025em;
+            font-size: {TYPE_XS};
+            font-weight: {FONT_WEIGHT_MEDIUM};
+            letter-spacing: 0.04em;
             margin: 0;
-            text-transform: none;
+            text-transform: uppercase;
         }}
         .lista-dash-th-acoes {{
             text-align: center !important;
         }}
         .lv-cell {{
             color: {COLORS["text"]};
-            font-size: 0.9rem;
-            line-height: 1.15;
+            font-size: {TYPE_BASE};
+            font-weight: {FONT_WEIGHT_REGULAR};
+            line-height: {LINE_HEIGHT_TIGHT};
             margin: 0;
             word-break: normal;
         }}
@@ -550,19 +605,20 @@ def inject_listview_premium_css() -> None:
         }}
         .lv-cell-user .lv-date {{
             color: {COLORS["text"]};
-            font-weight: 700;
-            font-size: 0.82rem;
+            font-weight: {FONT_WEIGHT_MEDIUM};
+            font-size: {TYPE_SM};
         }}
         .lv-cell-user .lv-name {{
             color: {COLORS["text_muted"]};
-            font-size: 0.72rem;
+            font-size: {TYPE_XS};
+            font-weight: {FONT_WEIGHT_REGULAR};
             margin-top: 0;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
         }}
         .lv-cell-motivo {{
-            font-weight: 600;
+            font-weight: {FONT_WEIGHT_MEDIUM};
             color: rgba(248, 250, 252, 0.96);
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -593,11 +649,11 @@ def inject_listview_premium_css() -> None:
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 2rem;
-            padding: 0.35rem 0.72rem;
-            border-radius: 10px;
-            font-size: 0.84rem;
-            font-weight: 700;
+            min-height: 1.75rem;
+            padding: 0.28rem 0.6rem;
+            border-radius: {RADIUS_SM};
+            font-size: {TYPE_SM};
+            font-weight: {FONT_WEIGHT_MEDIUM};
             line-height: 1;
             white-space: nowrap;
             max-width: 100%;

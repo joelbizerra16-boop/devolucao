@@ -35,19 +35,18 @@ def _render_card(
         sub_html = f'<span class="op-card-sub">{sub}</span>'
     else:
         sub_html = '<span class="op-card-sub op-card-sub-placeholder">&nbsp;</span>'
+    value_class = "op-card-value"
     if key == "impacto_financeiro":
-        font_size = "1.35rem"
+        value_class += " op-card-value--impacto"
     elif key == "principal_motivo" and wide:
-        font_size = "1.5rem"
-    else:
-        font_size = "2rem"
-    wrap = "word-wrap:break-word;line-height:1.25;" if wide else ""
+        value_class += " op-card-value--wide"
+    wrap = "word-wrap:break-word;" if wide else ""
     with col:
         st.markdown(
             f"""
             <div class="op-card {css_class}">
                 <p class="op-card-title">{icon} {label}</p>
-                <p class="op-card-value" style="color:{color};font-size:{font_size};{wrap}">{valor}</p>
+                <p class="{value_class}" style="color:{color};{wrap}">{valor}</p>
                 {sub_html}
             </div>
             """,
