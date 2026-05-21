@@ -23,11 +23,13 @@ TYPE_BASE = "0.875rem"      # 14px
 TYPE_MD = "0.9375rem"       # 15px
 TYPE_LG = "1.125rem"        # 18px
 TYPE_XL = "1.25rem"         # 20px — page header
-TYPE_KPI = "3rem"           # 48px — número (destaque compacto)
-TYPE_KPI_MONEY = "2.75rem"  # 44px — valores R$
-TYPE_KPI_WIDE = "1.3125rem" # 21px — principal motivo (texto)
+TYPE_KPI = "2.75rem"           # 44px — número principal
+TYPE_KPI_MONEY = "2.625rem"    # 42px — valores R$
+TYPE_KPI_WIDE = "1.3125rem"    # 21px — principal motivo
 TYPE_KPI_SM = TYPE_KPI_MONEY  # compatibilidade
-TYPE_CARD_LABEL = "0.75rem" # 12px
+TYPE_CARD_LABEL = "0.75rem"   # 12px — rótulo do card
+KPI_CARD_MIN_HEIGHT = "6.5rem"
+KPI_TITLE_VALUE_GAP = "0.5rem"
 
 LINE_HEIGHT_TIGHT = "1.2"
 LINE_HEIGHT_NORMAL = "1.45"

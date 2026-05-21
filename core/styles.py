@@ -484,8 +484,8 @@ def inject_global_css() -> None:
         }}
         .op-card-value {{
             color: {COLORS["text"]};
-            font-size: {TYPE_KPI};
-            font-weight: {FONT_WEIGHT_SEMIBOLD};
+            font-size: {TYPE_KPI} !important;
+            font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
             margin: 0;
             padding: 0;
             line-height: 1.08;
@@ -493,12 +493,12 @@ def inject_global_css() -> None:
             flex: 0 0 auto;
         }}
         .op-card-value--impacto {{
-            font-size: {TYPE_KPI_MONEY};
+            font-size: {TYPE_KPI_MONEY} !important;
             letter-spacing: -0.025em;
             line-height: 1.1;
         }}
         .op-card-value--wide {{
-            font-size: {TYPE_KPI_WIDE};
+            font-size: {TYPE_KPI_WIDE} !important;
             line-height: 1.3;
             font-weight: {FONT_WEIGHT_SEMIBOLD};
             letter-spacing: -0.015em;
