@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import streamlit as st
 
+from core.theme import RADIUS_LG, SHADOW_SUBTLE
+
 _CHART_CSS_INJECTED = False
 
 
@@ -12,26 +14,27 @@ def inject_dashboard_charts_css() -> None:
     if _CHART_CSS_INJECTED:
         return
     st.markdown(
-        """
+        f"""
         <style>
-        .dash-chart-shell {
+        .dash-chart-shell {{
             background: #111827;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 18px;
-            padding: 18px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
-            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: {RADIUS_LG};
+            padding: 0.85rem 1rem;
+            box-shadow: {SHADOW_SUBTLE};
+            margin-bottom: 0.65rem;
             overflow: hidden;
-        }
-        .dash-chart-shell [data-testid="stPlotlyChart"] {
+            font-family: 'Inter', sans-serif;
+        }}
+        .dash-chart-shell [data-testid="stPlotlyChart"] {{
             background: rgba(17, 24, 39, 0.95) !important;
-            border-radius: 12px;
-        }
-        .dash-chart-shell [data-testid="stPlotlyChart"] > div {
+            border-radius: {RADIUS_LG};
+        }}
+        .dash-chart-shell [data-testid="stPlotlyChart"] > div {{
             border: none !important;
             box-shadow: none !important;
             background: transparent !important;
-        }
+        }}
         </style>
         """,
         unsafe_allow_html=True,

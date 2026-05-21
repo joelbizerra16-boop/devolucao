@@ -70,7 +70,7 @@ def render_sidebar() -> None:
         st.markdown("---")
         if user:
             perfil_txt = perfil_para_label(user.perfil)
-            st.caption(f"**{user.nome}** · @{user.username} · {perfil_txt}")
+            st.caption(f"{user.nome} · @{user.username} · {perfil_txt}")
         if st.button("Sair", use_container_width=True, type="secondary"):
             logout()
             try:

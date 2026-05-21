@@ -12,6 +12,13 @@ import streamlit as st
 
 from core.cache_read import TTL_DASHBOARD
 from core.styles import COLORS
+from core.theme import (
+    PLOTLY_AXIS_SIZE,
+    PLOTLY_BAR_LABEL_SIZE,
+    PLOTLY_FONT,
+    PLOTLY_HOVER_SIZE,
+    PLOTLY_TITLE_SIZE,
+)
 from repositories import dashboard_repository
 from services.devolucao_service import (
     _formatar_data,
@@ -208,20 +215,20 @@ def _layout_plotly(titulo: str, height: int | None = None) -> dict[str, Any]:
     return dict(
         title=dict(
             text=titulo,
-            font=dict(size=18, family="Inter, sans-serif", color="#ffffff"),
+            font=dict(size=PLOTLY_TITLE_SIZE, family=PLOTLY_FONT, color="#ffffff"),
             x=0,
             xanchor="left",
-            pad=dict(t=8, b=12),
+            pad=dict(t=6, b=10),
         ),
         paper_bgcolor=CHART_BG,
         plot_bgcolor=CHART_BG,
-        font=dict(color=COLORS["text"], family="Inter, sans-serif"),
+        font=dict(color=COLORS["text"], family=PLOTLY_FONT, size=PLOTLY_AXIS_SIZE),
         height=height if height is not None else CHART_HEIGHT,
-        margin=dict(l=20, r=20, t=60, b=20),
+        margin=dict(l=18, r=18, t=52, b=18),
         xaxis=dict(
             gridcolor=CHART_GRID,
             linecolor="rgba(255,255,255,0.05)",
-            tickfont=dict(color=COLORS["text_muted"], size=11),
+            tickfont=dict(color=COLORS["text_muted"], size=PLOTLY_AXIS_SIZE, family=PLOTLY_FONT),
             showgrid=False,
             zeroline=False,
         ),
@@ -237,12 +244,12 @@ def _layout_plotly(titulo: str, height: int | None = None) -> dict[str, Any]:
         hovermode="closest",
         hoverlabel=dict(
             bgcolor="#111827",
-            font_size=14,
+            font_size=PLOTLY_HOVER_SIZE,
             font_color="white",
             bordercolor="rgba(255,255,255,0.12)",
-            font_family="Inter, sans-serif",
+            font_family=PLOTLY_FONT,
         ),
-        uniformtext_minsize=10,
+        uniformtext_minsize=9,
         uniformtext_mode="show",
     )
 
@@ -270,7 +277,7 @@ def _barra(
         y=y,
         text=text,
         textposition="outside",
-        textfont=dict(color="#e6edf3", size=12, family="Inter, sans-serif"),
+        textfont=dict(color="#e6edf3", size=PLOTLY_BAR_LABEL_SIZE, family=PLOTLY_FONT),
         marker=dict(
             color=colors,
             line=dict(width=0),

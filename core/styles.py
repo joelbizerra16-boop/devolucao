@@ -21,8 +21,10 @@ from core.theme import (
     SHADOW_CARD_HOVER,
     SHADOW_SUBTLE,
     TYPE_BASE,
+    TYPE_CARD_LABEL,
     TYPE_KPI,
     TYPE_KPI_SM,
+    TYPE_KPI_WIDE,
     TYPE_LG,
     TYPE_MD,
     TYPE_SM,
@@ -302,7 +304,23 @@ def inject_global_css() -> None:
             min-width: 18rem;
         }}
         section[data-testid="stSidebar"] .block-container {{
-            padding-top: 1rem;
+            padding-top: 0.85rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }}
+
+        section[data-testid="stSidebar"] [data-testid="stPageLink"] {{
+            margin-bottom: 0.15rem;
+        }}
+        section[data-testid="stSidebar"] [data-testid="stPageLink"] a {{
+            font-size: {TYPE_BASE} !important;
+            font-weight: {FONT_WEIGHT_MEDIUM} !important;
+            padding: 0.35rem 0.5rem !important;
+            border-radius: {RADIUS_SM};
+        }}
+        section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {{
+            font-size: {TYPE_SM} !important;
+            font-weight: {FONT_WEIGHT_REGULAR} !important;
         }}
 
         /* Logo oficial — centralizada na sidebar */
@@ -429,12 +447,12 @@ def inject_global_css() -> None:
             background: {COLORS["bg_card"]};
             border: 1px solid {COLORS["border"]};
             border-radius: {RADIUS_LG};
-            padding: 0.85rem 1.1rem;
             margin-bottom: 0.4rem;
             box-shadow: {SHADOW_CARD};
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             box-sizing: border-box;
-            min-height: 6.25rem;
+            min-height: 6.75rem;
+            padding: 0.95rem 1.15rem;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -447,11 +465,11 @@ def inject_global_css() -> None:
         }}
         .op-card-title {{
             color: {COLORS["text_muted"]};
-            font-size: {TYPE_XS};
+            font-size: {TYPE_CARD_LABEL};
             font-weight: {FONT_WEIGHT_MEDIUM};
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin: 0 0 0.3rem 0;
+            margin: 0 0 0.4rem 0;
         }}
         .op-card-value {{
             color: {COLORS["text"]};
@@ -466,17 +484,18 @@ def inject_global_css() -> None:
             font-size: {TYPE_KPI_SM};
         }}
         .op-card-value--wide {{
-            font-size: {TYPE_MD};
+            font-size: {TYPE_KPI_WIDE};
             line-height: {LINE_HEIGHT_NORMAL};
+            font-weight: {FONT_WEIGHT_MEDIUM};
         }}
         .op-card-sub {{
             display: block;
-            font-size: {TYPE_SM};
+            font-size: {TYPE_BASE};
             font-weight: {FONT_WEIGHT_REGULAR};
             color: {COLORS["text_muted"]};
             line-height: {LINE_HEIGHT_NORMAL};
-            min-height: 1rem;
-            margin-top: 0.15rem;
+            min-height: 1.05rem;
+            margin-top: 0.2rem;
         }}
         .op-card-sub-placeholder {{
             visibility: hidden;

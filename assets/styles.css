@@ -1,10 +1,10 @@
 /**
- * Refinamento premium — tipografia e densidade (paleta inalterada).
- * Carregado via core/styles.py
+ * Premium UI global — tipografia, densidade, hierarquia (paleta inalterada).
  */
 
-/* Base tipográfica */
+/* ── Base ── */
 html, body, [class*="css"] {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -16,25 +16,45 @@ h1, h2, h3, h4, h5, h6,
 [data-testid="stMarkdownContainer"] h3 {
   font-weight: 600 !important;
   letter-spacing: -0.02em;
+  line-height: 1.25 !important;
 }
 
-/* Subheaders Streamlit */
+[data-testid="stMarkdownContainer"] h1 { font-size: 1.25rem !important; }
+[data-testid="stMarkdownContainer"] h2 { font-size: 1.0625rem !important; }
+[data-testid="stMarkdownContainer"] h3 { font-size: 0.9375rem !important; }
+
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+}
+
 [data-testid="stHeader"] {
   font-weight: 500 !important;
 }
 
-/* Labels de formulário */
+.stSubheader,
+[data-testid="stMarkdownContainer"] h4 {
+  font-weight: 600 !important;
+  font-size: 0.9375rem !important;
+  letter-spacing: -0.01em;
+}
+
+/* ── Labels e widgets ── */
 [data-testid="stWidgetLabel"] p,
 [data-testid="stTextInput"] label p,
 [data-testid="stSelectbox"] label p,
 [data-testid="stDateInput"] label p,
-[data-testid="stTextArea"] label p {
+[data-testid="stTextArea"] label p,
+[data-testid="stFileUploader"] label p,
+[data-testid="stNumberInput"] label p {
   font-size: 0.8125rem !important;
   font-weight: 500 !important;
   letter-spacing: 0.01em;
+  color: #8b949e !important;
 }
 
-/* Inputs — altura e tipografia refinada */
 [data-testid="stTextInput"] input,
 [data-testid="stNumberInput"] input,
 [data-testid="stDateInput"] input,
@@ -48,53 +68,145 @@ textarea {
 
 [data-testid="stTextInput"] input::placeholder,
 textarea::placeholder {
-  color: rgba(139, 148, 158, 0.85) !important;
+  color: rgba(139, 148, 158, 0.8) !important;
   font-weight: 400 !important;
+  font-size: 0.875rem !important;
 }
 
-/* Select */
 div[data-baseweb="select"] > div {
   font-size: 0.875rem !important;
+  font-weight: 400 !important;
   min-height: 2.25rem !important;
 }
 
-/* Botões secundários */
+/* ── Botões ── */
+.stButton > button {
+  font-family: 'Inter', sans-serif !important;
+  letter-spacing: 0.01em;
+}
+
+.stButton > button[kind="primary"] {
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+}
+
 .stButton > button[kind="secondary"],
 .stButton > button:not([kind="primary"]) {
   font-weight: 500 !important;
   font-size: 0.8125rem !important;
 }
 
-/* Tabelas / dataframes */
-[data-testid="stDataFrame"] div {
-  font-size: 0.8125rem !important;
+/* ── Sidebar ── */
+section[data-testid="stSidebar"] {
+  font-size: 0.875rem;
 }
 
-/* Alerts */
-[data-testid="stAlert"] {
-  font-size: 0.875rem !important;
-  font-weight: 400 !important;
-}
-
-/* Sidebar — navegação */
-section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a,
+section[data-testid="stSidebar"] [data-testid="stPageLink"] span {
   font-size: 0.875rem !important;
   font-weight: 500 !important;
+  letter-spacing: 0.01em;
 }
 
-/* Reduz negrito agressivo herdado */
-strong, b {
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-current="page"] {
   font-weight: 600 !important;
 }
 
-/* Expander */
+section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p,
+section[data-testid="stSidebar"] .stCaption {
+  font-size: 0.8125rem !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] strong {
+  font-weight: 600 !important;
+  font-size: 0.8125rem !important;
+}
+
+section[data-testid="stSidebar"] hr {
+  margin: 0.65rem 0 !important;
+  opacity: 0.35;
+}
+
+/* ── Tabelas ── */
+[data-testid="stDataFrame"] div,
+[data-testid="stDataFrame"] span {
+  font-size: 0.8125rem !important;
+  font-weight: 400 !important;
+}
+
+[data-testid="stDataFrame"] th {
+  font-size: 0.6875rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Alerts e feedback ── */
+[data-testid="stAlert"] {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+}
+
+[data-testid="stToast"] {
+  font-size: 0.875rem !important;
+}
+
+/* ── Dialog / modal ── */
+[data-testid="stDialog"] h1,
+[data-testid="stDialog"] h2,
+[data-testid="stDialog"] h3 {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+[data-testid="stDialog"] p,
+[data-testid="stDialog"] label p {
+  font-size: 0.875rem !important;
+}
+
+/* ── File uploader ── */
+[data-testid="stFileUploader"] section p {
+  font-size: 0.8125rem !important;
+  font-weight: 400 !important;
+}
+
+[data-testid="stFileUploader"] small {
+  font-size: 0.75rem !important;
+}
+
+/* ── Tabs ── */
+button[data-baseweb="tab"] {
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+}
+
+/* ── Expander ── */
 [data-testid="stExpander"] summary {
   font-weight: 500 !important;
   font-size: 0.875rem !important;
 }
 
-/* Subheaders de página Streamlit nativos */
-.stSubheader {
+/* ── Caption global ── */
+[data-testid="stCaptionContainer"] p,
+.stCaption {
+  font-size: 0.8125rem !important;
+  font-weight: 400 !important;
+  color: #8b949e !important;
+}
+
+/* ── Negrito global ── */
+strong, b {
   font-weight: 600 !important;
-  font-size: 1rem !important;
+}
+
+/* ── Gráficos Plotly (container) ── */
+.dash-chart-shell {
+  font-family: 'Inter', sans-serif;
+}
+
+[data-testid="stPlotlyChart"] .js-plotly-plot .plotly .gtitle {
+  font-family: 'Inter', sans-serif !important;
 }
