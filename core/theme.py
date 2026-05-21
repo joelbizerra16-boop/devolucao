@@ -23,9 +23,9 @@ TYPE_BASE = "0.875rem"      # 14px
 TYPE_MD = "0.9375rem"       # 15px
 TYPE_LG = "1.125rem"        # 18px
 TYPE_XL = "1.25rem"         # 20px — page header
-TYPE_KPI = "4.5rem"         # 72px — número (devoluções)
-TYPE_KPI_MONEY = "4rem"     # 64px — valores R$
-TYPE_KPI_WIDE = "3rem"      # 48px — principal motivo (texto)
+TYPE_KPI = "3rem"           # 48px — número (destaque compacto)
+TYPE_KPI_MONEY = "2.75rem"  # 44px — valores R$
+TYPE_KPI_WIDE = "1.3125rem" # 21px — principal motivo (texto)
 TYPE_KPI_SM = TYPE_KPI_MONEY  # compatibilidade
 TYPE_CARD_LABEL = "0.75rem" # 12px
 
