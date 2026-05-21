@@ -32,7 +32,13 @@ TYPE_KPI_SM = TYPE_KPI_MONEY  # compatibilidade
 TYPE_CARD_LABEL = "0.75rem"   # 12px — rótulo do card
 KPI_CARD_MIN_HEIGHT = "7rem"
 KPI_TITLE_VALUE_GAP = "0.5rem"
-LISTVIEW_SCROLL_PX = 480
+LISTVIEW_VISIBLE_ROWS = 20
+LISTVIEW_ROW_HEIGHT_PX = 58   # altura média de cada linha no Streamlit
+LISTVIEW_ROW_GAP_PX = 7        # gap 0.45rem entre linhas
+LISTVIEW_SCROLL_PX = (
+    LISTVIEW_VISIBLE_ROWS * LISTVIEW_ROW_HEIGHT_PX
+    + (LISTVIEW_VISIBLE_ROWS - 1) * LISTVIEW_ROW_GAP_PX
+)  # ~20 linhas visíveis (1293px)
 
 LINE_HEIGHT_TIGHT = "1.2"
 LINE_HEIGHT_NORMAL = "1.45"

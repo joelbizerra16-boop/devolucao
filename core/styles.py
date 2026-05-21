@@ -595,8 +595,8 @@ def inject_listview_premium_css() -> None:
         }}
         /* Listagem — área rolável (st.container height + fallback) */
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-row) {{
-            max-height: min(52vh, {LISTVIEW_SCROLL_PX}px) !important;
-            height: min(52vh, {LISTVIEW_SCROLL_PX}px) !important;
+            max-height: {LISTVIEW_SCROLL_PX}px !important;
+            height: {LISTVIEW_SCROLL_PX}px !important;
             overflow: hidden !important;
             border: none !important;
             background: transparent !important;
@@ -605,7 +605,7 @@ def inject_listview_premium_css() -> None:
             display: flex !important;
             flex-direction: column !important;
             gap: 0.45rem !important;
-            max-height: min(52vh, {LISTVIEW_SCROLL_PX}px) !important;
+            max-height: {LISTVIEW_SCROLL_PX}px !important;
             height: 100% !important;
             min-height: 0 !important;
             overflow-y: auto !important;
