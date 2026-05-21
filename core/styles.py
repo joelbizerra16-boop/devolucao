@@ -21,6 +21,8 @@ from core.theme import (
     SHADOW_CARD_HOVER,
     SHADOW_SUBTLE,
     TYPE_BASE,
+    KPI_CARD_MIN_HEIGHT,
+    KPI_TITLE_VALUE_GAP,
     TYPE_CARD_LABEL,
     TYPE_KPI,
     TYPE_KPI_MONEY,
@@ -425,19 +427,28 @@ def inject_global_css() -> None:
             box-shadow: 0 4px 16px rgba(31, 111, 235, 0.4);
         }}
 
-        /* Cards KPI — compactos, valores em destaque */
+        /* Cards KPI — altura uniforme, valores em destaque (enterprise) */
         div[data-testid="stHorizontalBlock"]:has(.op-card) {{
             align-items: stretch !important;
         }}
         div[data-testid="column"]:has(.op-card) > div {{
             display: flex !important;
             flex-direction: column !important;
-            height: auto !important;
+            height: 100% !important;
         }}
-        div[data-testid="column"]:has(.op-card) [data-testid="stMarkdown"],
+        div[data-testid="column"]:has(.op-card) [data-testid="stMarkdown"] {{
+            flex: 1 1 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            min-height: {KPI_CARD_MIN_HEIGHT} !important;
+        }}
         div[data-testid="column"]:has(.op-card) [data-testid="stMarkdown"] > div {{
-            flex: 0 0 auto !important;
-            height: auto !important;
+            flex: 1 1 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            width: 100% !important;
         }}
         .op-card {{
             background: {COLORS["bg_card"]};
@@ -447,13 +458,14 @@ def inject_global_css() -> None:
             box-shadow: {SHADOW_CARD};
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             box-sizing: border-box;
-            min-height: 0;
-            height: auto;
-            padding: 0.5rem 1rem 0.55rem;
+            min-height: {KPI_CARD_MIN_HEIGHT};
+            height: 100%;
+            width: 100%;
+            padding: 0.7rem 1.05rem 0.65rem;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            gap: 0.1rem;
+            flex: 1 1 auto;
         }}
         .op-card:hover {{
             border-color: {COLORS["accent"]};
@@ -465,41 +477,51 @@ def inject_global_css() -> None:
             font-size: {TYPE_CARD_LABEL};
             font-weight: {FONT_WEIGHT_MEDIUM};
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin: 0 0 0.15rem 0;
-            line-height: 1.2;
+            letter-spacing: 0.06em;
+            margin: 0 0 {KPI_TITLE_VALUE_GAP} 0;
+            line-height: 1.25;
+            flex: 0 0 auto;
         }}
         .op-card-value {{
             color: {COLORS["text"]};
             font-size: {TYPE_KPI};
             font-weight: {FONT_WEIGHT_SEMIBOLD};
             margin: 0;
-            line-height: 1.05;
-            letter-spacing: -0.03em;
+            padding: 0;
+            line-height: 1.08;
+            letter-spacing: -0.025em;
             flex: 0 0 auto;
         }}
         .op-card-value--impacto {{
             font-size: {TYPE_KPI_MONEY};
-            letter-spacing: -0.03em;
-            line-height: 1.08;
+            letter-spacing: -0.025em;
+            line-height: 1.1;
         }}
         .op-card-value--wide {{
             font-size: {TYPE_KPI_WIDE};
-            line-height: 1.25;
+            line-height: 1.3;
             font-weight: {FONT_WEIGHT_SEMIBOLD};
-            letter-spacing: -0.01em;
+            letter-spacing: -0.015em;
         }}
         .op-card-sub {{
             display: block;
             font-size: {TYPE_SM};
             font-weight: {FONT_WEIGHT_REGULAR};
             color: {COLORS["text_muted"]};
-            line-height: 1.3;
-            margin: 0.1rem 0 0 0;
+            line-height: 1.35;
+            margin: auto 0 0 0;
+            padding-top: 0.35rem;
             flex: 0 0 auto;
         }}
         .op-card-sub-placeholder {{
-            display: none;
+            visibility: hidden;
+            display: block;
+            font-size: {TYPE_SM};
+            line-height: 1.35;
+            margin: auto 0 0 0;
+            padding-top: 0.35rem;
+            min-height: 1.35em;
+            flex: 0 0 auto;
         }}
         .op-card-accent-pendente {{ border-left: 4px solid {COLORS["warning"]}; }}
         .op-card-accent-conferencia {{ border-left: 4px solid {COLORS["accent"]}; }}
