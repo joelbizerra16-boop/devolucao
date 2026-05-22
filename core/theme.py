@@ -41,6 +41,13 @@ LISTVIEW_SCROLL_PX = (
     + (LISTVIEW_VISIBLE_ROWS - 1) * LISTVIEW_ROW_GAP_PX
 )  # 1013px — ~20 linhas visíveis (antes: 52vh ≈ 50 linhas)
 LISTVIEW_PAGE_SIZE = 50
+# Grid fixo — mesmas proporções dos st.columns [0.8, 2.1, 0.8, 0.9, 1.0, 1.4, 0.55]
+LISTVIEW_GRID_COLUMNS = (
+    "minmax(96px, 10.6fr) minmax(180px, 27.8fr) minmax(72px, 10.6fr) "
+    "minmax(84px, 11.9fr) minmax(92px, 13.2fr) minmax(120px, 18.5fr) "
+    "minmax(64px, 7.3fr)"
+)
+LISTVIEW_ROW_MIN_HEIGHT = "2.75rem"
 
 LINE_HEIGHT_TIGHT = "1.2"
 LINE_HEIGHT_NORMAL = "1.45"

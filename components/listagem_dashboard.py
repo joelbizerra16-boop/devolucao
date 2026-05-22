@@ -24,6 +24,7 @@ from services.devolucao_service import (
     excluir_devolucao,
 )
 
+# Proporções fixas (soma 7.55) — alinhadas ao CSS grid em core/styles.py
 _COLS_DADOS = [0.8, 2.1, 0.8, 0.9, 1.0, 1.4]
 _COLS_ACOES = 0.55
 _COLS_HEADER = [*_COLS_DADOS, _COLS_ACOES]
@@ -53,11 +54,11 @@ def _html_celula_usuario(data_txt: str, usuario: str) -> str:
         f'<span class="lv-meta-row">'
         f'<span class="lv-meta-icon">◷</span>'
         f'<span class="lv-date">{escape(data_txt)}</span>'
-        f'</span>'
+        f"</span>"
         f'<span class="lv-meta-row lv-meta-row-user">'
         f'<span class="lv-meta-icon">◦</span>'
         f'<span class="lv-name" title="{escape(usuario, quote=True)}">{escape(usuario)}</span>'
-        f'</span>'
+        f"</span>"
         f"</div>"
     )
 
@@ -185,6 +186,11 @@ def _render_cabecalho_tabela() -> None:
     ]
     for col, label in zip(h, labels):
         with col:
+            if label == "Data + Usuário":
+                st.markdown(
+                    '<span class="lv-table-header-marker" aria-hidden="true"></span>',
+                    unsafe_allow_html=True,
+                )
             if label:
                 cls = "lista-dash-th lista-dash-th-acoes" if label == "Ações" else "lista-dash-th"
                 st.markdown(f'<p class="{cls}">{label}</p>', unsafe_allow_html=True)
@@ -234,10 +240,10 @@ def _render_linha(
     on_delete: Callable[[int], None],
 ) -> None:
     dados = _linha_para_exibicao(row)
-    st.markdown('<div class="lista-premium-row">', unsafe_allow_html=True)
     cols = st.columns(_COLS_ROW)
 
     with cols[0]:
+        st.markdown('<span class="lv-row-marker" aria-hidden="true"></span>', unsafe_allow_html=True)
         st.markdown(
             _html_celula_usuario(dados["data_txt"], dados["usuario"]),
             unsafe_allow_html=True,
@@ -276,8 +282,6 @@ def _render_linha(
             on_delete=on_delete,
         )
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
 
 def render_listagem_operacional(rows: list) -> None:
     """Tabela premium com ícones de ação lado a lado."""
@@ -302,10 +306,11 @@ def render_listagem_operacional(rows: list) -> None:
         st.session_state["dash_del_id"] = dev_id
         st.session_state.pop("dash_edit_id", None)
 
-    st.markdown('<div class="lista-premium">', unsafe_allow_html=True)
-    st.markdown('<div class="lista-premium-header">', unsafe_allow_html=True)
-    _render_cabecalho_tabela()
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('<div class="lista-premium-stable" aria-label="Listagem operacional">', unsafe_allow_html=True)
+    st.markdown(
+        '<span class="lista-premium-scroller-marker" aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
 
     total = len(rows)
     page_size = LISTVIEW_PAGE_SIZE
@@ -325,7 +330,16 @@ def render_listagem_operacional(rows: list) -> None:
     fim = min(inicio + page_size, total)
     slice_rows = rows[inicio:fim]
 
+    filtro_sig = st.session_state.get("dash_lista_filtro_sig")
+    if filtro_sig is not None and st.session_state.get("_lv_last_filtro") != filtro_sig:
+        st.session_state[page_key] = 1
+    st.session_state["_lv_last_filtro"] = filtro_sig
+
     with st.container(height=LISTVIEW_SCROLL_PX, border=False):
+        st.markdown('<div class="lista-premium-header lista-premium-header-sticky">', unsafe_allow_html=True)
+        _render_cabecalho_tabela()
+        st.markdown("</div>", unsafe_allow_html=True)
+
         for row in slice_rows:
             _render_linha(
                 row,
@@ -333,6 +347,7 @@ def render_listagem_operacional(rows: list) -> None:
                 on_edit=_abrir_editar,
                 on_delete=_abrir_excluir,
             )
+
     st.markdown("</div>", unsafe_allow_html=True)
 
     if total_pages > 1:
