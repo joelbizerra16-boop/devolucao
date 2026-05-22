@@ -23,6 +23,10 @@ from core.theme import (
     TYPE_BASE,
     KPI_CARD_MIN_HEIGHT,
     KPI_TITLE_VALUE_GAP,
+    KPI_VALUE_LINE_HEIGHT,
+    KPI_VALUE_MIN_H_DEVOLUCOES,
+    KPI_VALUE_MIN_H_IMPACTO,
+    KPI_VALUE_MIN_H_WIDE,
     LISTVIEW_GRID_COLUMNS,
     LISTVIEW_ROW_MIN_HEIGHT,
     LISTVIEW_SCROLL_PX,
@@ -327,6 +331,7 @@ def _operational_cards_premium_css() -> str:
                 transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
                 border-color 0.22s ease,
                 box-shadow 0.22s ease;
+            /* sem transition em font-size — evita font jump */
             box-sizing: border-box;
             min-height: {KPI_CARD_MIN_HEIGHT};
             max-height: {KPI_CARD_MIN_HEIGHT};
@@ -393,34 +398,52 @@ def _operational_cards_premium_css() -> str:
             line-height: 1.25;
             flex: 0 0 auto;
         }}
-        .op-card-value {{
-            color: {COLORS["text"]};
+        /* Tipografia travada — sem clamp/vw; inline no HTML reforça primeiro paint */
+        [data-testid="stMarkdownContainer"] .op-card p.op-card-title,
+        .op-card p.op-card-title {{
+            font-size: {TYPE_CARD_LABEL} !important;
+            line-height: 1.25 !important;
+        }}
+        [data-testid="stMarkdownContainer"] .op-card p.op-card-value,
+        .op-card p.op-card-value {{
             font-size: {TYPE_KPI} !important;
             font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
-            margin: 0;
-            padding: 0;
-            line-height: 1.08;
-            letter-spacing: -0.025em;
+            line-height: {KPI_VALUE_LINE_HEIGHT} !important;
+            letter-spacing: -0.025em !important;
+            margin: 0 !important;
+            padding: 0 !important;
             flex: 0 0 auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }}
-        .op-card-value--impacto {{
+        .op-card-value--impacto,
+        p.op-card-value--impacto {{
             font-size: {TYPE_KPI_IMPACTO} !important;
-            letter-spacing: -0.03em;
-            line-height: 0.92;
+            line-height: {KPI_VALUE_LINE_HEIGHT} !important;
+            min-height: {KPI_VALUE_MIN_H_IMPACTO} !important;
+            max-height: {KPI_VALUE_MIN_H_IMPACTO} !important;
+            letter-spacing: -0.03em !important;
             text-shadow: 0 0 28px rgba(212, 160, 33, 0.28);
         }}
-        .op-card-value--devolucoes {{
+        .op-card-value--devolucoes,
+        p.op-card-value--devolucoes {{
             font-size: {TYPE_KPI_DEVOLUCOES} !important;
-            letter-spacing: -0.03em;
-            line-height: 0.92;
+            line-height: {KPI_VALUE_LINE_HEIGHT} !important;
+            min-height: {KPI_VALUE_MIN_H_DEVOLUCOES} !important;
+            max-height: {KPI_VALUE_MIN_H_DEVOLUCOES} !important;
+            letter-spacing: -0.03em !important;
             text-shadow: 0 0 24px rgba(121, 192, 255, 0.26);
         }}
-        .op-card-value--wide {{
+        .op-card-value--wide,
+        p.op-card-value--wide {{
             font-size: {TYPE_KPI_WIDE} !important;
-            line-height: 1.3;
-            font-weight: {FONT_WEIGHT_SEMIBOLD};
-            letter-spacing: -0.015em;
+            line-height: 1.3 !important;
+            min-height: {KPI_VALUE_MIN_H_WIDE} !important;
+            max-height: none !important;
+            font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
+            letter-spacing: -0.015em !important;
             text-shadow: 0 0 20px rgba(63, 185, 80, 0.22);
+            white-space: normal;
         }}
         .op-card-sub {{
             display: block;
@@ -520,11 +543,8 @@ def _operational_cards_premium_css() -> str:
 
 
 def inject_operational_cards_premium_css() -> None:
-    """Reinjeta estilos premium dos cards — garante efeito após reruns/navegação."""
-    st.markdown(
-        f"<style>{_operational_cards_premium_css()}</style>",
-        unsafe_allow_html=True,
-    )
+    """Estilos premium dos cards — incluídos em inject_global_css (sem reinjetar no render)."""
+    pass
 
 
 def inject_global_css() -> None:

@@ -23,7 +23,7 @@ h1, h2, h3, h4, h5, h6,
 [data-testid="stMarkdownContainer"] h2 { font-size: 1.0625rem !important; }
 [data-testid="stMarkdownContainer"] h3 { font-size: 0.9375rem !important; }
 
-[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] p:not(.op-card-title):not(.op-card-value):not(.op-card-sub),
 [data-testid="stMarkdownContainer"] li {
   font-size: 0.875rem !important;
   font-weight: 400 !important;
