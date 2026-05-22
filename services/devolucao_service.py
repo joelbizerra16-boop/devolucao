@@ -201,7 +201,9 @@ def preparar_listview_operacional(rows: list) -> pd.DataFrame:
 
 @st.cache_data(ttl=TTL_DEVOLUCOES, show_spinner=False)
 def listar_devolucoes_cache(busca: str = "") -> tuple[dict[str, Any], ...]:
-    rows = devolucao_repository.listar(busca=busca or "")
+    from core.search_utils import normalizar_texto_busca
+
+    rows = devolucao_repository.listar(busca=normalizar_texto_busca(busca or ""))
     return tuple(_serializar_listview_operacional(r) for r in rows)
 
 

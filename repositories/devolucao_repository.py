@@ -7,9 +7,10 @@ from types import SimpleNamespace
 from typing import Any, Optional, Union
 
 import pandas as pd
-from sqlalchemy import func, or_
+from sqlalchemy import func
 
 from core.db import get_session, get_write_session, is_postgres
+from core.search_utils import aplicar_busca_query
 from core.orm_serialize import devolucao_para_dict, parse_iso_date
 from core.system_log import log_event
 from database.models import Devolucao
@@ -197,21 +198,7 @@ def listar(
         q = session.query(Devolucao).order_by(
             Devolucao.data_devolucao.desc(), Devolucao.id.desc()
         )
-        if busca:
-            termo = f"%{busca.strip()}%"
-            q = q.filter(
-                or_(
-                    Devolucao.usuario.ilike(termo),
-                    Devolucao.nf_nfd.ilike(termo),
-                    Devolucao.motivo_devolucao.ilike(termo),
-                    Devolucao.observacao.ilike(termo),
-                    Devolucao.cliente.ilike(termo),
-                    Devolucao.cod_cliente.ilike(termo),
-                    Devolucao.vendedor.ilike(termo),
-                    Devolucao.cidade.ilike(termo),
-                    Devolucao.bairro.ilike(termo),
-                )
-            )
+        q = aplicar_busca_query(q, busca)
         if offset > 0:
             q = q.offset(offset)
         rows = q.limit(limit).all()
@@ -221,17 +208,7 @@ def listar(
 def contar(busca: str = "") -> int:
     with get_session() as session:
         q = session.query(Devolucao)
-        if busca:
-            termo = f"%{busca.strip()}%"
-            q = q.filter(
-                or_(
-                    Devolucao.usuario.ilike(termo),
-                    Devolucao.nf_nfd.ilike(termo),
-                    Devolucao.motivo_devolucao.ilike(termo),
-                    Devolucao.cod_cliente.ilike(termo),
-                    Devolucao.vendedor.ilike(termo),
-                )
-            )
+        q = aplicar_busca_query(q, busca)
         return q.count()
 
 

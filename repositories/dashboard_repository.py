@@ -6,10 +6,11 @@ from calendar import monthrange
 from datetime import date
 from typing import Any, Optional
 
-from sqlalchemy import extract, func, or_
+from sqlalchemy import extract, func
 
 from core.db import get_session
 from core.orm_serialize import devolucao_para_dict
+from core.search_utils import aplicar_busca_query
 from database.models import Devolucao
 
 
@@ -263,18 +264,7 @@ def listar_periodo(
 ) -> list[dict[str, Any]]:
     with get_session() as session:
         q = _filtro_mes_ano(session.query(Devolucao), mes, ano)
-        if busca:
-            termo = f"%{busca.strip()}%"
-            q = q.filter(
-                or_(
-                    Devolucao.usuario.ilike(termo),
-                    Devolucao.nf_nfd.ilike(termo),
-                    Devolucao.motivo_devolucao.ilike(termo),
-                    Devolucao.cod_cliente.ilike(termo),
-                    Devolucao.vendedor.ilike(termo),
-                    Devolucao.cliente.ilike(termo),
-                )
-            )
+        q = aplicar_busca_query(q, busca)
         rows = (
             q.order_by(Devolucao.data_devolucao.desc(), Devolucao.id.desc())
             .limit(limit)

@@ -135,7 +135,10 @@ def listar_devolucoes_periodo_cache(
     ano: int,
     busca: str = "",
 ) -> tuple[dict[str, Any], ...]:
-    rows = dashboard_repository.listar_periodo(mes, ano, busca=busca or "")
+    from core.search_utils import normalizar_texto_busca
+
+    busca_norm = normalizar_texto_busca(busca or "")
+    rows = dashboard_repository.listar_periodo(mes, ano, busca=busca_norm)
     return tuple(rows)
 
 
