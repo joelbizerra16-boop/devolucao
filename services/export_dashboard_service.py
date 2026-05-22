@@ -6,6 +6,7 @@ from collections import Counter
 from datetime import datetime
 from html import escape
 from io import BytesIO
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -37,6 +38,66 @@ C_HEADER_TEXT = "#475569"
 FONT_REGULAR = "Helvetica"
 FONT_BOLD = "Helvetica-Bold"
 FONT_MEDIUM = "Helvetica-Bold"
+
+
+def _registrar_fontes_premium() -> None:
+    """Inter/Manrope se disponível em assets/fonts; senão Helvetica."""
+    global FONT_REGULAR, FONT_BOLD, FONT_MEDIUM
+    try:
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+    except ImportError:
+        return
+
+    base = Path(__file__).resolve().parent.parent / "assets" / "fonts"
+    inter_regular = base / "Inter-Regular.ttf"
+    inter_bold = base / "Inter-SemiBold.ttf"
+    if not inter_bold.exists():
+        inter_bold = base / "Inter-Bold.ttf"
+    if inter_regular.exists() and inter_bold.exists():
+        pdfmetrics.registerFont(TTFont("Inter", str(inter_regular)))
+        pdfmetrics.registerFont(TTFont("Inter-SemiBold", str(inter_bold)))
+        FONT_REGULAR = "Inter"
+        FONT_BOLD = "Inter-SemiBold"
+        FONT_MEDIUM = "Inter-SemiBold"
+
+
+def _kpi_card_table(
+    label: str,
+    value: str,
+    *,
+    width: float,
+    label_style: Any,
+    value_style: Any,
+) -> Any:
+    from reportlab.lib import colors
+    from reportlab.lib.units import cm
+    from reportlab.platypus import Paragraph, Table, TableStyle
+
+    card = Table(
+        [
+            [Paragraph(label, label_style)],
+            [Paragraph(value, value_style)],
+        ],
+        colWidths=[width],
+        rowHeights=[0.78 * cm, 1.08 * cm],
+    )
+    card.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor(C_CARD_BG)),
+                ("BOX", (0, 0), (-1, -1), 0.45, colors.HexColor(C_BORDER)),
+                ("LEFTPADDING", (0, 0), (-1, -1), 14),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 14),
+                ("TOPPADDING", (0, 0), (-1, 0), 12),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 4),
+                ("TOPPADDING", (0, 1), (-1, 1), 4),
+                ("BOTTOMPADDING", (0, 1), (-1, 1), 12),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ]
+        )
+    )
+    return card
 
 
 def nome_arquivo_exportacao(extensao: str, mes_label: str, ano: int) -> str:
@@ -140,6 +201,8 @@ def export_listagem_pdf_bytes(
         TableStyle,
     )
 
+    _registrar_fontes_premium()
+
     agora = datetime.now()
     agora_txt = agora.strftime("%d/%m/%Y %H:%M")
     busca_txt = (busca or "").strip() or "—"
@@ -167,10 +230,7 @@ def export_listagem_pdf_bytes(
 
     def _on_page(canv: canvas.Canvas, doc: BaseDocTemplate) -> None:
         canv.saveState()
-        # Acento superior discreto (sem faixa chapada sobre o conteúdo)
-        canv.setStrokeColor(colors.HexColor(C_SLATE))
-        canv.setLineWidth(1.2)
-        canv.line(margin_l, page_h - 0.55 * cm, page_w - margin_r, page_h - 0.55 * cm)
+        # Sem linha no topo — evita qualquer sobreposição com KPIs/títulos
         # Rodapé executivo
         canv.setStrokeColor(colors.HexColor(C_BORDER))
         canv.setLineWidth(0.5)
@@ -221,12 +281,12 @@ def export_listagem_pdf_bytes(
         "kpi_label": ParagraphStyle(
             "KpiLabel",
             fontName=FONT_REGULAR,
-            fontSize=7,
-            leading=11,
+            fontSize=6.5,
+            leading=10,
             textColor=colors.HexColor(C_SLATE_LIGHT),
             alignment=TA_LEFT,
             spaceBefore=0,
-            spaceAfter=4,
+            spaceAfter=2,
         ),
         "kpi_value": ParagraphStyle(
             "KpiValue",
@@ -270,9 +330,9 @@ def export_listagem_pdf_bytes(
         ),
         "th": ParagraphStyle(
             "TH",
-            fontName=FONT_REGULAR,
-            fontSize=7,
-            leading=10,
+            fontName=FONT_MEDIUM,
+            fontSize=6.5,
+            leading=9,
             textColor=colors.HexColor(C_HEADER_TEXT),
             alignment=TA_LEFT,
         ),
@@ -327,45 +387,56 @@ def export_listagem_pdf_bytes(
 
     story.append(Spacer(1, 0.45 * cm))
 
-    # --- KPI cards ---
-    kpi_data = [
-        [
-            Paragraph("Total de devoluções", styles["kpi_label"]),
-            Paragraph("Impacto financeiro", styles["kpi_label"]),
-            Paragraph("Principal motivo", styles["kpi_label"]),
-            Paragraph("Clientes distintos", styles["kpi_label"]),
-        ],
-        [
-            Paragraph(kpis["total_devolucoes"], styles["kpi_value"]),
-            Paragraph(kpis["impacto_financeiro"], styles["kpi_value_green"]),
-            Paragraph(escape(kpis["principal_motivo"][:42]), styles["kpi_value"]),
-            Paragraph(kpis["qtd_clientes"], styles["kpi_value"]),
-        ],
+    # --- KPI cards (4 blocos separados, sem linhas cruzando texto) ---
+    gap = 0.28 * cm
+    card_w = (doc.width - 3 * gap) / 4
+    cards = [
+        _kpi_card_table(
+            "TOTAL DE DEVOLUÇÕES",
+            escape(kpis["total_devolucoes"]),
+            width=card_w,
+            label_style=styles["kpi_label"],
+            value_style=styles["kpi_value"],
+        ),
+        _kpi_card_table(
+            "IMPACTO FINANCEIRO",
+            escape(kpis["impacto_financeiro"]),
+            width=card_w,
+            label_style=styles["kpi_label"],
+            value_style=styles["kpi_value_green"],
+        ),
+        _kpi_card_table(
+            "PRINCIPAL MOTIVO",
+            escape(kpis["principal_motivo"][:36]),
+            width=card_w,
+            label_style=styles["kpi_label"],
+            value_style=styles["kpi_value"],
+        ),
+        _kpi_card_table(
+            "CLIENTES DISTINTOS",
+            escape(kpis["qtd_clientes"]),
+            width=card_w,
+            label_style=styles["kpi_label"],
+            value_style=styles["kpi_value"],
+        ),
     ]
-    kpi_w = doc.width / 4
-    kpi_table = Table(
-        kpi_data,
-        colWidths=[kpi_w] * 4,
-        rowHeights=[0.72 * cm, 1.05 * cm],
+    kpi_row = Table(
+        [[cards[0], "", cards[1], "", cards[2], "", cards[3]]],
+        colWidths=[card_w, gap, card_w, gap, card_w, gap, card_w],
     )
-    kpi_style = [
-        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor(C_CARD_BG)),
-        ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor(C_BORDER)),
-        ("LEFTPADDING", (0, 0), (-1, -1), 12),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 12),
-        ("TOPPADDING", (0, 0), (-1, 0), 10),
-        ("BOTTOMPADDING", (0, 0), (-1, 0), 2),
-        ("TOPPADDING", (0, 1), (-1, 1), 2),
-        ("BOTTOMPADDING", (0, 1), (-1, 1), 10),
-        ("VALIGN", (0, 0), (-1, -1), "TOP"),
-    ]
-    for col in range(4):
-        kpi_style.append(
-            ("LINELEFT", (col, 0), (col, -1), 2, colors.HexColor(C_BORDER))
+    kpi_row.setStyle(
+        TableStyle(
+            [
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+            ]
         )
-    kpi_table.setStyle(TableStyle(kpi_style))
-    story.append(kpi_table)
-    story.append(Spacer(1, 0.5 * cm))
+    )
+    story.append(kpi_row)
+    story.append(Spacer(1, 0.55 * cm))
 
     # --- Tabela de dados ---
     if not linhas:
@@ -396,7 +467,10 @@ def export_listagem_pdf_bytes(
         ]
 
         header_row = [
-            Paragraph(f"<font size='7' color='{C_HEADER_TEXT}'><b>{h}</b></font>", styles["th"])
+            Paragraph(
+                f"<font size='7' color='{C_HEADER_TEXT}'><b>{h}</b></font>",
+                styles["th"],
+            )
             for h in headers
         ]
         body_rows = []
