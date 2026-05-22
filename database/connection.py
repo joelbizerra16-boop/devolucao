@@ -123,6 +123,35 @@ def _resolve_database_url() -> str:
 
 DATABASE_URL = _resolve_database_url()
 
+# Registro do backend ativo (detecção de troca silenciosa SQLite ↔ PostgreSQL)
+_LAST_LOGGED_BACKEND: str | None = None
+
+
+def get_backend_label() -> str:
+    if is_postgres():
+        return "PostgreSQL (Supabase)"
+    return f"SQLite (local: {DEFAULT_SQLITE_PATH.name})"
+
+
+def log_active_backend(force: bool = False) -> str:
+    """Registra no log qual engine está ativa; alerta se o backend mudou."""
+    global _LAST_LOGGED_BACKEND
+    label = get_backend_label()
+    if force or label != _LAST_LOGGED_BACKEND:
+        try:
+            from core.system_log import log_event
+
+            if _LAST_LOGGED_BACKEND and _LAST_LOGGED_BACKEND != label:
+                log_event(
+                    "db",
+                    f"ALERTA: backend alterado de {_LAST_LOGGED_BACKEND} para {label}",
+                )
+            log_event("db", f"Backend ativo: {label}")
+        except Exception:
+            pass
+        _LAST_LOGGED_BACKEND = label
+    return label
+
 
 def is_postgres() -> bool:
     return DATABASE_URL.startswith("postgresql")
@@ -148,6 +177,7 @@ def _create_engine() -> Engine:
 
 
 engine = _create_engine()
+log_active_backend(force=True)
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -173,3 +203,4 @@ def reset_engine() -> None:
         bind=engine,
         expire_on_commit=False,
     )
+    log_active_backend(force=True)
