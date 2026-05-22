@@ -9,8 +9,9 @@ from typing import Any, Optional, Union
 import pandas as pd
 from sqlalchemy import func, or_
 
-from core.db import get_session, get_write_session
+from core.db import get_session, get_write_session, is_postgres
 from core.orm_serialize import devolucao_para_dict, parse_iso_date
+from core.system_log import log_event
 from database.models import Devolucao
 
 
@@ -138,12 +139,18 @@ def inserir(
     vendedor: Optional[str] = None,
     valor_nf: Optional[float] = None,
 ) -> int:
+    nf = nf_nfd.strip()
+    backend = "PostgreSQL" if is_postgres() else "SQLite"
+    log_event(
+        "persist",
+        f"INSERT devolucao iniciado backend={backend} nf={nf} data={data_devolucao}",
+    )
     with get_write_session() as session:
         dev = Devolucao(
             data_lancamento=data_devolucao,
             data_devolucao=data_devolucao,
             usuario=usuario,
-            nf_nfd=nf_nfd.strip(),
+            nf_nfd=nf,
             motivo_devolucao=motivo_devolucao,
             observacao=observacao,
             data_emissao_nf=data_emissao_nf,
@@ -156,7 +163,28 @@ def inserir(
         )
         session.add(dev)
         session.flush()
-        return dev.id
+        dev_id = int(dev.id)
+        if session.get(Devolucao, dev_id) is None:
+            raise RuntimeError("flush() não materializou o registro na sessão")
+
+    if not confirmar_persistencia(dev_id, nf):
+        log_event("persist", f"FALHA pós-commit: id={dev_id} nf={nf} não encontrado")
+        raise RuntimeError("Registro não confirmado no banco após commit")
+
+    log_event("persist", f"INSERT devolucao OK id={dev_id} nf={nf}")
+    return dev_id
+
+
+def confirmar_persistencia(devolucao_id: int, nf_nfd: str) -> bool:
+    """SELECT imediato após commit — evita falso positivo de sucesso."""
+    chave = nf_nfd.strip()
+    with get_session() as session:
+        row = (
+            session.query(Devolucao.id)
+            .filter(Devolucao.id == devolucao_id, Devolucao.nf_nfd == chave)
+            .first()
+        )
+        return row is not None
 
 
 def listar(

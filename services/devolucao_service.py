@@ -9,6 +9,7 @@ import pandas as pd
 import streamlit as st
 
 from core.cache_read import TTL_DEVOLUCOES, limpar_cache_leitura
+from core.system_log import log_event
 from repositories import devolucao_repository
 from services import sap_service
 from services.validation_service import validar_cadastro_devolucao, validar_edicao_devolucao
@@ -62,6 +63,10 @@ def cadastrar_devolucao(
         if not validacao.ok:
             return False, validacao.message, None
 
+        log_event(
+            "persist",
+            f"cadastrar_devolucao nf={nf} data={dd} usuario={usuario!r}",
+        )
         dev_id = devolucao_repository.inserir(
             data_devolucao=dd,
             usuario=str(usuario).strip(),
@@ -77,8 +82,10 @@ def cadastrar_devolucao(
             valor_nf=sap.get("valor_nf") if sap else None,
         )
         limpar_cache_leitura()
+        log_event("persist", f"cadastrar_devolucao OK id={dev_id} cache_limpo=True")
         return True, "Devolução salva com sucesso.", dev_id
     except Exception as exc:
+        log_event("persist", f"cadastrar_devolucao ERRO nf={str(nf_nfd or '').strip()!r}: {exc}", exc)
         return False, f"Erro ao salvar devolução: {exc}", None
 
 

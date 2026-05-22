@@ -121,10 +121,9 @@ class DatabaseManager:
                 # Leitura pura: rollback expira atributos ORM → DetachedInstanceError
                 if session.new or session.dirty or session.deleted:
                     session.rollback()
-            elif session.new or session.dirty or session.deleted:
-                session.commit()
             else:
-                session.rollback()
+                # Escrita: sempre commit (após flush() new/dirty ficam vazios — rollback silencioso quebrava INSERT)
+                session.commit()
         except Exception:
             session.rollback()
             raise
