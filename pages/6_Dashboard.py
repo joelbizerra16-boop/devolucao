@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
 from components.cards import render_dashboard_cards
 from components.chart_card import render_plotly_in_card
 from components.listagem_dashboard import render_listagem_operacional
+from core.auth import get_current_user
 from core.layout import init_authenticated_page, safe_page_run
 from core.navigation import PAGE_DASHBOARD
 from core.styles import inject_dashboard_export_toolbar_css, page_header
@@ -130,11 +131,13 @@ def _render() -> None:
         busca=busca_txt,
     )
 
+    user = get_current_user()
     pdf_bytes = export_listagem_pdf_bytes(
         rows_lista,
         mes=lista_mes_label,
         ano=lista_ano_num,
         busca=busca_txt,
+        usuario_exportador=user.nome if user else "Sistema",
     )
     xlsx_bytes = export_listagem_excel_bytes(rows_lista)
 
