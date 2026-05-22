@@ -30,12 +30,15 @@ from services.usuario_service import seed_default_users
 
 
 def _bootstrap() -> None:
+    if st.session_state.get("_db_ready"):
+        return
     ok, msg = check_connection()
     if not ok:
         raise ConnectionError(msg)
     init_db()
     init_csv_storage()
     seed_default_users()
+    st.session_state["_db_ready"] = True
 
 
 def _render_login() -> None:

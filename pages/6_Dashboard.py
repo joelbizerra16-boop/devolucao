@@ -18,15 +18,14 @@ from core.auth import get_current_user
 from core.layout import init_authenticated_page, safe_page_run
 from core.navigation import PAGE_DASHBOARD
 from core.styles import inject_dashboard_export_toolbar_css, page_header
-from services.export_dashboard_service import (
-    export_listagem_excel_bytes,
-    export_listagem_pdf_bytes,
-    nome_arquivo_exportacao,
-)
+from services.export_dashboard_service import nome_arquivo_exportacao
 from core.cache_read import limpar_cache_leitura
 from services.dashboard_service import (
     MESES_LABEL,
     carregar_dashboard,
+    export_excel_dashboard_cache,
+    export_pdf_dashboard_cache,
+    listar_devolucoes_periodo_cache,
     mes_label_para_numero,
     listar_devolucoes_periodo_dashboard,
     obter_anos_disponiveis,
@@ -36,6 +35,13 @@ from services.dashboard_service import (
 
 
 def _render() -> None:
+    from core.perf_monitor import track_page
+
+    with track_page("dashboard"):
+        _render_dashboard()
+
+
+def _render_dashboard() -> None:
     init_authenticated_page("Dashboard", "📊", page_slug=PAGE_DASHBOARD)
 
     page_header(
@@ -125,6 +131,11 @@ def _render() -> None:
     lista_mes_num = mes_label_para_numero(lista_mes_label)
     lista_ano_num = int(lista_ano)
     busca_txt = busca_lista or ""
+    rows_cache = listar_devolucoes_periodo_cache(
+        lista_mes_num,
+        lista_ano_num,
+        busca_txt,
+    )
     rows_lista = listar_devolucoes_periodo_dashboard(
         lista_mes_num,
         lista_ano_num,
@@ -132,14 +143,15 @@ def _render() -> None:
     )
 
     user = get_current_user()
-    pdf_bytes = export_listagem_pdf_bytes(
-        rows_lista,
-        mes=lista_mes_label,
-        ano=lista_ano_num,
-        busca=busca_txt,
-        usuario_exportador=user.nome if user else "Sistema",
+    usuario_exp = user.nome if user else "Sistema"
+    pdf_bytes = export_pdf_dashboard_cache(
+        lista_mes_label,
+        lista_ano_num,
+        busca_txt,
+        usuario_exp,
+        rows_cache,
     )
-    xlsx_bytes = export_listagem_excel_bytes(rows_lista)
+    xlsx_bytes = export_excel_dashboard_cache(rows_cache)
 
     with lf4:
         st.markdown('<span class="dash-export-marker-pdf"></span>', unsafe_allow_html=True)
@@ -165,6 +177,11 @@ def _render() -> None:
             use_container_width=True,
             key="dash_export_xlsx",
         )
+
+    filtro_sig = (lista_mes_num, lista_ano_num, busca_txt)
+    if st.session_state.get("dash_lista_filtro_sig") != filtro_sig:
+        st.session_state["dash_lista_filtro_sig"] = filtro_sig
+        st.session_state["dash_lista_page"] = 1
 
     render_listagem_operacional(rows_lista)
 

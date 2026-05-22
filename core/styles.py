@@ -271,6 +271,9 @@ def inject_login_css(background_url: str | None = None) -> None:
 
 
 def inject_global_css() -> None:
+    if st.session_state.get("_css_global_injected"):
+        return
+    st.session_state["_css_global_injected"] = True
     st.markdown(
         f"""
         <style>
@@ -574,6 +577,9 @@ def inject_global_css() -> None:
 
 def inject_listview_premium_css() -> None:
     """Estilos da listagem operacional premium (dashboard)."""
+    if st.session_state.get("_css_listview_injected"):
+        return
+    st.session_state["_css_listview_injected"] = True
     st.markdown(
         f"""
         <style>
@@ -849,6 +855,9 @@ def inject_listview_premium_css() -> None:
 
 def inject_dashboard_export_toolbar_css() -> None:
     """Botões ícone PDF/Excel alinhados à barra de filtros da listagem operacional."""
+    if st.session_state.get("_css_dash_export_injected"):
+        return
+    st.session_state["_css_dash_export_injected"] = True
     st.markdown(
         f"""
         <style>

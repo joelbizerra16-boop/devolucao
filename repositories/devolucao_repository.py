@@ -8,7 +8,7 @@ from typing import Any, Optional, Union
 import pandas as pd
 from sqlalchemy import func, or_
 
-from core.db import get_session
+from core.db import get_session, get_write_session
 from database.models import Devolucao
 
 
@@ -70,7 +70,7 @@ def atualizar(
     vendedor: Optional[str] = None,
     valor_nf: Optional[float] = None,
 ) -> bool:
-    with get_session() as session:
+    with get_write_session() as session:
         dev = session.get(Devolucao, devolucao_id)
         if dev is None:
             return False
@@ -91,7 +91,7 @@ def atualizar(
 
 
 def excluir(devolucao_id: int) -> bool:
-    with get_session() as session:
+    with get_write_session() as session:
         dev = session.get(Devolucao, devolucao_id)
         if dev is None:
             return False
@@ -113,7 +113,7 @@ def inserir(
     vendedor: Optional[str] = None,
     valor_nf: Optional[float] = None,
 ) -> int:
-    with get_session() as session:
+    with get_write_session() as session:
         dev = Devolucao(
             data_lancamento=data_devolucao,
             data_devolucao=data_devolucao,

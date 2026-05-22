@@ -11,7 +11,7 @@ import streamlit as st
 from core.auth import get_current_user
 from core.permissions import pode_editar
 from core.styles import inject_listview_premium_css
-from core.theme import LISTVIEW_SCROLL_PX
+from core.theme import LISTVIEW_PAGE_SIZE, LISTVIEW_SCROLL_PX
 from repositories import devolucao_repository
 from services.csv_repository import listar_motivos
 from core.cache_read import limpar_cache_leitura
@@ -307,8 +307,26 @@ def render_listagem_operacional(rows: list) -> None:
     _render_cabecalho_tabela()
     st.markdown("</div>", unsafe_allow_html=True)
 
+    total = len(rows)
+    page_size = LISTVIEW_PAGE_SIZE
+    total_pages = max(1, (total + page_size - 1) // page_size)
+    page_key = "dash_lista_page"
+    if page_key not in st.session_state:
+        st.session_state[page_key] = 1
+    pagina = int(st.session_state[page_key])
+    if pagina > total_pages:
+        pagina = total_pages
+        st.session_state[page_key] = pagina
+    if pagina < 1:
+        pagina = 1
+        st.session_state[page_key] = pagina
+
+    inicio = (pagina - 1) * page_size
+    fim = min(inicio + page_size, total)
+    slice_rows = rows[inicio:fim]
+
     with st.container(height=LISTVIEW_SCROLL_PX, border=False):
-        for row in rows:
+        for row in slice_rows:
             _render_linha(
                 row,
                 pode_alterar=pode_alterar,
@@ -316,6 +334,32 @@ def render_listagem_operacional(rows: list) -> None:
                 on_delete=_abrir_excluir,
             )
     st.markdown("</div>", unsafe_allow_html=True)
+
+    if total_pages > 1:
+        nav1, nav2, nav3 = st.columns([1, 2, 1])
+        with nav1:
+            if st.button(
+                "Anterior",
+                disabled=pagina <= 1,
+                key="dash_lista_prev",
+                use_container_width=True,
+            ):
+                st.session_state[page_key] = pagina - 1
+                st.rerun()
+        with nav2:
+            st.caption(
+                f"Página {pagina} de {total_pages} · "
+                f"exibindo {inicio + 1}–{fim} de {total} registros"
+            )
+        with nav3:
+            if st.button(
+                "Próxima",
+                disabled=pagina >= total_pages,
+                key="dash_lista_next",
+                use_container_width=True,
+            ):
+                st.session_state[page_key] = pagina + 1
+                st.rerun()
 
     if not pode_alterar:
         st.caption("Perfil somente leitura — edição e exclusão disponíveis para administrador.")

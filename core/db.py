@@ -110,11 +110,19 @@ class DatabaseManager:
         return False, self._last_health_msg
 
     @contextmanager
-    def session_scope(self) -> Generator[Session, None, None]:
+    def session_scope(self, *, read_only: bool = False) -> Generator[Session, None, None]:
+        from core.perf_monitor import track
+
         session = self.session_factory()
         try:
-            yield session
-            session.commit()
+            with track("db", "session"):
+                yield session
+            if read_only:
+                session.rollback()
+            elif session.new or session.dirty or session.deleted:
+                session.commit()
+            else:
+                session.rollback()
         except Exception:
             session.rollback()
             raise
@@ -131,8 +139,16 @@ def get_session_factory() -> sessionmaker:
 
 
 @contextmanager
-def get_session() -> Generator[Session, None, None]:
-    with DatabaseManager.instance().session_scope() as session:
+def get_session(*, read_only: bool = True) -> Generator[Session, None, None]:
+    """Sessão de leitura por padrão — sem commit em SELECT."""
+    with DatabaseManager.instance().session_scope(read_only=read_only) as session:
+        yield session
+
+
+@contextmanager
+def get_write_session() -> Generator[Session, None, None]:
+    """Sessão para INSERT/UPDATE/DELETE."""
+    with DatabaseManager.instance().session_scope(read_only=False) as session:
         yield session
 
 

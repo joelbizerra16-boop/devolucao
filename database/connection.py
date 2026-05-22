@@ -157,12 +157,21 @@ def is_postgres() -> bool:
     return DATABASE_URL.startswith("postgresql")
 
 
+def _pool_kwargs() -> dict:
+    return {
+        "pool_pre_ping": True,
+        "pool_recycle": int(os.getenv("DB_POOL_RECYCLE", "300")),
+        "pool_size": int(os.getenv("DB_POOL_SIZE", "5")),
+        "max_overflow": int(os.getenv("DB_POOL_MAX_OVERFLOW", "10")),
+    }
+
+
 def _create_engine() -> Engine:
+    pool = _pool_kwargs()
     if is_postgres():
         return create_engine(
             DATABASE_URL,
-            pool_pre_ping=True,
-            pool_recycle=300,
+            **pool,
             connect_args={
                 "sslmode": "require",
                 "connect_timeout": int(os.getenv("DB_CONNECT_TIMEOUT", "10")),
@@ -170,8 +179,7 @@ def _create_engine() -> Engine:
         )
     return create_engine(
         DATABASE_URL,
-        pool_pre_ping=True,
-        pool_recycle=300,
+        **pool,
         connect_args={"check_same_thread": False},
     )
 

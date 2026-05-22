@@ -297,8 +297,13 @@ def _finalizar_figura(
     return fig
 
 
-def grafico_devolucoes_por_dia(mes: int, ano: int) -> go.Figure:
-    rows = dashboard_repository.devolucoes_por_dia(mes, ano)
+def grafico_devolucoes_por_dia(
+    mes: int,
+    ano: int,
+    rows: list[tuple[date, int]] | None = None,
+) -> go.Figure:
+    if rows is None:
+        rows = dashboard_repository.devolucoes_por_dia(mes, ano)
     if rows:
         labels = [d.strftime("%d/%m") for d, _ in rows]
         valores = [v for _, v in rows]
@@ -321,8 +326,13 @@ def grafico_devolucoes_por_dia(mes: int, ano: int) -> go.Figure:
     return _finalizar_figura(fig, titulo, height=CHART_HEIGHT_DIA)
 
 
-def grafico_impacto_por_mes(mes: int, ano: int) -> go.Figure:
-    rows = dashboard_repository.impacto_financeiro_por_mes(ano, ate_mes=mes)
+def grafico_impacto_por_mes(
+    mes: int,
+    ano: int,
+    rows: list[tuple[int, float]] | None = None,
+) -> go.Figure:
+    if rows is None:
+        rows = dashboard_repository.impacto_financeiro_por_mes(ano, ate_mes=mes)
     mapa = {m: v for m, v in rows}
     meses_visiveis = list(range(1, mes + 1))
     labels = [MESES_LABEL[i - 1][:3] for i in meses_visiveis]
@@ -348,9 +358,14 @@ def grafico_impacto_por_mes(mes: int, ano: int) -> go.Figure:
     return _finalizar_figura(fig, titulo)
 
 
-def grafico_devolucoes_por_mes(mes: int, ano: int) -> go.Figure:
+def grafico_devolucoes_por_mes(
+    mes: int,
+    ano: int,
+    rows: list[tuple[int, int]] | None = None,
+) -> go.Figure:
     """Barras por mês no ano — até o mês filtrado; mês selecionado em destaque."""
-    rows = dashboard_repository.devolucoes_por_mes_no_ano(ano, ate_mes=mes)
+    if rows is None:
+        rows = dashboard_repository.devolucoes_por_mes_no_ano(ano, ate_mes=mes)
     mapa = {m: t for m, t in rows}
     meses_visiveis = list(range(1, mes + 1))
     labels = [MESES_LABEL[i - 1][:3] for i in meses_visiveis]
@@ -394,13 +409,53 @@ def carregar_listview_dashboard(mes: int, ano: int, busca: str = "") -> pd.DataF
 
 @st.cache_data(ttl=TTL_DASHBOARD, show_spinner=False)
 def obter_graficos_cache(mes: int, ano: int) -> dict[str, dict[str, Any]]:
+    from core.perf_monitor import track
+
+    with track("dashboard", f"graficos_{mes}_{ano}"):
+        agg = dashboard_repository.obter_agregacoes_graficos(mes, ano)
     return {
-        "devolucoes_dia": grafico_devolucoes_por_dia(mes, ano).to_dict(),
-        "impacto_mes": grafico_impacto_por_mes(mes, ano).to_dict(),
-        "devolucoes_mes": grafico_devolucoes_por_mes(mes, ano).to_dict(),
+        "devolucoes_dia": grafico_devolucoes_por_dia(
+            mes, ano, agg["por_dia"]
+        ).to_dict(),
+        "impacto_mes": grafico_impacto_por_mes(
+            mes, ano, agg["impacto_mes"]
+        ).to_dict(),
+        "devolucoes_mes": grafico_devolucoes_por_mes(
+            mes, ano, agg["por_mes_ano"]
+        ).to_dict(),
     }
 
 
 def obter_graficos(mes: int, ano: int) -> dict[str, go.Figure]:
     graficos = obter_graficos_cache(mes, ano)
     return {chave: go.Figure(fig) for chave, fig in graficos.items()}
+
+
+@st.cache_data(ttl=TTL_DASHBOARD, show_spinner=False)
+def export_pdf_dashboard_cache(
+    mes_label: str,
+    ano: int,
+    busca: str,
+    usuario: str,
+    rows_tuple: tuple[dict[str, Any], ...],
+) -> bytes:
+    from services.export_dashboard_service import export_listagem_pdf_bytes
+
+    rows = [_deserializar_devolucao_row(d) for d in rows_tuple]
+    return export_listagem_pdf_bytes(
+        rows,
+        mes=mes_label,
+        ano=ano,
+        busca=busca,
+        usuario_exportador=usuario,
+    )
+
+
+@st.cache_data(ttl=TTL_DASHBOARD, show_spinner=False)
+def export_excel_dashboard_cache(
+    rows_tuple: tuple[dict[str, Any], ...],
+) -> bytes:
+    from services.export_dashboard_service import export_listagem_excel_bytes
+
+    rows = [_deserializar_devolucao_row(d) for d in rows_tuple]
+    return export_listagem_excel_bytes(rows)

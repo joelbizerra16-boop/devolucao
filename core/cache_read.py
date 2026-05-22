@@ -26,6 +26,8 @@ def limpar_cache_leitura() -> None:
         dashboard_service.obter_anos_disponiveis_cache,
         dashboard_service.obter_periodo_padrao_cache,
         dashboard_service.listar_devolucoes_periodo_cache,
+        dashboard_service.export_pdf_dashboard_cache,
+        dashboard_service.export_excel_dashboard_cache,
         devolucao_service.listar_devolucoes_cache,
         devolucao_service.obter_metricas_cards_cache,
         motivo_service.listar_motivos_cache,

@@ -8,7 +8,7 @@ from datetime import datetime
 
 from sqlalchemy import text
 
-from core.db import get_engine, get_session, is_postgres
+from core.db import get_engine, get_write_session, is_postgres
 from core.paths import MOTIVOS_PADRAO
 from core.system_log import log_event
 from database.models import Base, Motivo, PerfilUsuario, Usuario
@@ -88,7 +88,7 @@ def _migrar_colunas_sqlite() -> None:
 
 
 def seed_motivos_padrao() -> None:
-    with get_session() as session:
+    with get_write_session() as session:
         qtd = session.query(Motivo).count()
         if qtd > 0:
             return
@@ -98,7 +98,7 @@ def seed_motivos_padrao() -> None:
 
 
 def seed_usuario_admin() -> None:
-    with get_session() as session:
+    with get_write_session() as session:
         existe = (
             session.query(Usuario)
             .filter(Usuario.username == USUARIO_PROTEGIDO)

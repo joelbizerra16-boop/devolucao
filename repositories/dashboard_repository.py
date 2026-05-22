@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from calendar import monthrange
 from datetime import date
 from typing import Any, Optional
 
@@ -11,10 +12,26 @@ from core.db import get_session
 from database.models import Devolucao
 
 
+def _intervalo_mes(ano: int, mes: int) -> tuple[date, date]:
+    ultimo_dia = monthrange(ano, mes)[1]
+    return date(ano, mes, 1), date(ano, mes, ultimo_dia)
+
+
 def _filtro_mes_ano(q, mes: int, ano: int):
+    """Intervalo fechado — usa índice em data_devolucao (sem extract no WHERE)."""
+    inicio, fim = _intervalo_mes(ano, mes)
     return q.filter(
-        extract("year", Devolucao.data_devolucao) == ano,
-        extract("month", Devolucao.data_devolucao) == mes,
+        Devolucao.data_devolucao >= inicio,
+        Devolucao.data_devolucao <= fim,
+    )
+
+
+def _filtro_ano_ate_mes(q, ano: int, ate_mes: int):
+    inicio = date(ano, 1, 1)
+    fim = date(ano, ate_mes, monthrange(ano, ate_mes)[1])
+    return q.filter(
+        Devolucao.data_devolucao >= inicio,
+        Devolucao.data_devolucao <= fim,
     )
 
 
@@ -81,6 +98,62 @@ def obter_cards_periodo(mes: int, ano: int) -> dict[str, Any]:
     }
 
 
+def obter_agregacoes_graficos(mes: int, ano: int) -> dict[str, Any]:
+    """Uma sessão para os três conjuntos de dados dos gráficos."""
+    with get_session() as session:
+        rows_dia = (
+            _filtro_mes_ano(
+                session.query(
+                    Devolucao.data_devolucao,
+                    func.count(Devolucao.id).label("total"),
+                ),
+                mes,
+                ano,
+            )
+            .group_by(Devolucao.data_devolucao)
+            .order_by(Devolucao.data_devolucao.asc())
+            .all()
+        )
+
+        rows_impacto = (
+            _filtro_ano_ate_mes(
+                session.query(
+                    extract("month", Devolucao.data_devolucao).label("mes"),
+                    func.coalesce(func.sum(Devolucao.valor_nf), 0.0).label("total"),
+                ),
+                ano,
+                mes,
+            )
+            .group_by(extract("month", Devolucao.data_devolucao))
+            .order_by(extract("month", Devolucao.data_devolucao).asc())
+            .all()
+        )
+
+        rows_dev_mes = (
+            _filtro_ano_ate_mes(
+                session.query(
+                    extract("month", Devolucao.data_devolucao).label("mes"),
+                    func.count(Devolucao.id).label("total"),
+                ),
+                ano,
+                mes,
+            )
+            .group_by(extract("month", Devolucao.data_devolucao))
+            .order_by(extract("month", Devolucao.data_devolucao).asc())
+            .all()
+        )
+
+    return {
+        "por_dia": [(r[0], int(r[1] or 0)) for r in rows_dia if r[0] is not None],
+        "impacto_mes": [
+            (int(r[0]), float(r[1] or 0)) for r in rows_impacto if r[0] is not None
+        ],
+        "por_mes_ano": [
+            (int(r[0]), int(r[1] or 0)) for r in rows_dev_mes if r[0] is not None
+        ],
+    }
+
+
 def devolucoes_por_dia(mes: int, ano: int) -> list[tuple[date, int]]:
     with get_session() as session:
         rows = (
@@ -102,15 +175,19 @@ def devolucoes_por_dia(mes: int, ano: int) -> list[tuple[date, int]]:
 def impacto_financeiro_por_mes(
     ano: int, ate_mes: int | None = None
 ) -> list[tuple[int, float]]:
+    if ate_mes is None:
+        ate_mes = 12
     with get_session() as session:
-        q = session.query(
-            extract("month", Devolucao.data_devolucao).label("mes"),
-            func.coalesce(func.sum(Devolucao.valor_nf), 0.0).label("total"),
-        ).filter(extract("year", Devolucao.data_devolucao) == ano)
-        if ate_mes is not None:
-            q = q.filter(extract("month", Devolucao.data_devolucao) <= ate_mes)
         rows = (
-            q.group_by(extract("month", Devolucao.data_devolucao))
+            _filtro_ano_ate_mes(
+                session.query(
+                    extract("month", Devolucao.data_devolucao).label("mes"),
+                    func.coalesce(func.sum(Devolucao.valor_nf), 0.0).label("total"),
+                ),
+                ano,
+                ate_mes,
+            )
+            .group_by(extract("month", Devolucao.data_devolucao))
             .order_by(extract("month", Devolucao.data_devolucao).asc())
             .all()
         )
@@ -136,16 +213,19 @@ def impacto_financeiro_por_dia(mes: int, ano: int) -> list[tuple[date, float]]:
 
 
 def devolucoes_por_mes_no_ano(ano: int, ate_mes: int | None = None) -> list[tuple[int, int]]:
-    """Contagem por mês no ano; se ate_mes informado, só meses 1..ate_mes."""
+    if ate_mes is None:
+        ate_mes = 12
     with get_session() as session:
-        q = session.query(
-            extract("month", Devolucao.data_devolucao).label("mes"),
-            func.count(Devolucao.id).label("total"),
-        ).filter(extract("year", Devolucao.data_devolucao) == ano)
-        if ate_mes is not None:
-            q = q.filter(extract("month", Devolucao.data_devolucao) <= ate_mes)
         rows = (
-            q.group_by(extract("month", Devolucao.data_devolucao))
+            _filtro_ano_ate_mes(
+                session.query(
+                    extract("month", Devolucao.data_devolucao).label("mes"),
+                    func.count(Devolucao.id).label("total"),
+                ),
+                ano,
+                ate_mes,
+            )
+            .group_by(extract("month", Devolucao.data_devolucao))
             .order_by(extract("month", Devolucao.data_devolucao).asc())
             .all()
         )

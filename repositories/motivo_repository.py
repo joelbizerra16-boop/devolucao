@@ -7,7 +7,7 @@ from typing import Optional
 import pandas as pd
 from sqlalchemy import func
 
-from core.db import get_session
+from core.db import get_session, get_write_session
 from database.models import Motivo
 
 
@@ -64,7 +64,7 @@ def buscar_por_descricao(descricao: str) -> Optional[Motivo]:
 
 
 def inserir(descricao: str) -> int:
-    with get_session() as session:
+    with get_write_session() as session:
         motivo = Motivo(descricao=descricao.strip(), ativo=True)
         session.add(motivo)
         session.flush()
@@ -72,7 +72,7 @@ def inserir(descricao: str) -> int:
 
 
 def excluir_por_descricao(descricao: str) -> bool:
-    with get_session() as session:
+    with get_write_session() as session:
         motivo = (
             session.query(Motivo)
             .filter(func.lower(Motivo.descricao) == descricao.strip().lower())
@@ -86,7 +86,7 @@ def excluir_por_descricao(descricao: str) -> bool:
 
 def importar_descricoes(descricoes: list[str]) -> int:
     inseridos = 0
-    with get_session() as session:
+    with get_write_session() as session:
         existentes = {
             (r[0] or "").strip().lower()
             for r in session.query(Motivo.descricao).all()

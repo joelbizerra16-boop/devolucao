@@ -11,7 +11,7 @@ import streamlit as st
 
 from core.auth import hash_password
 from core.cache_read import TTL_USUARIOS, limpar_cache_leitura
-from core.database import PerfilUsuario, init_db
+from core.database import PerfilUsuario
 from core.constants import (
     PERFIS_VALIDOS,
     USUARIO_PROTEGIDO,
@@ -27,7 +27,6 @@ def get_user_by_username(username: str):
 
 def seed_default_users() -> None:
     """Cria usuário administrador padrão se não existir."""
-    init_db()
     if usuario_repository.buscar_por_username(USUARIO_PROTEGIDO):
         return
     usuario_repository.inserir(

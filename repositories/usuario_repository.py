@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional
 
 from core.database import PerfilUsuario, Usuario
-from core.db import get_session
+from core.db import get_session, get_write_session
 # Coluna real no PostgreSQL/Supabase: username (Usuario.usuario e synonym legado)
 _LOGIN_COL = Usuario.username
 
@@ -55,7 +55,7 @@ def inserir(
     perfil: PerfilUsuario,
     ativo: bool = True,
 ) -> int:
-    with get_session() as session:
+    with get_write_session() as session:
         user = Usuario(
             nome=nome.strip(),
             username=username.strip().lower(),
@@ -76,7 +76,7 @@ def atualizar(
     perfil: PerfilUsuario,
     senha_hash: Optional[str] = None,
 ) -> bool:
-    with get_session() as session:
+    with get_write_session() as session:
         user = session.get(Usuario, usuario_id)
         if user is None:
             return False
@@ -89,7 +89,7 @@ def atualizar(
 
 
 def excluir(usuario_id: int) -> bool:
-    with get_session() as session:
+    with get_write_session() as session:
         user = session.get(Usuario, usuario_id)
         if user is None:
             return False
@@ -99,7 +99,7 @@ def excluir(usuario_id: int) -> bool:
 
 def alternar_ativo(usuario_id: int) -> Optional[bool]:
     """Retorna novo estado ativo ou None se usuário não existe."""
-    with get_session() as session:
+    with get_write_session() as session:
         user = session.get(Usuario, usuario_id)
         if user is None:
             return None

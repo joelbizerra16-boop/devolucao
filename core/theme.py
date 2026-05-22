@@ -4,6 +4,7 @@ Tokens de tipografia e espaçamento — refinamento premium global (paleta inalt
 
 from __future__ import annotations
 
+import functools
 from pathlib import Path
 
 FONT_FAMILY = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
@@ -39,6 +40,7 @@ LISTVIEW_SCROLL_PX = (
     LISTVIEW_VISIBLE_ROWS * LISTVIEW_ROW_HEIGHT_PX
     + (LISTVIEW_VISIBLE_ROWS - 1) * LISTVIEW_ROW_GAP_PX
 )  # 1013px — ~20 linhas visíveis (antes: 52vh ≈ 50 linhas)
+LISTVIEW_PAGE_SIZE = 50
 
 LINE_HEIGHT_TIGHT = "1.2"
 LINE_HEIGHT_NORMAL = "1.45"
@@ -61,6 +63,7 @@ PLOTLY_BAR_LABEL_SIZE = 11
 PLOTLY_LEGEND_SIZE = 11
 
 
+@functools.lru_cache(maxsize=1)
 def load_asset_styles() -> str:
     """Carrega assets/styles.css (tipografia e refinamentos globais)."""
     path = Path(__file__).resolve().parent.parent / "assets" / "styles.css"
