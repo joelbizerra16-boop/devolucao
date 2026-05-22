@@ -46,6 +46,8 @@ def _fmt_data(valor: Optional[datetime]) -> str:
 
 
 def _serializar_usuario(row: Any) -> dict[str, Any]:
+    if isinstance(row, dict):
+        return dict(row)
     created = row.created_at
     if isinstance(created, datetime):
         created = created.isoformat()
@@ -86,8 +88,7 @@ def _deserializar_usuario(dados: dict[str, Any]) -> SimpleNamespace:
 
 @st.cache_data(ttl=TTL_USUARIOS, show_spinner=False)
 def listar_usuarios_cache() -> tuple[dict[str, Any], ...]:
-    rows = usuario_repository.listar_todos()
-    return tuple(_serializar_usuario(r) for r in rows)
+    return tuple(usuario_repository.listar_todos())
 
 
 def listar_usuarios() -> list:

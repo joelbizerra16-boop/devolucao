@@ -11,9 +11,24 @@ from core.db import get_session, get_write_session
 _LOGIN_COL = Usuario.username
 
 
-def listar_todos() -> list[Usuario]:
+def _usuario_para_dict(row: Usuario) -> dict:
+    return {
+        "id": int(row.id),
+        "nome": row.nome,
+        "username": row.username,
+        "senha_hash": row.senha_hash,
+        "perfil": row.perfil.value if hasattr(row.perfil, "value") else str(row.perfil),
+        "ativo": bool(row.ativo),
+        "created_at": row.created_at.isoformat() if row.created_at else None,
+        "updated_at": row.updated_at.isoformat() if getattr(row, "updated_at", None) else None,
+        "empresa_id": getattr(row, "empresa_id", None),
+    }
+
+
+def listar_todos() -> list[dict]:
     with get_session() as session:
-        return session.query(Usuario).order_by(Usuario.nome.asc()).all()
+        rows = session.query(Usuario).order_by(Usuario.nome.asc()).all()
+        return [_usuario_para_dict(r) for r in rows]
 
 
 def buscar_por_id(usuario_id: int) -> Optional[Usuario]:

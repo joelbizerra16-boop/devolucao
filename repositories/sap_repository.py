@@ -2,19 +2,24 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from typing import Any, Optional
 
 from core.db import get_session, get_session_factory
+from core.orm_serialize import dado_sap_para_dict
 from database.models import DadoSAP
 
 
-def buscar_por_nf(nf_nfd: str) -> Optional[DadoSAP]:
+def buscar_por_nf(nf_nfd: str) -> Optional[dict[str, Any]]:
+    """Retorna dict serializado (nunca entidade ORM) — seguro para cache Streamlit."""
     chave = nf_nfd.strip()
     if not chave:
         return None
     with get_session() as session:
-        return session.query(DadoSAP).filter(DadoSAP.nf_nfd == chave).first()
+        row = session.query(DadoSAP).filter(DadoSAP.nf_nfd == chave).first()
+        if row is None:
+            return None
+        return dado_sap_para_dict(row)
 
 
 def nf_existe(nf_nfd: str) -> bool:
@@ -30,21 +35,7 @@ def listar_todos_como_dicts() -> list[dict[str, Any]]:
     """Backup lógico da base vigente para rollback."""
     with get_session() as session:
         rows = session.query(DadoSAP).all()
-        return [
-            {
-                "nf_nfd": r.nf_nfd,
-                "data_emissao_nf": r.data_emissao_nf,
-                "cod_cliente": r.cod_cliente,
-                "cliente": r.cliente,
-                "cidade": r.cidade,
-                "bairro": r.bairro,
-                "vendedor": r.vendedor,
-                "valor_nf": r.valor_nf,
-                "arquivo_origem": r.arquivo_origem,
-                "data_importacao": r.data_importacao,
-            }
-            for r in rows
-        ]
+        return [dado_sap_para_dict(r) for r in rows]
 
 
 def substituir_base_completa(registros: list[dict[str, Any]]) -> int:

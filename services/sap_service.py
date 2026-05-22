@@ -420,20 +420,15 @@ def _obter_por_nf_db(nf_nfd: str) -> tuple[bool, str, Optional[dict[str, Any]]]:
     if not chave:
         return False, "Informe o número NF/NFD.", None
 
-    registro = sap_repository.buscar_por_nf(chave)
-    if registro is None:
+    dados = sap_repository.buscar_por_nf(chave)
+    if dados is None:
         return False, "Número NF não localizado na base SAP.", None
 
-    dados = {
-        "nf_nfd": registro.nf_nfd,
-        "data_emissao_nf": registro.data_emissao_nf,
-        "cod_cliente": registro.cod_cliente,
-        "cliente": registro.cliente,
-        "cidade": registro.cidade,
-        "bairro": registro.bairro,
-        "vendedor": registro.vendedor,
-        "valor_nf": registro.valor_nf,
-    }
+    if dados.get("data_emissao_nf") and isinstance(dados["data_emissao_nf"], str):
+        from core.orm_serialize import parse_iso_date
+
+        dados = {**dados, "data_emissao_nf": parse_iso_date(dados["data_emissao_nf"])}
+
     if not dados.get("nf_nfd"):
         return False, "Dados SAP inválidos para esta NF/NFD.", None
 

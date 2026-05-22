@@ -9,6 +9,7 @@ from typing import Any, Optional
 from sqlalchemy import extract, func, or_
 
 from core.db import get_session
+from core.orm_serialize import devolucao_para_dict
 from database.models import Devolucao
 
 
@@ -259,7 +260,7 @@ def listar_periodo(
     ano: int,
     busca: str = "",
     limit: int = 500,
-) -> list[Devolucao]:
+) -> list[dict[str, Any]]:
     with get_session() as session:
         q = _filtro_mes_ano(session.query(Devolucao), mes, ano)
         if busca:
@@ -274,8 +275,9 @@ def listar_periodo(
                     Devolucao.cliente.ilike(termo),
                 )
             )
-        return (
+        rows = (
             q.order_by(Devolucao.data_devolucao.desc(), Devolucao.id.desc())
             .limit(limit)
             .all()
         )
+        return [devolucao_para_dict(r) for r in rows]

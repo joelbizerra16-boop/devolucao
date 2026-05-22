@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from types import SimpleNamespace
 from typing import Any, Optional, Union
 
 import pandas as pd
 from sqlalchemy import func, or_
 
 from core.db import get_session, get_write_session
+from core.orm_serialize import devolucao_para_dict, parse_iso_date
 from database.models import Devolucao
 
 
@@ -49,9 +51,32 @@ def nf_ja_cadastrada(nf_nfd: str, exceto_id: Optional[int] = None) -> bool:
         return q.first() is not None
 
 
-def obter_por_id(devolucao_id: int) -> Optional[Devolucao]:
+def _dict_para_devolucao_ns(d: dict[str, Any]) -> SimpleNamespace:
+    return SimpleNamespace(
+        id=d["id"],
+        data_devolucao=parse_iso_date(d["data_devolucao"]),
+        usuario=d.get("usuario"),
+        usuario_ultima_edicao=d.get("usuario_ultima_edicao"),
+        motivo_devolucao=d.get("motivo_devolucao"),
+        nf_nfd=d.get("nf_nfd"),
+        valor_nf=d.get("valor_nf"),
+        cod_cliente=d.get("cod_cliente"),
+        cliente=d.get("cliente"),
+        cidade=d.get("cidade"),
+        bairro=d.get("bairro"),
+        vendedor=d.get("vendedor"),
+        observacao=d.get("observacao"),
+        data_emissao_nf=parse_iso_date(d.get("data_emissao_nf")),
+    )
+
+
+def obter_por_id(devolucao_id: int) -> Optional[SimpleNamespace]:
+    """Namespace leve — nunca retorna entidade ORM (evita DetachedInstanceError)."""
     with get_session() as session:
-        return session.get(Devolucao, devolucao_id)
+        dev = session.get(Devolucao, devolucao_id)
+        if dev is None:
+            return None
+        return _dict_para_devolucao_ns(devolucao_para_dict(dev))
 
 
 def atualizar(
@@ -139,7 +164,7 @@ def listar(
     *,
     limit: int = 500,
     offset: int = 0,
-) -> list[Devolucao]:
+) -> list[dict[str, Any]]:
     with get_session() as session:
         q = session.query(Devolucao).order_by(
             Devolucao.data_devolucao.desc(), Devolucao.id.desc()
@@ -161,7 +186,8 @@ def listar(
             )
         if offset > 0:
             q = q.offset(offset)
-        return q.limit(limit).all()
+        rows = q.limit(limit).all()
+        return [devolucao_para_dict(r) for r in rows]
 
 
 def contar(busca: str = "") -> int:

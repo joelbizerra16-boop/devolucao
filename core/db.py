@@ -118,7 +118,9 @@ class DatabaseManager:
             with track("db", "session"):
                 yield session
             if read_only:
-                session.rollback()
+                # Leitura pura: rollback expira atributos ORM → DetachedInstanceError
+                if session.new or session.dirty or session.deleted:
+                    session.rollback()
             elif session.new or session.dirty or session.deleted:
                 session.commit()
             else:

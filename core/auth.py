@@ -78,17 +78,17 @@ def _dict_para_usuario(data: Any) -> Optional[UserSession]:
         return None
 
 
-def _aplicar_sessao(user: Usuario, *, persist_cookie: bool = True) -> None:
-    dados = _usuario_para_dict(user)
+def _aplicar_sessao(user: Usuario | dict[str, Any], *, persist_cookie: bool = True) -> None:
+    dados = _usuario_para_dict(user) if isinstance(user, Usuario) else dict(user)
     st.session_state[SESSION_AUTH_KEY] = True
     st.session_state[SESSION_USER_KEY] = dados
-    st.session_state[SESSION_USERNAME_KEY] = user.username
-    st.session_state[SESSION_PERFIL_KEY] = user.perfil.value
-    st.session_state[SESSION_EMPRESA_KEY] = user.empresa_id
-    st.session_state["usuario"] = user.username
-    st.session_state["perfil"] = perfil_para_label(user.perfil.value)
+    st.session_state[SESSION_USERNAME_KEY] = dados["username"]
+    st.session_state[SESSION_PERFIL_KEY] = dados["perfil"]
+    st.session_state[SESSION_EMPRESA_KEY] = dados.get("empresa_id")
+    st.session_state["usuario"] = dados["username"]
+    st.session_state["perfil"] = perfil_para_label(str(dados["perfil"]))
     if persist_cookie:
-        persist_auth_cookie(user.username)
+        persist_auth_cookie(str(dados["username"]))
 
 
 def init_session_state() -> None:
@@ -106,10 +106,10 @@ def init_session_state() -> None:
     restore_session()
 
 
-def _carregar_usuario_ativo(username: str) -> Optional[Usuario]:
+def _carregar_usuario_ativo(username: str) -> Optional[dict[str, Any]]:
     try:
         with get_session() as db:
-            return (
+            row = (
                 db.query(Usuario)
                 .filter(
                     Usuario.username == str(username).strip().lower(),
@@ -117,6 +117,9 @@ def _carregar_usuario_ativo(username: str) -> Optional[Usuario]:
                 )
                 .first()
             )
+            if row is None:
+                return None
+            return _usuario_para_dict(row)
     except Exception:
         return None
 
@@ -131,10 +134,10 @@ def _tentar_restaurar_sessao() -> bool:
     if not username:
         return False
 
-    user = _carregar_usuario_ativo(str(username))
-    if user is None:
+    dados = _carregar_usuario_ativo(str(username))
+    if dados is None:
         return False
-    _aplicar_sessao(user, persist_cookie=False)
+    _aplicar_sessao(dados, persist_cookie=False)
     return True
 
 
@@ -144,16 +147,16 @@ def _restaurar_persistente() -> bool:
     if not username:
         return False
 
-    user = _carregar_usuario_ativo(username)
-    if user is None:
+    dados = _carregar_usuario_ativo(username)
+    if dados is None:
         clear_auth_cookie()
         return False
 
-    token = read_auth_token_from_request() or create_auth_token(user.username)
+    token = read_auth_token_from_request() or create_auth_token(dados["username"])
     store_auth_token(token)
-    _aplicar_sessao(user, persist_cookie=False)
+    _aplicar_sessao(dados, persist_cookie=False)
     sync_auth_query_param()
-    persist_auth_cookie(user.username)
+    persist_auth_cookie(str(dados["username"]))
     return True
 
 
@@ -186,7 +189,7 @@ def login(username: str, password: str) -> tuple[bool, str]:
         if not user or not verify_password(password, user.senha_hash):
             return False, "Credenciais inválidas."
 
-        _aplicar_sessao(user)
+        _aplicar_sessao(_usuario_para_dict(user))
         return True, f"Bem-vindo, {user.nome}!"
 
 

@@ -92,6 +92,8 @@ def obter_periodo_padrao_cache() -> tuple[int, int]:
 
 
 def _serializar_devolucao_row(row: Any) -> dict[str, Any]:
+    if isinstance(row, dict):
+        return dict(row)
     data_dev = row.data_devolucao
     if hasattr(data_dev, "isoformat"):
         data_dev = data_dev.isoformat()
@@ -134,7 +136,7 @@ def listar_devolucoes_periodo_cache(
     busca: str = "",
 ) -> tuple[dict[str, Any], ...]:
     rows = dashboard_repository.listar_periodo(mes, ano, busca=busca or "")
-    return tuple(_serializar_devolucao_row(r) for r in rows)
+    return tuple(rows)
 
 
 def listar_devolucoes_periodo_dashboard(
