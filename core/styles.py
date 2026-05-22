@@ -272,6 +272,261 @@ def inject_login_css(background_url: str | None = None) -> None:
     )
 
 
+def _operational_cards_premium_css() -> str:
+    """Cards KPI — glass, profundidade e glow (Stripe/Linear/Supabase style)."""
+    return f"""
+        /* Cards KPI — layout uniforme */
+        div[data-testid="stHorizontalBlock"]:has(.op-card) {{
+            align-items: stretch !important;
+            gap: 0.65rem !important;
+        }}
+        div[data-testid="column"]:has(.op-card) > div,
+        div[data-testid="stColumn"]:has(.op-card) > div {{
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+        }}
+        div[data-testid="column"]:has(.op-card) [data-testid="stMarkdown"],
+        div[data-testid="stColumn"]:has(.op-card) [data-testid="stMarkdown"] {{
+            flex: 1 1 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            min-height: {KPI_CARD_MIN_HEIGHT} !important;
+            max-height: {KPI_CARD_MIN_HEIGHT} !important;
+        }}
+        div[data-testid="column"]:has(.op-card) [data-testid="stMarkdown"] > div,
+        div[data-testid="stColumn"]:has(.op-card) [data-testid="stMarkdown"] > div {{
+            flex: 1 1 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            width: 100% !important;
+        }}
+
+        .op-card {{
+            position: relative;
+            isolation: isolate;
+            background: linear-gradient(
+                155deg,
+                rgba(38, 48, 68, 0.55) 0%,
+                rgba(22, 28, 40, 0.82) 48%,
+                rgba(17, 24, 39, 0.92) 100%
+            );
+            backdrop-filter: blur(14px) saturate(1.15);
+            -webkit-backdrop-filter: blur(14px) saturate(1.15);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: {RADIUS_LG};
+            margin-bottom: 0.35rem;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+                0 1px 2px rgba(0, 0, 0, 0.22),
+                0 8px 28px rgba(0, 0, 0, 0.28);
+            transition:
+                transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.22s ease,
+                box-shadow 0.22s ease;
+            box-sizing: border-box;
+            min-height: {KPI_CARD_MIN_HEIGHT};
+            max-height: {KPI_CARD_MIN_HEIGHT};
+            height: {KPI_CARD_MIN_HEIGHT};
+            width: 100%;
+            padding: 0.58rem 1.1rem 0.52rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            flex: 1 1 auto;
+            overflow: hidden;
+        }}
+        .op-card::before {{
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.06) 0%,
+                rgba(255, 255, 255, 0.01) 38%,
+                transparent 62%
+            );
+            pointer-events: none;
+            z-index: 0;
+        }}
+        .op-card::after {{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 8%;
+            right: 8%;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.14),
+                transparent
+            );
+            pointer-events: none;
+            z-index: 1;
+        }}
+        .op-card > * {{
+            position: relative;
+            z-index: 2;
+        }}
+        .op-card:hover {{
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.14);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.09),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+                0 4px 12px rgba(0, 0, 0, 0.25),
+                0 14px 36px rgba(0, 0, 0, 0.32);
+        }}
+
+        .op-card-title {{
+            color: rgba(230, 237, 243, 0.72);
+            font-size: {TYPE_CARD_LABEL};
+            font-weight: {FONT_WEIGHT_MEDIUM};
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin: 0 0 {KPI_TITLE_VALUE_GAP} 0;
+            line-height: 1.25;
+            flex: 0 0 auto;
+        }}
+        .op-card-value {{
+            color: {COLORS["text"]};
+            font-size: {TYPE_KPI} !important;
+            font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
+            margin: 0;
+            padding: 0;
+            line-height: 1.08;
+            letter-spacing: -0.025em;
+            flex: 0 0 auto;
+        }}
+        .op-card-value--impacto {{
+            font-size: {TYPE_KPI_IMPACTO} !important;
+            letter-spacing: -0.03em;
+            line-height: 0.92;
+            text-shadow: 0 0 28px rgba(212, 160, 33, 0.28);
+        }}
+        .op-card-value--devolucoes {{
+            font-size: {TYPE_KPI_DEVOLUCOES} !important;
+            letter-spacing: -0.03em;
+            line-height: 0.92;
+            text-shadow: 0 0 24px rgba(121, 192, 255, 0.26);
+        }}
+        .op-card-value--wide {{
+            font-size: {TYPE_KPI_WIDE} !important;
+            line-height: 1.3;
+            font-weight: {FONT_WEIGHT_SEMIBOLD};
+            letter-spacing: -0.015em;
+            text-shadow: 0 0 20px rgba(63, 185, 80, 0.22);
+        }}
+        .op-card-sub {{
+            display: block;
+            font-size: {TYPE_SM};
+            font-weight: {FONT_WEIGHT_REGULAR};
+            color: {COLORS["text_muted"]};
+            line-height: 1.35;
+            margin: auto 0 0 0;
+            padding-top: 0.35rem;
+            flex: 0 0 auto;
+        }}
+        .op-card-sub-placeholder {{
+            visibility: hidden;
+            display: block;
+            font-size: {TYPE_SM};
+            line-height: 1.35;
+            margin: auto 0 0 0;
+            padding-top: 0.35rem;
+            min-height: 1.35em;
+            flex: 0 0 auto;
+        }}
+
+        .op-card-accent-pendente {{
+            border-left: 4px solid rgba(210, 153, 33, 0.85);
+            background: linear-gradient(
+                155deg,
+                rgba(48, 42, 28, 0.42) 0%,
+                rgba(22, 28, 40, 0.86) 55%,
+                rgba(17, 24, 39, 0.94) 100%
+            );
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+                0 8px 28px rgba(0, 0, 0, 0.28),
+                0 0 32px rgba(210, 153, 33, 0.07);
+        }}
+        .op-card-accent-pendente:hover {{
+            border-left-color: rgba(212, 160, 33, 1);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.09),
+                0 14px 36px rgba(0, 0, 0, 0.32),
+                0 0 40px rgba(210, 153, 33, 0.14);
+        }}
+
+        .op-card-accent-conferencia {{
+            border-left: 4px solid rgba(121, 192, 255, 0.88);
+            background: linear-gradient(
+                155deg,
+                rgba(28, 38, 58, 0.48) 0%,
+                rgba(22, 28, 40, 0.86) 55%,
+                rgba(17, 24, 39, 0.94) 100%
+            );
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+                0 8px 28px rgba(0, 0, 0, 0.28),
+                0 0 32px rgba(47, 128, 237, 0.08);
+        }}
+        .op-card-accent-conferencia:hover {{
+            border-left-color: rgba(121, 192, 255, 1);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.09),
+                0 14px 36px rgba(0, 0, 0, 0.32),
+                0 0 40px rgba(47, 128, 237, 0.16);
+        }}
+
+        .op-card-accent-finalizada {{
+            border-left: 4px solid rgba(63, 185, 80, 0.88);
+            background: linear-gradient(
+                155deg,
+                rgba(24, 42, 32, 0.42) 0%,
+                rgba(22, 28, 40, 0.86) 55%,
+                rgba(17, 24, 39, 0.94) 100%
+            );
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+                0 8px 28px rgba(0, 0, 0, 0.28),
+                0 0 32px rgba(63, 185, 80, 0.07);
+        }}
+        .op-card-accent-finalizada:hover {{
+            border-left-color: rgba(63, 185, 80, 1);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.09),
+                0 14px 36px rgba(0, 0, 0, 0.32),
+                0 0 40px rgba(63, 185, 80, 0.14);
+        }}
+
+        .op-card-accent-coleta {{
+            border-left: 4px solid rgba(248, 81, 73, 0.88);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                0 8px 28px rgba(0, 0, 0, 0.28),
+                0 0 28px rgba(248, 81, 73, 0.08);
+        }}
+    """
+
+
+def inject_operational_cards_premium_css() -> None:
+    """Reinjeta estilos premium dos cards — garante efeito após reruns/navegação."""
+    st.markdown(
+        f"<style>{_operational_cards_premium_css()}</style>",
+        unsafe_allow_html=True,
+    )
+
+
 def inject_global_css() -> None:
     if st.session_state.get("_css_global_injected"):
         return
@@ -436,114 +691,7 @@ def inject_global_css() -> None:
             box-shadow: 0 4px 16px rgba(31, 111, 235, 0.4);
         }}
 
-        /* Cards KPI — altura uniforme, valores em destaque (enterprise) */
-        div[data-testid="stHorizontalBlock"]:has(.op-card) {{
-            align-items: stretch !important;
-        }}
-        div[data-testid="column"]:has(.op-card) > div {{
-            display: flex !important;
-            flex-direction: column !important;
-            height: 100% !important;
-        }}
-        div[data-testid="column"]:has(.op-card) [data-testid="stMarkdown"] {{
-            flex: 1 1 auto !important;
-            display: flex !important;
-            flex-direction: column !important;
-            height: 100% !important;
-            min-height: {KPI_CARD_MIN_HEIGHT} !important;
-            max-height: {KPI_CARD_MIN_HEIGHT} !important;
-        }}
-        div[data-testid="column"]:has(.op-card) [data-testid="stMarkdown"] > div {{
-            flex: 1 1 auto !important;
-            display: flex !important;
-            flex-direction: column !important;
-            height: 100% !important;
-            width: 100% !important;
-        }}
-        .op-card {{
-            background: {COLORS["bg_card"]};
-            border: 1px solid {COLORS["border"]};
-            border-radius: {RADIUS_LG};
-            margin-bottom: 0.35rem;
-            box-shadow: {SHADOW_CARD};
-            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-            box-sizing: border-box;
-            min-height: {KPI_CARD_MIN_HEIGHT};
-            max-height: {KPI_CARD_MIN_HEIGHT};
-            height: {KPI_CARD_MIN_HEIGHT};
-            width: 100%;
-            padding: 0.55rem 1.05rem 0.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            flex: 1 1 auto;
-            overflow: hidden;
-        }}
-        .op-card:hover {{
-            border-color: {COLORS["accent"]};
-            transform: translateY(-1px);
-            box-shadow: {SHADOW_CARD_HOVER};
-        }}
-        .op-card-title {{
-            color: {COLORS["text_muted"]};
-            font-size: {TYPE_CARD_LABEL};
-            font-weight: {FONT_WEIGHT_MEDIUM};
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin: 0 0 {KPI_TITLE_VALUE_GAP} 0;
-            line-height: 1.25;
-            flex: 0 0 auto;
-        }}
-        .op-card-value {{
-            color: {COLORS["text"]};
-            font-size: {TYPE_KPI} !important;
-            font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
-            margin: 0;
-            padding: 0;
-            line-height: 1.08;
-            letter-spacing: -0.025em;
-            flex: 0 0 auto;
-        }}
-        .op-card-value--impacto {{
-            font-size: {TYPE_KPI_IMPACTO} !important;
-            letter-spacing: -0.03em;
-            line-height: 0.92;
-        }}
-        .op-card-value--devolucoes {{
-            font-size: {TYPE_KPI_DEVOLUCOES} !important;
-            letter-spacing: -0.03em;
-            line-height: 0.92;
-        }}
-        .op-card-value--wide {{
-            font-size: {TYPE_KPI_WIDE} !important;
-            line-height: 1.3;
-            font-weight: {FONT_WEIGHT_SEMIBOLD};
-            letter-spacing: -0.015em;
-        }}
-        .op-card-sub {{
-            display: block;
-            font-size: {TYPE_SM};
-            font-weight: {FONT_WEIGHT_REGULAR};
-            color: {COLORS["text_muted"]};
-            line-height: 1.35;
-            margin: auto 0 0 0;
-            padding-top: 0.35rem;
-            flex: 0 0 auto;
-        }}
-        .op-card-sub-placeholder {{
-            visibility: hidden;
-            display: block;
-            font-size: {TYPE_SM};
-            line-height: 1.35;
-            margin: auto 0 0 0;
-            padding-top: 0.35rem;
-            min-height: 1.35em;
-            flex: 0 0 auto;
-        }}
-        .op-card-accent-pendente {{ border-left: 4px solid {COLORS["warning"]}; }}
-        .op-card-accent-conferencia {{ border-left: 4px solid {COLORS["accent_light"]}; }}
-        .op-card-accent-finalizada {{ border-left: 4px solid {COLORS["success"]}; }}
-        .op-card-accent-coleta {{ border-left: 4px solid {COLORS["danger"]}; }}
+        {_operational_cards_premium_css()}
 
         .page-header {{
             margin-bottom: 1.15rem;

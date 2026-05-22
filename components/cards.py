@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from core.styles import COLORS
+from core.styles import COLORS, inject_operational_cards_premium_css
 
 OPERATIONAL_CARD_CONFIG = [
     ("impacto_financeiro", "Impacto", "💰", "op-card-accent-pendente", COLORS["warning"]),
@@ -57,6 +57,7 @@ def _render_card(
 
 
 def _render_cards_operacionais(metricas: dict[str, str], config: list) -> None:
+    inject_operational_cards_premium_css()
     c1, c2, c3 = st.columns([1, 1, 2])
     for col, (key, label, icon, css_class, color) in zip([c1, c2, c3], config):
         _render_card(
