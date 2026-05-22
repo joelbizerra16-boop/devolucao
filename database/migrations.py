@@ -12,6 +12,7 @@ from core.db import get_engine, get_session, is_postgres
 from core.paths import MOTIVOS_PADRAO
 from core.system_log import log_event
 from database.models import Base, Motivo, PerfilUsuario, Usuario
+from database.schema_compat import assert_usuarios_postgres_schema
 import bcrypt
 
 from core.constants import USUARIO_PROTEGIDO
@@ -122,7 +123,9 @@ def seed_usuario_admin() -> None:
 def run_migrations() -> None:
     try:
         _migrar_sqlite_legado()
-        Base.metadata.create_all(bind=get_engine())
+        engine = get_engine()
+        Base.metadata.create_all(bind=engine)
+        assert_usuarios_postgres_schema(engine)
         _migrar_colunas_sqlite()
         _criar_indices_postgres()
         seed_motivos_padrao()

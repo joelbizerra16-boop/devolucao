@@ -7,6 +7,8 @@ from typing import Optional
 
 from core.database import PerfilUsuario, Usuario
 from core.db import get_session
+# Coluna real no PostgreSQL/Supabase: username (Usuario.usuario e synonym legado)
+_LOGIN_COL = Usuario.username
 
 
 def listar_todos() -> list[Usuario]:
@@ -32,7 +34,7 @@ def buscar_por_username(username: str) -> Optional[Usuario]:
     if not chave:
         return None
     with get_session() as session:
-        return session.query(Usuario).filter(Usuario.username == chave).first()
+        return session.query(Usuario).filter(_LOGIN_COL == chave).first()
 
 
 def username_existe(username: str, ignorar_id: Optional[int] = None) -> bool:
@@ -40,7 +42,7 @@ def username_existe(username: str, ignorar_id: Optional[int] = None) -> bool:
     if not chave:
         return False
     with get_session() as session:
-        q = session.query(Usuario.id).filter(Usuario.username == chave)
+        q = session.query(Usuario.id).filter(_LOGIN_COL == chave)
         if ignorar_id is not None:
             q = q.filter(Usuario.id != ignorar_id)
         return q.first() is not None

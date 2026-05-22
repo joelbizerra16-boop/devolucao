@@ -74,10 +74,11 @@ def _deserializar_usuario(dados: dict[str, Any]) -> SimpleNamespace:
         perfil = PerfilUsuario(dados["perfil"])
     except (ValueError, KeyError):
         perfil = SimpleNamespace(value=dados.get("perfil"))
+    login = dados.get("username") or dados.get("usuario")
     return SimpleNamespace(
         id=dados["id"],
         nome=dados.get("nome"),
-        username=dados.get("username"),
+        username=login,
         perfil=perfil,
         ativo=dados.get("ativo", True),
         created_at=created,

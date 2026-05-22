@@ -66,9 +66,10 @@ def _dict_para_usuario(data: Any) -> Optional[UserSession]:
     if not isinstance(data, dict):
         return None
     try:
+        login = str(data.get("username") or data.get("usuario") or "").strip().lower()
         return UserSession(
             id=int(data["id"]),
-            username=str(data["username"]),
+            username=login,
             nome=str(data["nome"]),
             perfil=str(data["perfil"]),
             empresa_id=data.get("empresa_id"),
@@ -111,7 +112,7 @@ def _carregar_usuario_ativo(username: str) -> Optional[Usuario]:
             return (
                 db.query(Usuario)
                 .filter(
-                    Usuario.username == str(username).lower(),
+                    Usuario.username == str(username).strip().lower(),
                     Usuario.ativo.is_(True),
                 )
                 .first()

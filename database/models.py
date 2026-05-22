@@ -9,7 +9,7 @@ from enum import Enum
 from typing import Optional
 
 from sqlalchemy import Boolean, Date, DateTime, Enum as SQLEnum, Float, Integer, String, Text
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, synonym
 
 
 class Base(DeclarativeBase):
@@ -33,10 +33,17 @@ class StatusDevolucao(str, Enum):
 
 
 class Usuario(Base):
+    """
+    Login do sistema: coluna PostgreSQL ``username`` (não confundir com
+    ``Devolucao.usuario``, que é o nome do responsável pela devolução).
+    """
+
     __tablename__ = "usuarios"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
+    # Alias ORM para código legado que referencia Usuario.usuario em queries
+    usuario = synonym("username")
     senha_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     nome: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)
