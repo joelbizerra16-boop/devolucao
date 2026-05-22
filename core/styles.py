@@ -847,6 +847,66 @@ def inject_listview_premium_css() -> None:
     )
 
 
+def inject_dashboard_export_toolbar_css() -> None:
+    """Botões ícone PDF/Excel alinhados à barra de filtros da listagem operacional."""
+    st.markdown(
+        f"""
+        <style>
+        div[data-testid="column"]:has(.dash-export-marker-pdf),
+        div[data-testid="column"]:has(.dash-export-marker-xlsx),
+        div[data-testid="stColumn"]:has(.dash-export-marker-pdf),
+        div[data-testid="stColumn"]:has(.dash-export-marker-xlsx) {{
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-end !important;
+        }}
+        div[data-testid="column"]:has(.dash-export-marker-pdf) [data-testid="stDownloadButton"] button,
+        div[data-testid="column"]:has(.dash-export-marker-xlsx) [data-testid="stDownloadButton"] button,
+        div[data-testid="stColumn"]:has(.dash-export-marker-pdf) [data-testid="stDownloadButton"] button,
+        div[data-testid="stColumn"]:has(.dash-export-marker-xlsx) [data-testid="stDownloadButton"] button {{
+            width: 2.35rem !important;
+            min-width: 2.35rem !important;
+            height: 2.35rem !important;
+            min-height: 2.35rem !important;
+            padding: 0 !important;
+            border-radius: {RADIUS_MD} !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
+            background: rgba(15,23,42,0.72) !important;
+            backdrop-filter: blur(8px);
+            transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+            box-shadow: {SHADOW_SUBTLE} !important;
+        }}
+        div[data-testid="column"]:has(.dash-export-marker-pdf) [data-testid="stDownloadButton"] button:hover,
+        div[data-testid="stColumn"]:has(.dash-export-marker-pdf) [data-testid="stDownloadButton"] button:hover {{
+            background: rgba(47, 128, 237, 0.22) !important;
+            border-color: rgba(47, 128, 237, 0.45) !important;
+            transform: translateY(-1px);
+        }}
+        div[data-testid="column"]:has(.dash-export-marker-xlsx) [data-testid="stDownloadButton"] button:hover,
+        div[data-testid="stColumn"]:has(.dash-export-marker-xlsx) [data-testid="stDownloadButton"] button:hover {{
+            background: rgba(63, 185, 80, 0.18) !important;
+            border-color: rgba(63, 185, 80, 0.42) !important;
+            transform: translateY(-1px);
+        }}
+        div[data-testid="column"]:has(.dash-export-marker-pdf) [data-testid="stDownloadButton"] button svg,
+        div[data-testid="column"]:has(.dash-export-marker-xlsx) [data-testid="stDownloadButton"] button svg,
+        div[data-testid="stColumn"]:has(.dash-export-marker-pdf) [data-testid="stDownloadButton"] button svg,
+        div[data-testid="stColumn"]:has(.dash-export-marker-xlsx) [data-testid="stDownloadButton"] button svg {{
+            width: 1.05rem !important;
+            height: 1.05rem !important;
+        }}
+        div[data-testid="column"]:has(.dash-export-marker-pdf) [data-testid="stDownloadButton"] button p,
+        div[data-testid="column"]:has(.dash-export-marker-xlsx) [data-testid="stDownloadButton"] button p,
+        div[data-testid="stColumn"]:has(.dash-export-marker-pdf) [data-testid="stDownloadButton"] button p,
+        div[data-testid="stColumn"]:has(.dash-export-marker-xlsx) [data-testid="stDownloadButton"] button p {{
+            display: none !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def page_header(title: str, subtitle: str = "") -> None:
     sub = f"<p>{subtitle}</p>" if subtitle else ""
     st.markdown(

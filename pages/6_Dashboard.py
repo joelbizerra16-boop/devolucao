@@ -16,7 +16,12 @@ from components.chart_card import render_plotly_in_card
 from components.listagem_dashboard import render_listagem_operacional
 from core.layout import init_authenticated_page, safe_page_run
 from core.navigation import PAGE_DASHBOARD
-from core.styles import page_header
+from core.styles import inject_dashboard_export_toolbar_css, page_header
+from services.export_dashboard_service import (
+    export_listagem_excel_bytes,
+    export_listagem_pdf_bytes,
+    nome_arquivo_exportacao,
+)
 from core.cache_read import limpar_cache_leitura
 from services.dashboard_service import (
     MESES_LABEL,
@@ -91,7 +96,10 @@ def _render() -> None:
     )
     idx_ano_lista = anos.index(ano) if ano in anos else 0
 
-    lf1, lf2, lf3 = st.columns([1.2, 1, 2])
+    inject_dashboard_export_toolbar_css()
+
+    # BUSCA ~20% mais estreita (2.0 -> 1.6); ícones PDF + Excel à direita
+    lf1, lf2, lf3, lf4, lf5 = st.columns([1.2, 1, 1.6, 0.38, 0.38])
     with lf1:
         lista_mes_label = st.selectbox(
             "MÊS",
@@ -115,11 +123,46 @@ def _render() -> None:
 
     lista_mes_num = mes_label_para_numero(lista_mes_label)
     lista_ano_num = int(lista_ano)
+    busca_txt = busca_lista or ""
     rows_lista = listar_devolucoes_periodo_dashboard(
         lista_mes_num,
         lista_ano_num,
-        busca=busca_lista or "",
+        busca=busca_txt,
     )
+
+    pdf_bytes = export_listagem_pdf_bytes(
+        rows_lista,
+        mes=lista_mes_label,
+        ano=lista_ano_num,
+        busca=busca_txt,
+    )
+    xlsx_bytes = export_listagem_excel_bytes(rows_lista)
+
+    with lf4:
+        st.markdown('<span class="dash-export-marker-pdf"></span>', unsafe_allow_html=True)
+        st.download_button(
+            label="",
+            data=pdf_bytes,
+            file_name=nome_arquivo_exportacao("pdf", lista_mes_label, lista_ano_num),
+            mime="application/pdf",
+            icon=":material/picture_as_pdf:",
+            help="Exportar PDF",
+            use_container_width=True,
+            key="dash_export_pdf",
+        )
+    with lf5:
+        st.markdown('<span class="dash-export-marker-xlsx"></span>', unsafe_allow_html=True)
+        st.download_button(
+            label="",
+            data=xlsx_bytes,
+            file_name=nome_arquivo_exportacao("xlsx", lista_mes_label, lista_ano_num),
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            icon=":material/table_chart:",
+            help="Exportar Excel",
+            use_container_width=True,
+            key="dash_export_xlsx",
+        )
+
     render_listagem_operacional(rows_lista)
 
 
