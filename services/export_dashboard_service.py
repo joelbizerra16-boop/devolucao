@@ -19,20 +19,24 @@ from services.devolucao_service import (
     _texto_celula,
 )
 
-# Paleta alinhada ao sistema (PDF em fundo claro premium)
-C_PRIMARY = "#1f6feb"
-C_PRIMARY_DARK = "#1558c9"
+# Paleta executiva — slate/navy refinado (sem azul saturado)
+C_NAVY = "#1e293b"
+C_SLATE = "#475569"
+C_SLATE_LIGHT = "#64748b"
+C_ACCENT = "#5b6b7c"
 C_TEXT = "#0f172a"
 C_TEXT_MUTED = "#64748b"
 C_BORDER = "#e2e8f0"
-C_ROW_ALT = "#f8fafc"
-C_SUCCESS = "#16a34a"
-C_SUCCESS_BG = "#ecfdf5"
-C_CARD_BG = "#ffffff"
-C_ACCENT_LINE = "#2F80ED"
+C_BORDER_SOFT = "#f1f5f9"
+C_ROW_ALT = "#fafbfc"
+C_SUCCESS = "#15803d"
+C_CARD_BG = "#f8fafc"
+C_HEADER_BG = "#f1f5f9"
+C_HEADER_TEXT = "#475569"
 
 FONT_REGULAR = "Helvetica"
 FONT_BOLD = "Helvetica-Bold"
+FONT_MEDIUM = "Helvetica-Bold"
 
 
 def nome_arquivo_exportacao(extensao: str, mes_label: str, ano: int) -> str:
@@ -147,7 +151,7 @@ def export_listagem_pdf_bytes(
     page_w, page_h = page_size
     margin_l = 1.35 * cm
     margin_r = 1.35 * cm
-    margin_t = 1.15 * cm
+    margin_t = 1.55 * cm
     margin_b = 1.45 * cm
 
     meta = {
@@ -163,9 +167,10 @@ def export_listagem_pdf_bytes(
 
     def _on_page(canv: canvas.Canvas, doc: BaseDocTemplate) -> None:
         canv.saveState()
-        # Faixa superior corporativa
-        canv.setFillColor(colors.HexColor(C_PRIMARY))
-        canv.rect(0, page_h - 0.42 * cm, page_w, 0.42 * cm, fill=1, stroke=0)
+        # Acento superior discreto (sem faixa chapada sobre o conteúdo)
+        canv.setStrokeColor(colors.HexColor(C_SLATE))
+        canv.setLineWidth(1.2)
+        canv.line(margin_l, page_h - 0.55 * cm, page_w - margin_r, page_h - 0.55 * cm)
         # Rodapé executivo
         canv.setStrokeColor(colors.HexColor(C_BORDER))
         canv.setLineWidth(0.5)
@@ -185,7 +190,7 @@ def export_listagem_pdf_bytes(
         pagesize=page_size,
         leftMargin=margin_l,
         rightMargin=margin_r,
-        topMargin=margin_t + 0.25 * cm,
+        topMargin=margin_t,
         bottomMargin=margin_b,
     )
     frame = Frame(
@@ -201,39 +206,41 @@ def export_listagem_pdf_bytes(
         "title": ParagraphStyle(
             "ExecTitle",
             fontName=FONT_BOLD,
-            fontSize=18,
-            leading=22,
-            textColor=colors.HexColor(C_TEXT),
-            spaceAfter=2,
+            fontSize=17,
+            leading=21,
+            textColor=colors.HexColor(C_NAVY),
+            spaceAfter=3,
         ),
         "subtitle": ParagraphStyle(
             "ExecSubtitle",
             fontName=FONT_REGULAR,
-            fontSize=9,
+            fontSize=8.5,
             leading=12,
             textColor=colors.HexColor(C_TEXT_MUTED),
         ),
         "kpi_label": ParagraphStyle(
             "KpiLabel",
             fontName=FONT_REGULAR,
-            fontSize=7.5,
-            leading=10,
-            textColor=colors.HexColor(C_TEXT_MUTED),
+            fontSize=7,
+            leading=11,
+            textColor=colors.HexColor(C_SLATE_LIGHT),
             alignment=TA_LEFT,
+            spaceBefore=0,
+            spaceAfter=4,
         ),
         "kpi_value": ParagraphStyle(
             "KpiValue",
-            fontName=FONT_BOLD,
-            fontSize=13,
-            leading=16,
-            textColor=colors.HexColor(C_PRIMARY_DARK),
+            fontName=FONT_MEDIUM,
+            fontSize=12,
+            leading=15,
+            textColor=colors.HexColor(C_NAVY),
             alignment=TA_LEFT,
         ),
         "kpi_value_green": ParagraphStyle(
             "KpiValueGreen",
-            fontName=FONT_BOLD,
-            fontSize=13,
-            leading=16,
+            fontName=FONT_MEDIUM,
+            fontSize=12,
+            leading=15,
             textColor=colors.HexColor(C_SUCCESS),
             alignment=TA_LEFT,
         ),
@@ -241,15 +248,15 @@ def export_listagem_pdf_bytes(
             "Cell",
             fontName=FONT_REGULAR,
             fontSize=7.5,
-            leading=10,
+            leading=11,
             textColor=colors.HexColor(C_TEXT),
             alignment=TA_LEFT,
         ),
         "cell_right": ParagraphStyle(
             "CellRight",
-            fontName=FONT_BOLD,
+            fontName=FONT_MEDIUM,
             fontSize=7.5,
-            leading=10,
+            leading=11,
             textColor=colors.HexColor(C_SUCCESS),
             alignment=TA_RIGHT,
         ),
@@ -263,10 +270,10 @@ def export_listagem_pdf_bytes(
         ),
         "th": ParagraphStyle(
             "TH",
-            fontName=FONT_BOLD,
-            fontSize=8,
+            fontName=FONT_REGULAR,
+            fontSize=7,
             leading=10,
-            textColor=colors.white,
+            textColor=colors.HexColor(C_HEADER_TEXT),
             alignment=TA_LEFT,
         ),
     }
@@ -285,7 +292,7 @@ def export_listagem_pdf_bytes(
     titulo_block = [
         Paragraph("Relatório Operacional de Devoluções", styles["title"]),
         Paragraph(
-            f"Período: <font color='{C_PRIMARY}'><b>{meta['mes']} / {meta['ano']}</b></font>"
+            f"Período: <font color='{C_SLATE}'><b>{meta['mes']} / {meta['ano']}</b></font>"
             f" &nbsp;·&nbsp; Busca: <b>{meta['busca']}</b>",
             styles["subtitle"],
         ),
@@ -336,22 +343,27 @@ def export_listagem_pdf_bytes(
         ],
     ]
     kpi_w = doc.width / 4
-    kpi_table = Table(kpi_data, colWidths=[kpi_w] * 4, rowHeights=[0.55 * cm, 0.85 * cm])
-    kpi_table.setStyle(
-        TableStyle(
-            [
-                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor(C_CARD_BG)),
-                ("BOX", (0, 0), (-1, -1), 0.6, colors.HexColor(C_BORDER)),
-                ("INNERGRID", (0, 0), (-1, -1), 0.4, colors.HexColor(C_BORDER)),
-                ("LINEBELOW", (0, 0), (-1, 0), 2, colors.HexColor(C_PRIMARY)),
-                ("LEFTPADDING", (0, 0), (-1, -1), 10),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 10),
-                ("TOPPADDING", (0, 0), (-1, -1), 8),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-            ]
-        )
+    kpi_table = Table(
+        kpi_data,
+        colWidths=[kpi_w] * 4,
+        rowHeights=[0.72 * cm, 1.05 * cm],
     )
+    kpi_style = [
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor(C_CARD_BG)),
+        ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor(C_BORDER)),
+        ("LEFTPADDING", (0, 0), (-1, -1), 12),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+        ("TOPPADDING", (0, 0), (-1, 0), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 2),
+        ("TOPPADDING", (0, 1), (-1, 1), 2),
+        ("BOTTOMPADDING", (0, 1), (-1, 1), 10),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]
+    for col in range(4):
+        kpi_style.append(
+            ("LINELEFT", (col, 0), (col, -1), 2, colors.HexColor(C_BORDER))
+        )
+    kpi_table.setStyle(TableStyle(kpi_style))
     story.append(kpi_table)
     story.append(Spacer(1, 0.5 * cm))
 
@@ -383,7 +395,10 @@ def export_listagem_pdf_bytes(
             doc.width - (2.0 + 2.6 + 5.8 + 2.1 + 2.6 + 2.4) * cm,
         ]
 
-        header_row = [Paragraph(f"<b>{h}</b>", styles["th"]) for h in headers]
+        header_row = [
+            Paragraph(f"<font size='7' color='{C_HEADER_TEXT}'><b>{h}</b></font>", styles["th"])
+            for h in headers
+        ]
         body_rows = []
         for row in linhas:
             body_rows.append(
@@ -406,19 +421,17 @@ def export_listagem_pdf_bytes(
         data_table.setStyle(
             TableStyle(
                 [
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor(C_PRIMARY)),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("FONTNAME", (0, 0), (-1, 0), FONT_BOLD),
-                    ("FONTSIZE", (0, 0), (-1, 0), 8),
-                    ("BOTTOMPADDING", (0, 0), (-1, 0), 9),
-                    ("TOPPADDING", (0, 0), (-1, 0), 9),
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor(C_HEADER_BG)),
+                    ("LINEBELOW", (0, 0), (-1, 0), 0.8, colors.HexColor(C_BORDER)),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 10),
+                    ("TOPPADDING", (0, 0), (-1, 0), 10),
                     ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor(C_ROW_ALT)]),
-                    ("GRID", (0, 0), (-1, -1), 0.35, colors.HexColor(C_BORDER)),
+                    ("LINEBELOW", (0, 1), (-1, -1), 0.25, colors.HexColor(C_BORDER_SOFT)),
                     ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                    ("LEFTPADDING", (0, 0), (-1, -1), 7),
-                    ("RIGHTPADDING", (0, 0), (-1, -1), 7),
-                    ("TOPPADDING", (0, 1), (-1, -1), 6),
-                    ("BOTTOMPADDING", (0, 1), (-1, -1), 6),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 9),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 9),
+                    ("TOPPADDING", (0, 1), (-1, -1), 8),
+                    ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
                     ("ALIGN", (4, 1), (4, -1), "RIGHT"),
                     ("ALIGN", (3, 1), (3, -1), "CENTER"),
                     ("ALIGN", (5, 1), (5, -1), "CENTER"),
