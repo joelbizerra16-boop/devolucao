@@ -68,6 +68,21 @@ class KpiAnalisadaTests(unittest.TestCase):
         self.assertEqual(pct, 100.0)
         self.assertEqual(formatar_pct_analisada(pct), "100,00%")
 
+    def test_montar_kpi_analisada_cenarios_oficiais(self) -> None:
+        from core.tratativa_utils import montar_kpi_analisada
+
+        kpi1 = montar_kpi_analisada(57, 57)
+        self.assertEqual(kpi1["total_analisadas"], 0)
+        self.assertEqual(kpi1["pct_analisada"], 0.0)
+
+        kpi2 = montar_kpi_analisada(57, 20)
+        self.assertEqual(kpi2["total_analisadas"], 37)
+        self.assertAlmostEqual(float(kpi2["pct_analisada"]), 64.91, places=2)
+
+        kpi3 = montar_kpi_analisada(57, 0)
+        self.assertEqual(kpi3["total_analisadas"], 57)
+        self.assertEqual(kpi3["pct_analisada"], 100.0)
+
     def test_texto_livre_conta_como_analisada(self) -> None:
         """Registro da listagem com tratativa customizada não é Aguardando exato."""
         tratativas = ["Aguardando"] * 56 + ["Cliente se enganou, pediu sim."]

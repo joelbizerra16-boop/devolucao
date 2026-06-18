@@ -1117,6 +1117,46 @@ def inject_listview_premium_css() -> None:
     )
 
 
+def inject_tratativa_dialog_css() -> None:
+    """Modal compacto — Editar Tratativa."""
+    if st.session_state.get("_css_tratativa_dialog_injected"):
+        return
+    st.session_state["_css_tratativa_dialog_injected"] = True
+    st.markdown(
+        """
+        <style>
+        [data-testid="stDialog"] [data-testid="stForm"] {
+            padding-top: 0.15rem !important;
+        }
+        [data-testid="stDialog"] [data-testid="stForm"] [data-testid="stVerticalBlock"] {
+            gap: 0.45rem !important;
+        }
+        [data-testid="stDialog"] .tratativa-dialog-section {
+            margin: 0.35rem 0 0.1rem 0;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            color: rgba(148, 163, 184, 0.92);
+        }
+        [data-testid="stDialog"] [data-testid="stTextArea"] textarea {
+            min-height: 5.25rem !important;
+            max-height: 7rem !important;
+        }
+        [data-testid="stDialog"] [data-testid="stCaptionContainer"] {
+            margin-top: -0.15rem !important;
+        }
+        @media (max-width: 640px) {
+            [data-testid="stDialog"] [data-testid="stForm"] [data-testid="column"] {
+                min-width: 0 !important;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def inject_dashboard_export_toolbar_css() -> None:
     """Botões ícone PDF/Excel alinhados à barra de filtros da listagem operacional."""
     if st.session_state.get("_css_dash_export_injected"):

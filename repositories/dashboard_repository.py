@@ -6,11 +6,12 @@ from calendar import monthrange
 from datetime import date
 from typing import Any, Optional
 
-from sqlalchemy import extract, func
+from sqlalchemy import extract, func, or_
 
 from core.db import get_session
 from core.orm_serialize import devolucao_para_dict
-from core.tratativa_utils import calcular_kpi_tratativa_dashboard
+from core.tratativa_constants import TRATATIVA_PADRAO
+from core.tratativa_utils import montar_kpi_analisada
 from core.search_utils import aplicar_busca_query
 from database.models import Devolucao
 
@@ -35,6 +36,19 @@ def _filtro_ano_ate_mes(q, ano: int, ate_mes: int):
     return q.filter(
         Devolucao.data_devolucao >= inicio,
         Devolucao.data_devolucao <= fim,
+    )
+
+
+def _filtro_tratativa_aguardando(q):
+    """Somente valor exato de TRATATIVA_PADRAO (case-insensitive); NULL/vazio = aguardando."""
+    col = Devolucao.tratativa
+    padrao = TRATATIVA_PADRAO.casefold()
+    return q.filter(
+        or_(
+            col.is_(None),
+            func.trim(col) == "",
+            func.lower(func.trim(col)) == padrao,
+        )
     )
 
 
@@ -69,12 +83,14 @@ def obter_cards_periodo(mes: int, ano: int) -> dict[str, Any]:
         ).scalar()
         total = base.with_entities(func.count(Devolucao.id)).scalar() or 0
 
-        tratativas = [
-            row[0]
-            for row in _filtro_mes_ano(
-                session.query(Devolucao.tratativa), mes, ano
-            ).all()
-        ]
+        aguardando = (
+            _filtro_tratativa_aguardando(
+                _filtro_mes_ano(session.query(Devolucao), mes, ano)
+            )
+            .with_entities(func.count(Devolucao.id))
+            .scalar()
+            or 0
+        )
 
         motivo_row = (
             _filtro_mes_ano(
@@ -101,7 +117,7 @@ def obter_cards_periodo(mes: int, ano: int) -> dict[str, Any]:
         motivo_qtd = int(motivo_row[1] or 0)
 
     total_int = int(total)
-    kpi_tratativa = calcular_kpi_tratativa_dashboard(tratativas)
+    kpi_tratativa = montar_kpi_analisada(total_int, int(aguardando))
 
     return {
         "soma_valor_nf": float(soma_valor or 0),

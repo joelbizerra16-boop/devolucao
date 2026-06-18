@@ -159,59 +159,117 @@ def _dialog_editar(devolucao_id: int) -> None:
             st.error(msg)
 
 
-@st.dialog("Editar tratativa")
+def _tratativa_field_key(devolucao_id: int) -> str:
+    return f"dash_tratativa_txt_{devolucao_id}"
+
+
+def _prepare_tratativa_field(devolucao_id: int, valor_atual: str) -> str:
+    """Inicializa o campo editável uma vez por abertura do modal."""
+    key = _tratativa_field_key(devolucao_id)
+    if st.session_state.get("dash_tratativa_open_id") != devolucao_id:
+        st.session_state["dash_tratativa_open_id"] = devolucao_id
+        st.session_state[key] = valor_atual
+    return key
+
+
+def _fechar_modal_tratativa(devolucao_id: int) -> None:
+    st.session_state.pop("dash_tratativa_id", None)
+    st.session_state.pop("dash_tratativa_open_id", None)
+    st.session_state.pop(_tratativa_field_key(devolucao_id), None)
+
+
+def _log_tratativa_modal(evento: str, detalhe: str = "") -> None:
+    from core.system_log import log_event
+
+    msg = evento if not detalhe else f"{evento} | {detalhe}"
+    log_event("tratativa_modal", msg)
+
+
+@st.dialog("Editar Tratativa")
 def _dialog_editar_tratativa(devolucao_id: int) -> None:
+    from core.styles import inject_tratativa_dialog_css
+
+    inject_tratativa_dialog_css()
+
     dev = devolucao_repository.obter_por_id(devolucao_id)
     if dev is None:
         st.error("Registro não encontrado.")
         if st.button("Fechar"):
-            st.session_state.pop("dash_tratativa_id", None)
+            _fechar_modal_tratativa(devolucao_id)
             st.rerun()
         return
 
     if not pode_editar_tratativa():
         st.error("Permissão negada. Apenas o perfil VISITANTE pode editar a tratativa.")
         if st.button("Fechar"):
-            st.session_state.pop("dash_tratativa_id", None)
+            _fechar_modal_tratativa(devolucao_id)
             st.rerun()
         return
 
-    st.text_input("ID", value=str(dev.id), disabled=True)
-    st.text_input("NF", value=dev.nf_nfd or "—", disabled=True)
-    st.text_input("Motivo", value=dev.motivo_devolucao or "—", disabled=True)
+    tratativa_atual = _texto_tratativa_exibicao(getattr(dev, "tratativa", None))
+    field_key = _prepare_tratativa_field(devolucao_id, tratativa_atual)
 
     atualizada_em = getattr(dev, "tratativa_atualizada_em", None)
     atualizada_por = getattr(dev, "tratativa_atualizada_por", None)
-    if atualizada_em or atualizada_por:
-        st.markdown("**Última atualização:**")
-        st.text_input(
-            "Data/Hora",
-            value=_formatar_data_hora(atualizada_em) if atualizada_em else "—",
-            disabled=True,
-        )
-        st.text_input("Usuário", value=atualizada_por or "—", disabled=True)
 
-    with st.form("form_editar_tratativa"):
-        tratativa_atual = _texto_tratativa_exibicao(getattr(dev, "tratativa", None))
-        tratativa = st.text_input("Tratativa", value=tratativa_atual, max_chars=255)
-        c1, c2 = st.columns(2)
-        with c1:
-            salvar = st.form_submit_button("Salvar", type="primary", use_container_width=True)
-        with c2:
+    with st.form("form_editar_tratativa", clear_on_submit=False, border=False):
+        id_col, nf_col = st.columns(2)
+        with id_col:
+            st.text_input("ID", value=str(dev.id), disabled=True)
+        with nf_col:
+            st.text_input("NF", value=dev.nf_nfd or "—", disabled=True)
+
+        st.text_input("Motivo", value=dev.motivo_devolucao or "—", disabled=True)
+
+        st.markdown('<p class="tratativa-dialog-section">Última atualização</p>', unsafe_allow_html=True)
+        data_col, user_col = st.columns(2)
+        with data_col:
+            st.text_input(
+                "Data/Hora",
+                value=_formatar_data_hora(atualizada_em) if atualizada_em else "—",
+                disabled=True,
+            )
+        with user_col:
+            st.text_input("Usuário", value=atualizada_por or "—", disabled=True)
+
+        st.markdown('<p class="tratativa-dialog-section">Tratativa</p>', unsafe_allow_html=True)
+        st.text_area(
+            "Tratativa",
+            key=field_key,
+            max_chars=255,
+            height=88,
+            label_visibility="collapsed",
+        )
+        chars = len(str(st.session_state.get(field_key, "") or ""))
+        st.caption(f"Caracteres: {chars}/255")
+
+        btn_cancel, btn_save = st.columns(2)
+        with btn_cancel:
             cancelar = st.form_submit_button("Cancelar", use_container_width=True)
+        with btn_save:
+            salvar = st.form_submit_button("Salvar", type="primary", use_container_width=True)
 
     if cancelar:
-        st.session_state.pop("dash_tratativa_id", None)
+        _log_tratativa_modal("BUTTON_CLICK", "cancelar")
+        _fechar_modal_tratativa(devolucao_id)
         st.rerun()
 
     if salvar:
-        ok, msg = atualizar_tratativa(devolucao_id, tratativa)
+        _log_tratativa_modal("FORM_SUBMIT")
+        texto = str(st.session_state.get(field_key, "") or "").strip()
+        _log_tratativa_modal("AJAX_REQUEST", f"id={devolucao_id} chars={len(texto)}")
+        with st.spinner("Salvando..."):
+            ok, msg = atualizar_tratativa(devolucao_id, texto)
         if ok:
-            st.session_state.pop("dash_tratativa_id", None)
+            _log_tratativa_modal("SAVE_SUCCESS", f"id={devolucao_id}")
+            _log_tratativa_modal("AJAX_RESPONSE", "ok")
+            st.toast("Tratativa salva com sucesso.", icon="✅")
+            _fechar_modal_tratativa(devolucao_id)
             limpar_cache_leitura()
-            st.success(msg)
             st.rerun()
         else:
+            _log_tratativa_modal("SAVE_ERROR", msg)
+            _log_tratativa_modal("AJAX_RESPONSE", f"erro: {msg}")
             st.error(msg)
 
 
@@ -419,9 +477,11 @@ def render_listagem_operacional(rows: list) -> None:
         st.session_state.pop("dash_tratativa_id", None)
 
     def _abrir_tratativa(dev_id: int) -> None:
+        _log_tratativa_modal("BUTTON_CLICK", f"abrir id={dev_id}")
         st.session_state["dash_tratativa_id"] = dev_id
         st.session_state.pop("dash_edit_id", None)
         st.session_state.pop("dash_del_id", None)
+        st.rerun()
 
     st.markdown('<div class="lista-premium-stable" aria-label="Listagem operacional">', unsafe_allow_html=True)
     st.markdown(

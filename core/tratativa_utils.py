@@ -82,10 +82,13 @@ def calcular_pct_analisada(total: int, aguardando: int) -> float:
     return round(max(0, analisadas) / total_int * 100, 2)
 
 
-def calcular_kpi_tratativa_dashboard(tratativas: list[str | None]) -> dict[str, int | float]:
-    """Aguardando (exato) + % analisada para cards superiores do dashboard."""
-    total = len(tratativas)
-    aguardando = contar_aguardando_kpi(tratativas)
+def montar_kpi_analisada(
+    total_devolucoes: int,
+    total_aguardando: int,
+) -> dict[str, int | float]:
+    """Monta KPI oficial: ANALISADAS = DEVOLUÇÕES - AGUARDANDO."""
+    total = int(total_devolucoes)
+    aguardando = int(total_aguardando)
     analisadas = total - aguardando
     if analisadas + aguardando != total:
         from core.system_log import log_event
@@ -101,6 +104,13 @@ def calcular_kpi_tratativa_dashboard(tratativas: list[str | None]) -> dict[str, 
         "total_analisadas": analisadas,
         "pct_analisada": pct,
     }
+
+
+def calcular_kpi_tratativa_dashboard(tratativas: list[str | None]) -> dict[str, int | float]:
+    """Aguardando (exato) + % analisada para cards superiores do dashboard."""
+    total = len(tratativas)
+    aguardando = contar_aguardando_kpi(tratativas)
+    return montar_kpi_analisada(total, aguardando)
 
 
 def formatar_pct_analisada(pct: float) -> str:
@@ -133,6 +143,7 @@ __all__ = [
     "calcular_indicadores_tratativa",
     "calcular_pct_analisada",
     "calcular_kpi_tratativa_dashboard",
+    "montar_kpi_analisada",
     "contar_aguardando_kpi",
     "eh_tratativa_aguardando",
     "formatar_pct_analisada",
