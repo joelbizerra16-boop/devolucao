@@ -27,10 +27,10 @@ from services.devolucao_service import (
     excluir_devolucao,
 )
 
-# Proporções fixas (soma 9.57) — alinhadas ao CSS grid em core/theme.py
+# Proporções fixas (soma 9.58) — alinhadas ao CSS grid em core/theme.py
 # Data | Motivo | Tratativa | NF | Valor | Cod | Vendedor | Ações
-_COLS_DADOS = [0.72, 2.35, 2.55, 0.52, 0.58, 0.78, 1.65]
-_COLS_ACOES = 0.42
+_COLS_DADOS = [0.88, 2.33, 2.53, 0.50, 0.56, 0.76, 1.62]
+_COLS_ACOES = 0.40
 _COLS_HEADER = [*_COLS_DADOS, _COLS_ACOES]
 _COLS_ROW = _COLS_HEADER
 
@@ -67,7 +67,7 @@ def _linha_para_exibicao(row) -> dict[str, str]:
 def _html_celula_usuario(data_txt: str, usuario: str) -> str:
     return (
         f'<div class="lv-cell lv-cell-user">'
-        f'<span class="lv-meta-row">'
+        f'<span class="lv-meta-row lv-meta-row-date">'
         f'<span class="lv-meta-icon">◷</span>'
         f'<span class="lv-date">{escape(data_txt)}</span>'
         f"</span>"
@@ -449,11 +449,12 @@ def _render_linha(
 
 def render_listagem_operacional(rows: list) -> None:
     """Tabela premium com ícones de ação lado a lado."""
+    inject_listview_premium_css()
+
     if not rows:
         st.info("Nenhuma devolução encontrada para o período selecionado.")
         return
 
-    inject_listview_premium_css()
     pode_alterar = pode_editar()
     pode_alterar_tratativa = pode_editar_tratativa()
 

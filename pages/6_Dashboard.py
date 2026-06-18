@@ -17,7 +17,7 @@ from components.listagem_dashboard import render_listagem_operacional
 from core.auth import get_current_user
 from core.layout import init_authenticated_page, safe_page_run
 from core.navigation import PAGE_DASHBOARD
-from core.styles import inject_dashboard_export_toolbar_css, page_header
+from core.styles import inject_dashboard_export_toolbar_css, inject_listview_premium_css, page_header
 from services.export_dashboard_service import nome_arquivo_exportacao
 from core.tratativa_constants import TRATATIVA_FILTRO_TODOS, TRATATIVA_FILTROS_UI
 from core.cache_read import limpar_cache_leitura
@@ -45,6 +45,8 @@ def _render() -> None:
 
 def _render_dashboard() -> None:
     init_authenticated_page("Dashboard", "📊", page_slug=PAGE_DASHBOARD)
+    inject_listview_premium_css()
+    inject_dashboard_export_toolbar_css()
 
     page_header(
         "Dashboard",
@@ -104,8 +106,6 @@ def _render_dashboard() -> None:
         MESES_LABEL.index(mes_label) if mes_label in MESES_LABEL else mes_padrao - 1
     )
     idx_ano_lista = anos.index(ano) if ano in anos else 0
-
-    inject_dashboard_export_toolbar_css()
 
     # BUSCA + TRATATIVA; ícones PDF + Excel à direita
     lf1, lf2, lf3, lf4, lf5, lf6 = st.columns([1.1, 0.9, 1.4, 1.1, 0.38, 0.38])

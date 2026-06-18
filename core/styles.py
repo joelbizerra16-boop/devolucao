@@ -788,6 +788,7 @@ def inject_listview_premium_css() -> None:
         /* Escopo estável — evita conflito com CSS global em reruns/navegação */
         .lista-premium-stable {{
             width: 100%;
+            max-width: 100%;
             margin-top: 0.5rem;
         }}
         .lista-premium-header {{
@@ -848,7 +849,7 @@ def inject_listview_premium_css() -> None:
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
             display: grid !important;
             grid-template-columns: {LISTVIEW_GRID_COLUMNS} !important;
-            column-gap: 0.35rem !important;
+            column-gap: 0.32rem !important;
             row-gap: 0 !important;
             align-items: center !important;
             width: 100% !important;
@@ -859,7 +860,7 @@ def inject_listview_premium_css() -> None:
             background: rgba(17,24,39,0.35);
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: {RADIUS_LG};
-            padding: 0.36rem 0.38rem;
+            padding: 0.36rem 0.28rem;
             box-shadow: {SHADOW_SUBTLE};
             margin: 0;
             box-sizing: border-box;
@@ -911,17 +912,21 @@ def inject_listview_premium_css() -> None:
             word-break: normal;
         }}
         .lv-cell-user {{
-            line-height: 1.04;
-            padding-right: 0.06rem;
+            line-height: 1.06;
+            padding-right: 0.12rem;
             display: flex;
             flex-direction: column;
-            gap: 0.12rem;
+            gap: 0.14rem;
+            min-width: 0;
         }}
         .lv-meta-row {{
             display: flex;
             align-items: center;
             gap: 0.34rem;
             min-width: 0;
+        }}
+        .lv-meta-row-date {{
+            white-space: nowrap;
         }}
         .lv-meta-icon {{
             width: 1rem;
@@ -937,6 +942,7 @@ def inject_listview_premium_css() -> None:
             color: {COLORS["text"]};
             font-weight: {FONT_WEIGHT_MEDIUM};
             font-size: {TYPE_SM};
+            white-space: nowrap;
         }}
         .lv-cell-user .lv-name {{
             color: {COLORS["text_muted"]};
