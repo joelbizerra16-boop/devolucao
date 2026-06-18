@@ -102,11 +102,17 @@ def _render_cards_operacionais(metricas: dict[str, str], config: list) -> None:
 
 def render_operational_cards(metricas: dict[str, str]) -> None:
     """Três cards — Consultar Devoluções (1:1:2, altura uniforme)."""
+    from core.styles import inject_operational_cards_premium_css
+
+    inject_operational_cards_premium_css()
     _render_cards_operacionais(metricas, OPERATIONAL_CARD_CONFIG)
 
 
 def render_dashboard_cards(metricas: dict[str, str]) -> None:
     """Cinco cards — Dashboard (1:1:1:1:2, altura uniforme)."""
+    from core.styles import inject_operational_cards_premium_css
+
+    inject_operational_cards_premium_css()
     st.markdown(
         '<span class="op-card-dashboard-row" aria-hidden="true"></span>',
         unsafe_allow_html=True,

@@ -578,8 +578,11 @@ def _operational_cards_premium_css() -> str:
 
 
 def inject_operational_cards_premium_css() -> None:
-    """Estilos premium dos cards — incluídos em inject_global_css (sem reinjetar no render)."""
-    pass
+    """Cards KPI — reinjetado a cada render (multipage Streamlit / switch_page após login)."""
+    st.markdown(
+        f"<style>{_operational_cards_premium_css()}</style>",
+        unsafe_allow_html=True,
+    )
 
 
 def inject_global_css() -> None:
