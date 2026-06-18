@@ -30,6 +30,7 @@ from core.theme import (
     LISTVIEW_GRID_COLUMNS,
     LISTVIEW_GRID_COLUMNS_MD,
     LISTVIEW_ROW_MIN_HEIGHT,
+    LISTVIEW_ROW_PADDING,
     LISTVIEW_SCROLL_PX,
     TYPE_CARD_LABEL,
     TYPE_KPI,
@@ -799,7 +800,7 @@ def inject_listview_premium_css() -> None:
             border-top: 1px solid rgba(255,255,255,0.08);
             border-bottom: 1px solid rgba(255,255,255,0.05);
             border-radius: {RADIUS_LG};
-            padding: 0.35rem 0.5rem 0.32rem 0.24rem;
+            padding: 0;
             margin-bottom: 0.45rem;
         }}
         .lista-premium-header-sticky {{
@@ -852,21 +853,27 @@ def inject_listview_premium_css() -> None:
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
             display: grid !important;
             grid-template-columns: {LISTVIEW_GRID_COLUMNS} !important;
-            column-gap: 0.32rem !important;
+            column-gap: 0.34rem !important;
             row-gap: 0 !important;
             align-items: center !important;
             width: 100% !important;
             max-width: 100% !important;
             min-height: {LISTVIEW_ROW_MIN_HEIGHT} !important;
+            padding: {LISTVIEW_ROW_PADDING} !important;
+            box-sizing: border-box !important;
+        }}
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            margin: 0;
         }}
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
             background: rgba(17,24,39,0.35);
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: {RADIUS_LG};
-            padding: 0.36rem 0.28rem;
             box-shadow: {SHADOW_SUBTLE};
             margin: 0;
-            box-sizing: border-box;
         }}
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker):hover {{
             background: rgba(17,24,39,0.5);
@@ -902,9 +909,34 @@ def inject_listview_premium_css() -> None:
             letter-spacing: 0.04em;
             margin: 0;
             text-transform: uppercase;
+            line-height: 1.2;
         }}
         .lista-dash-th-acoes {{
             text-align: center !important;
+            white-space: nowrap !important;
+        }}
+        /* Alinhamento por coluna — mesma geometria no header e nas linhas */
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(8),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(8) {{
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }}
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4) [data-testid="stMarkdown"],
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5) [data-testid="stMarkdown"],
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4) [data-testid="stMarkdown"],
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5) [data-testid="stMarkdown"],
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6) [data-testid="stMarkdown"],
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6) [data-testid="stMarkdown"] {{
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
         }}
         .lv-cell {{
             color: {COLORS["text"]};
@@ -987,13 +1019,11 @@ def inject_listview_premium_css() -> None:
         .lv-cell-vendedor {{
             max-width: 100%;
             color: rgba(241, 245, 249, 0.94);
-            white-space: normal;
-            overflow: visible;
-            text-overflow: initial;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            line-height: 1.25;
         }}
         .lv-badge {{
             display: inline-flex;
@@ -1028,10 +1058,9 @@ def inject_listview_premium_css() -> None:
         }}
         div[data-testid="column"]:has(.lista-dash-col-acoes-marker),
         div[data-testid="stColumn"]:has(.lista-dash-col-acoes-marker) {{
-            flex: 0 0 3.1rem !important;
-            width: 3.1rem !important;
-            min-width: 3.1rem !important;
-            max-width: 3.1rem !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -1039,14 +1068,14 @@ def inject_listview_premium_css() -> None:
         }}
         div[data-testid="column"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"],
         div[data-testid="stColumn"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"] {{
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            display: inline-flex !important;
+            display: grid !important;
+            grid-template-columns: 1.7rem 1.7rem !important;
+            column-gap: 0.28rem !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.5rem !important;
             width: auto !important;
-            min-width: 3.4rem !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
         }}
         div[data-testid="column"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"] > div,
         div[data-testid="stColumn"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"] > div {{
@@ -1096,8 +1125,11 @@ def inject_listview_premium_css() -> None:
         }}
         div[data-testid="column"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"],
         div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] {{
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) 1.7rem !important;
             align-items: center !important;
-            gap: 0.2rem !important;
+            gap: 0.24rem !important;
+            width: 100% !important;
         }}
         div[data-testid="column"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] > div:last-child,
         div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] > div:last-child {{

@@ -27,10 +27,10 @@ from services.devolucao_service import (
     excluir_devolucao,
 )
 
-# Proporções fixas (soma 9.58) — alinhadas ao CSS grid em core/theme.py
+# Proporções fixas (soma 9.97) — espelham LISTVIEW_GRID_COLUMNS em core/theme.py
 # Data | Motivo | Tratativa | NF | Valor | Cod | Vendedor | Ações
-_COLS_DADOS = [0.88, 2.33, 2.53, 0.50, 0.56, 0.76, 1.62]
-_COLS_ACOES = 0.40
+_COLS_DADOS = [0.95, 2.48, 2.72, 0.46, 0.52, 0.70, 1.78]
+_COLS_ACOES = 0.36
 _COLS_HEADER = [*_COLS_DADOS, _COLS_ACOES]
 _COLS_ROW = _COLS_HEADER
 

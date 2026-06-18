@@ -46,18 +46,18 @@ LISTVIEW_SCROLL_PX = (
     + (LISTVIEW_VISIBLE_ROWS - 1) * LISTVIEW_ROW_GAP_PX
 )  # 1013px — ~20 linhas visíveis (antes: 52vh ≈ 50 linhas)
 LISTVIEW_PAGE_SIZE = 50
-# Grid fixo — proporções st.columns [0.88, 2.33, 2.53, 0.50, 0.56, 0.76, 1.62, 0.40]
+# Grid corporativo — header e linhas compartilham exatamente estas colunas
+# Data(fr) | Motivo(fr) | Tratativa(fr) | NF(px) | Valor(px) | Cod(px) | Vendedor(fr) | Ações(px)
 LISTVIEW_GRID_COLUMNS = (
-    "minmax(104px, 9.2fr) minmax(158px, 24.3fr) minmax(300px, 26.4fr) "
-    "minmax(62px, 5.2fr) minmax(70px, 5.8fr) minmax(76px, 7.9fr) "
-    "minmax(116px, 16.9fr) minmax(50px, 4.2fr)"
+    "minmax(110px, 9.5fr) minmax(168px, 24.9fr) minmax(290px, 27.3fr) "
+    "76px 92px 88px minmax(128px, 17.9fr) 56px"
 )
 LISTVIEW_GRID_COLUMNS_MD = (
-    "minmax(96px, 8.8fr) minmax(138px, 22.8fr) minmax(260px, 27.1fr) "
-    "minmax(56px, 5.1fr) minmax(66px, 5.6fr) minmax(70px, 7.6fr) "
-    "minmax(108px, 16.2fr) minmax(48px, 4fr)"
+    "minmax(100px, 9.2fr) minmax(150px, 24.2fr) minmax(270px, 27.5fr) "
+    "70px 86px 82px minmax(118px, 17.5fr) 52px"
 )
-LISTVIEW_ROW_MIN_HEIGHT = "2.75rem"
+LISTVIEW_ROW_MIN_HEIGHT = "2.85rem"
+LISTVIEW_ROW_PADDING = "0.38rem 0.44rem"
 
 LINE_HEIGHT_TIGHT = "1.2"
 LINE_HEIGHT_NORMAL = "1.45"
