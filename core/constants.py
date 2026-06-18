@@ -6,19 +6,16 @@ from __future__ import annotations
 
 from database.models import PerfilUsuario
 
+from core.tratativa_constants import (
+    TRATATIVA_FILTRO_TODOS,
+    TRATATIVA_FILTROS_UI,
+    TRATATIVA_PADRAO,
+)
+
 LABEL_ADMIN = "ADMINISTRADOR"
 LABEL_VISITANTE = "VISITANTE"
 
-TRATATIVA_PADRAO = "Aguardando"
-
-TRATATIVA_FILTRO_TODOS = "Todos"
-TRATATIVA_FILTROS_UI = [
-    TRATATIVA_FILTRO_TODOS,
-    "Aguardando",
-    "Em Análise",
-    "Concluído",
-    "Recusado",
-]
+# Reexportação — preferir core.tratativa_constants em imports de UI
 
 # Conta padrão do sistema — não pode ser editada nem excluída pela UI
 USUARIO_PROTEGIDO = "admin"

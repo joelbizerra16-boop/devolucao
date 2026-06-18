@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from core.constants import TRATATIVA_FILTRO_TODOS, TRATATIVA_FILTROS_UI, TRATATIVA_PADRAO
+from core.tratativa_constants import TRATATIVA_FILTRO_TODOS, TRATATIVA_FILTROS_UI, TRATATIVA_PADRAO
 
 CATEGORIA_AGUARDANDO = "Aguardando"
 CATEGORIA_EM_ANALISE = "Em Análise"

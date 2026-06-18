@@ -19,7 +19,7 @@ from core.layout import init_authenticated_page, safe_page_run
 from core.navigation import PAGE_DASHBOARD
 from core.styles import inject_dashboard_export_toolbar_css, page_header
 from services.export_dashboard_service import nome_arquivo_exportacao
-from core.constants import TRATATIVA_FILTRO_TODOS, TRATATIVA_FILTROS_UI
+from core.tratativa_constants import TRATATIVA_FILTRO_TODOS, TRATATIVA_FILTROS_UI
 from core.cache_read import limpar_cache_leitura
 from core.tratativa_utils import filtrar_linhas_por_tratativa
 from services.dashboard_service import (

@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from core.cache_read import TTL_DASHBOARD
-from core.constants import TRATATIVA_FILTRO_TODOS
+from core.tratativa_constants import TRATATIVA_FILTRO_TODOS
 from core.orm_serialize import parse_iso_datetime
 from core.tratativa_utils import (
     calcular_indicadores_tratativa,
