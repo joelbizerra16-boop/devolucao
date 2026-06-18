@@ -28,6 +28,7 @@ from core.theme import (
     KPI_VALUE_MIN_H_IMPACTO,
     KPI_VALUE_MIN_H_WIDE,
     LISTVIEW_GRID_COLUMNS,
+    LISTVIEW_GRID_COLUMNS_MD,
     LISTVIEW_ROW_MIN_HEIGHT,
     LISTVIEW_SCROLL_PX,
     TYPE_CARD_LABEL,
@@ -283,6 +284,40 @@ def _operational_cards_premium_css() -> str:
         div[data-testid="stHorizontalBlock"]:has(.op-card) {{
             align-items: stretch !important;
             gap: 0.65rem !important;
+        }}
+        div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) {{
+            gap: 0.5rem !important;
+        }}
+        @media (max-width: 1280px) {{
+            div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) {{
+                gap: 0.4rem !important;
+            }}
+            .op-card {{
+                padding: 0.5rem 0.75rem 0.45rem !important;
+            }}
+            [data-testid="stMarkdownContainer"] .op-card p.op-card-value--impacto,
+            p.op-card-value--impacto {{
+                font-size: calc({TYPE_KPI_IMPACTO} * 0.92) !important;
+            }}
+            [data-testid="stMarkdownContainer"] .op-card p.op-card-value--devolucoes,
+            p.op-card-value--devolucoes {{
+                font-size: calc({TYPE_KPI_DEVOLUCOES} * 0.92) !important;
+            }}
+        }}
+        @media (max-width: 992px) {{
+            div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) {{
+                flex-wrap: wrap !important;
+            }}
+            div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) > div[data-testid="column"],
+            div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) > div[data-testid="stColumn"] {{
+                min-width: 18% !important;
+                flex: 1 1 18% !important;
+            }}
+            div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) > div[data-testid="column"]:last-child,
+            div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) > div[data-testid="stColumn"]:last-child {{
+                min-width: 38% !important;
+                flex: 2 1 38% !important;
+            }}
         }}
         div[data-testid="column"]:has(.op-card) > div,
         div[data-testid="stColumn"]:has(.op-card) > div {{
@@ -922,6 +957,17 @@ def inject_listview_premium_css() -> None:
             line-height: 1.2;
             max-width: 100%;
         }}
+        .lv-cell-tratativa {{
+            font-weight: {FONT_WEIGHT_REGULAR};
+            color: rgba(241, 245, 249, 0.94);
+            white-space: normal;
+            overflow: visible;
+            text-overflow: unset;
+            word-break: normal;
+            overflow-wrap: anywhere;
+            line-height: 1.25;
+            max-width: 100%;
+        }}
         .lv-cell-truncate {{
             overflow: hidden;
             white-space: nowrap;
@@ -930,10 +976,10 @@ def inject_listview_premium_css() -> None:
             width: 100%;
         }}
         .lv-cell-vendedor {{
-            max-width: 220px;
+            max-width: 100%;
             color: rgba(241, 245, 249, 0.94);
             white-space: normal;
-            overflow: hidden;
+            overflow: visible;
             text-overflow: initial;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -973,10 +1019,10 @@ def inject_listview_premium_css() -> None:
         }}
         div[data-testid="column"]:has(.lista-dash-col-acoes-marker),
         div[data-testid="stColumn"]:has(.lista-dash-col-acoes-marker) {{
-            flex: 0 0 3.65rem !important;
-            width: 3.65rem !important;
-            min-width: 3.65rem !important;
-            max-width: 3.65rem !important;
+            flex: 0 0 3.1rem !important;
+            width: 3.1rem !important;
+            min-width: 3.1rem !important;
+            max-width: 3.1rem !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -1038,6 +1084,32 @@ def inject_listview_premium_css() -> None:
             color: {COLORS["text_muted"]};
             margin: 0;
             font-size: 0.85rem;
+        }}
+        div[data-testid="column"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"],
+        div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] {{
+            align-items: center !important;
+            gap: 0.2rem !important;
+        }}
+        div[data-testid="column"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] > div:last-child,
+        div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] > div:last-child {{
+            flex: 0 0 1.7rem !important;
+            width: 1.7rem !important;
+            min-width: 1.7rem !important;
+            max-width: 1.7rem !important;
+        }}
+        div[data-testid="column"]:has(.lista-dash-col-tratativa-marker) button,
+        div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) button {{
+            width: 1.7rem !important;
+            min-width: 1.7rem !important;
+            height: 1.7rem !important;
+            min-height: 1.7rem !important;
+            padding: 0 !important;
+        }}
+        @media (max-width: 1400px) {{
+            .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
+            .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
+                grid-template-columns: {LISTVIEW_GRID_COLUMNS_MD} !important;
+            }}
         }}
         </style>
         """,

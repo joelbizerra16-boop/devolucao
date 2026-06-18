@@ -9,6 +9,17 @@ from database.models import PerfilUsuario
 LABEL_ADMIN = "ADMINISTRADOR"
 LABEL_VISITANTE = "VISITANTE"
 
+TRATATIVA_PADRAO = "Aguardando"
+
+TRATATIVA_FILTRO_TODOS = "Todos"
+TRATATIVA_FILTROS_UI = [
+    TRATATIVA_FILTRO_TODOS,
+    "Aguardando",
+    "Em Análise",
+    "Concluído",
+    "Recusado",
+]
+
 # Conta padrão do sistema — não pode ser editada nem excluída pela UI
 USUARIO_PROTEGIDO = "admin"
 

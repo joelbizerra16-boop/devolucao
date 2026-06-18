@@ -16,16 +16,21 @@ from core.theme import (
 )
 
 OPERATIONAL_CARD_CONFIG = [
-    ("impacto_financeiro", "Impacto", "💰", "op-card-accent-pendente", COLORS["warning"]),
-    ("devolucoes", "Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent_light"]),
-    ("principal_motivo", "Principal Motivo", "📊", "op-card-accent-finalizada", COLORS["success"]),
+    ("impacto_financeiro", "Impacto", "💰", "op-card-accent-pendente", COLORS["warning"], False),
+    ("devolucoes", "Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent_light"], False),
+    ("principal_motivo", "Principal Motivo", "📊", "op-card-accent-finalizada", COLORS["success"], True),
 ]
 
 DASHBOARD_CARD_CONFIG = [
-    ("impacto_financeiro", "Impacto", "💰", "op-card-accent-pendente", COLORS["warning"]),
-    ("devolucoes", "Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent_light"]),
-    ("principal_motivo", "Principal Motivo", "📊", "op-card-accent-finalizada", COLORS["success"]),
+    ("impacto_financeiro", "Impacto", "💰", "op-card-accent-pendente", COLORS["warning"], False),
+    ("devolucoes", "Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent_light"], False),
+    ("aguardando", "Aguardando", "⏳", "op-card-accent-pendente", COLORS["warning"], False),
+    ("pct_analisada", "% Analisada", "📈", "op-card-accent-conferencia", COLORS["accent_light"], False),
+    ("principal_motivo", "Principal Motivo", "📊", "op-card-accent-finalizada", COLORS["success"], True),
 ]
+
+_NUMERIC_CARD_KEYS = frozenset({"devolucoes", "aguardando", "pct_analisada"})
+
 
 def _render_card(
     col,
@@ -51,7 +56,7 @@ def _render_card(
         value_class += " op-card-value--impacto"
         font_size = TYPE_KPI_IMPACTO
         min_h = KPI_VALUE_MIN_H_IMPACTO
-    elif key == "devolucoes":
+    elif key in _NUMERIC_CARD_KEYS:
         value_class += " op-card-value--devolucoes"
         font_size = TYPE_KPI_DEVOLUCOES
         min_h = KPI_VALUE_MIN_H_DEVOLUCOES
@@ -60,7 +65,6 @@ def _render_card(
         font_size = TYPE_KPI_WIDE
         min_h = KPI_VALUE_MIN_H_WIDE
     wrap = "word-wrap:break-word;" if wide else ""
-    # font-size inline = primeiro paint estável (anti FOUC / font jump)
     height_lock = ""
     if key != "principal_motivo":
         height_lock = f"min-height:{min_h};max-height:{min_h};"
@@ -89,10 +93,10 @@ def _render_card(
 
 def _render_cards_operacionais(metricas: dict[str, str], config: list) -> None:
     c1, c2, c3 = st.columns([1, 1, 2])
-    for col, (key, label, icon, css_class, color) in zip([c1, c2, c3], config):
+    for col, cfg in zip([c1, c2, c3], config):
+        key, label, icon, css_class, color, wide = cfg
         _render_card(
-            col, key, label, icon, css_class, color, metricas,
-            wide=(key == "principal_motivo"),
+            col, key, label, icon, css_class, color, metricas, wide=wide,
         )
 
 
@@ -102,8 +106,17 @@ def render_operational_cards(metricas: dict[str, str]) -> None:
 
 
 def render_dashboard_cards(metricas: dict[str, str]) -> None:
-    """Três cards — Dashboard (mesmo layout, rótulos analíticos)."""
-    _render_cards_operacionais(metricas, DASHBOARD_CARD_CONFIG)
+    """Cinco cards — Dashboard (1:1:1:1:2, altura uniforme)."""
+    st.markdown(
+        '<span class="op-card-dashboard-row" aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
+    c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 2])
+    for col, cfg in zip([c1, c2, c3, c4, c5], DASHBOARD_CARD_CONFIG):
+        key, label, icon, css_class, color, wide = cfg
+        _render_card(
+            col, key, label, icon, css_class, color, metricas, wide=wide,
+        )
 
 
 def render_kpi_row(kpis: dict) -> None:

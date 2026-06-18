@@ -104,6 +104,11 @@ class Devolucao(Base):
     cidade: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     bairro: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     motivo_devolucao: Mapped[str] = mapped_column(String(200), nullable=False)
+    tratativa: Mapped[str] = mapped_column(
+        String(255), default="Aguardando", nullable=False
+    )
+    tratativa_atualizada_em: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    tratativa_atualizada_por: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)
     observacao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(

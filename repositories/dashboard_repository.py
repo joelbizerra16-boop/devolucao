@@ -10,6 +10,7 @@ from sqlalchemy import extract, func
 
 from core.db import get_session
 from core.orm_serialize import devolucao_para_dict
+from core.tratativa_utils import calcular_kpi_tratativa_dashboard
 from core.search_utils import aplicar_busca_query
 from database.models import Devolucao
 
@@ -68,6 +69,13 @@ def obter_cards_periodo(mes: int, ano: int) -> dict[str, Any]:
         ).scalar()
         total = base.with_entities(func.count(Devolucao.id)).scalar() or 0
 
+        tratativas = [
+            row[0]
+            for row in _filtro_mes_ano(
+                session.query(Devolucao.tratativa), mes, ano
+            ).all()
+        ]
+
         motivo_row = (
             _filtro_mes_ano(
                 session.query(
@@ -92,9 +100,15 @@ def obter_cards_periodo(mes: int, ano: int) -> dict[str, Any]:
         motivo = str(motivo_row[0]).strip() or None
         motivo_qtd = int(motivo_row[1] or 0)
 
+    total_int = int(total)
+    kpi_tratativa = calcular_kpi_tratativa_dashboard(tratativas)
+
     return {
         "soma_valor_nf": float(soma_valor or 0),
-        "total_devolucoes": int(total),
+        "total_devolucoes": total_int,
+        "total_aguardando": int(kpi_tratativa["total_aguardando"]),
+        "total_analisadas": int(kpi_tratativa["total_analisadas"]),
+        "pct_analisada": float(kpi_tratativa["pct_analisada"]),
         "principal_motivo": motivo,
         "principal_motivo_qtd": motivo_qtd,
     }

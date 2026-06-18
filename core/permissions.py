@@ -34,6 +34,7 @@ __all__ = [
     "is_administrador",
     "is_visitante",
     "pode_editar",
+    "pode_editar_tratativa",
     "exigir_administrador",
     "aviso_somente_leitura",
 ]
@@ -52,6 +53,11 @@ def is_visitante() -> bool:
 
 def pode_editar() -> bool:
     return is_administrador()
+
+
+def pode_editar_tratativa() -> bool:
+    """Somente perfil VISITANTE pode editar a tratativa."""
+    return is_visitante()
 
 
 def exigir_administrador() -> None:

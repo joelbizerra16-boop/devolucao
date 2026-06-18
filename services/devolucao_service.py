@@ -9,6 +9,9 @@ import pandas as pd
 import streamlit as st
 
 from core.cache_read import TTL_DEVOLUCOES, limpar_cache_leitura
+from core.constants import TRATATIVA_PADRAO
+from core.auth import get_current_user
+from core.permissions import pode_editar_tratativa
 from core.system_log import log_event
 from repositories import devolucao_repository
 from services import sap_service
@@ -159,6 +162,7 @@ def _serializar_listview_operacional(row: Any) -> dict[str, Any]:
         "cidade": _valor_linha(row, "cidade"),
         "bairro": _valor_linha(row, "bairro"),
         "motivo_devolucao": _valor_linha(row, "motivo_devolucao"),
+        "tratativa": _valor_linha(row, "tratativa"),
     }
 
 
@@ -324,3 +328,26 @@ def excluir_devolucao(devolucao_id: int) -> tuple[bool, str]:
         return True, "Devolução excluída com sucesso."
     except Exception as exc:
         return False, f"Erro ao excluir devolução: {exc}"
+
+
+def _texto_tratativa_exibicao(valor: Any) -> str:
+    texto = _texto_celula(valor)
+    return texto if texto != "—" else TRATATIVA_PADRAO
+
+
+def atualizar_tratativa(devolucao_id: int, tratativa: str) -> tuple[bool, str]:
+    if not pode_editar_tratativa():
+        return False, "Permissão negada. Apenas o perfil VISITANTE pode editar a tratativa."
+    texto = str(tratativa or "").strip() or TRATATIVA_PADRAO
+    if len(texto) > 255:
+        return False, "Tratativa deve ter no máximo 255 caracteres."
+    user = get_current_user()
+    usuario = user.nome if user else ""
+    try:
+        ok = devolucao_repository.atualizar_tratativa(devolucao_id, texto, usuario)
+        if not ok:
+            return False, "Devolução não encontrada."
+        limpar_cache_leitura()
+        return True, "Tratativa atualizada com sucesso."
+    except Exception as exc:
+        return False, f"Erro ao atualizar tratativa: {exc}"

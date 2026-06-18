@@ -35,6 +35,9 @@ def devolucao_para_dict(row: Any) -> dict[str, Any]:
         "usuario": row.usuario,
         "usuario_ultima_edicao": row.usuario_ultima_edicao,
         "motivo_devolucao": row.motivo_devolucao,
+        "tratativa": getattr(row, "tratativa", None) or "Aguardando",
+        "tratativa_atualizada_em": _iso(getattr(row, "tratativa_atualizada_em", None)),
+        "tratativa_atualizada_por": getattr(row, "tratativa_atualizada_por", None),
         "nf_nfd": row.nf_nfd,
         "valor_nf": float(row.valor_nf) if row.valor_nf is not None else None,
         "cod_cliente": row.cod_cliente,
@@ -54,5 +57,19 @@ def parse_iso_date(val: Any) -> Optional[date]:
         return val
     try:
         return date.fromisoformat(str(val))
+    except (TypeError, ValueError):
+        return None
+
+
+def parse_iso_datetime(val: Any) -> Optional[datetime]:
+    if val is None:
+        return None
+    if isinstance(val, datetime):
+        return val
+    texto = str(val).strip()
+    if not texto:
+        return None
+    try:
+        return datetime.fromisoformat(texto)
     except (TypeError, ValueError):
         return None

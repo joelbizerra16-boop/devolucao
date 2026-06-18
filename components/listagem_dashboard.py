@@ -9,7 +9,7 @@ from typing import Callable
 import streamlit as st
 
 from core.auth import get_current_user
-from core.permissions import pode_editar
+from core.permissions import pode_editar, pode_editar_tratativa
 from core.styles import inject_listview_premium_css
 from core.theme import LISTVIEW_PAGE_SIZE, LISTVIEW_SCROLL_PX
 from repositories import devolucao_repository
@@ -20,18 +20,33 @@ from services.devolucao_service import (
     _formatar_valor_br,
     _nome_responsavel_exibicao,
     _texto_celula,
+    _texto_tratativa_exibicao,
+    _formatar_data_hora,
     atualizar_devolucao,
+    atualizar_tratativa,
     excluir_devolucao,
 )
 
-# Proporções fixas (soma 7.55) — alinhadas ao CSS grid em core/styles.py
-_COLS_DADOS = [0.8, 2.1, 0.8, 0.9, 1.0, 1.4]
-_COLS_ACOES = 0.55
+# Proporções fixas (soma 9.57) — alinhadas ao CSS grid em core/theme.py
+# Data | Motivo | Tratativa | NF | Valor | Cod | Vendedor | Ações
+_COLS_DADOS = [0.72, 2.35, 2.55, 0.52, 0.58, 0.78, 1.65]
+_COLS_ACOES = 0.42
 _COLS_HEADER = [*_COLS_DADOS, _COLS_ACOES]
 _COLS_ROW = _COLS_HEADER
 
 _ICON_EDITAR = ":material/edit:"
 _ICON_EXCLUIR = ":material/delete:"
+
+COLUNAS_LISTVIEW_OPERACIONAL = [
+    "Data + Usuário",
+    "Motivo",
+    "Tratativa",
+    "NF",
+    "Valor",
+    "Cod Cliente",
+    "Vendedor",
+    "Ações",
+]
 
 
 def _linha_para_exibicao(row) -> dict[str, str]:
@@ -41,6 +56,7 @@ def _linha_para_exibicao(row) -> dict[str, str]:
         "data_txt": data_txt,
         "usuario": usuario,
         "motivo": _texto_celula(row.motivo_devolucao),
+        "tratativa": _texto_tratativa_exibicao(getattr(row, "tratativa", None)),
         "nf": _texto_celula(row.nf_nfd),
         "valor": _formatar_valor_br(row.valor_nf),
         "cod_cliente": _texto_celula(row.cod_cliente),
@@ -143,6 +159,62 @@ def _dialog_editar(devolucao_id: int) -> None:
             st.error(msg)
 
 
+@st.dialog("Editar tratativa")
+def _dialog_editar_tratativa(devolucao_id: int) -> None:
+    dev = devolucao_repository.obter_por_id(devolucao_id)
+    if dev is None:
+        st.error("Registro não encontrado.")
+        if st.button("Fechar"):
+            st.session_state.pop("dash_tratativa_id", None)
+            st.rerun()
+        return
+
+    if not pode_editar_tratativa():
+        st.error("Permissão negada. Apenas o perfil VISITANTE pode editar a tratativa.")
+        if st.button("Fechar"):
+            st.session_state.pop("dash_tratativa_id", None)
+            st.rerun()
+        return
+
+    st.text_input("ID", value=str(dev.id), disabled=True)
+    st.text_input("NF", value=dev.nf_nfd or "—", disabled=True)
+    st.text_input("Motivo", value=dev.motivo_devolucao or "—", disabled=True)
+
+    atualizada_em = getattr(dev, "tratativa_atualizada_em", None)
+    atualizada_por = getattr(dev, "tratativa_atualizada_por", None)
+    if atualizada_em or atualizada_por:
+        st.markdown("**Última atualização:**")
+        st.text_input(
+            "Data/Hora",
+            value=_formatar_data_hora(atualizada_em) if atualizada_em else "—",
+            disabled=True,
+        )
+        st.text_input("Usuário", value=atualizada_por or "—", disabled=True)
+
+    with st.form("form_editar_tratativa"):
+        tratativa_atual = _texto_tratativa_exibicao(getattr(dev, "tratativa", None))
+        tratativa = st.text_input("Tratativa", value=tratativa_atual, max_chars=255)
+        c1, c2 = st.columns(2)
+        with c1:
+            salvar = st.form_submit_button("Salvar", type="primary", use_container_width=True)
+        with c2:
+            cancelar = st.form_submit_button("Cancelar", use_container_width=True)
+
+    if cancelar:
+        st.session_state.pop("dash_tratativa_id", None)
+        st.rerun()
+
+    if salvar:
+        ok, msg = atualizar_tratativa(devolucao_id, tratativa)
+        if ok:
+            st.session_state.pop("dash_tratativa_id", None)
+            limpar_cache_leitura()
+            st.success(msg)
+            st.rerun()
+        else:
+            st.error(msg)
+
+
 @st.dialog("Excluir devolução")
 def _dialog_excluir(devolucao_id: int) -> None:
     dev = devolucao_repository.obter_por_id(devolucao_id)
@@ -175,16 +247,7 @@ def _dialog_excluir(devolucao_id: int) -> None:
 
 def _render_cabecalho_tabela() -> None:
     h = st.columns(_COLS_HEADER)
-    labels = [
-        "Data + Usuário",
-        "Motivo",
-        "NF",
-        "Valor",
-        "Cod Cliente",
-        "Vendedor",
-        "Ações",
-    ]
-    for col, label in zip(h, labels):
+    for col, label in zip(h, COLUNAS_LISTVIEW_OPERACIONAL):
         with col:
             if label == "Data + Usuário":
                 st.markdown(
@@ -232,12 +295,48 @@ def _render_acoes(
             on_delete(row_id)
 
 
+def _render_tratativa(
+    row_id: int,
+    texto: str,
+    *,
+    pode_alterar_tratativa: bool,
+    on_edit: Callable[[int], None],
+) -> None:
+    st.markdown(
+        '<span class="lista-dash-col-tratativa-marker"></span>',
+        unsafe_allow_html=True,
+    )
+    if pode_alterar_tratativa:
+        col_txt, col_btn = st.columns([7, 1])
+        with col_txt:
+            st.markdown(
+                _html_celula(texto, extra_class="lv-cell-tratativa"),
+                unsafe_allow_html=True,
+            )
+        with col_btn:
+            if st.button(
+                "",
+                key=f"dash_trat_{row_id}",
+                icon=_ICON_EDITAR,
+                help="Editar tratativa",
+                type="secondary",
+            ):
+                on_edit(row_id)
+    else:
+        st.markdown(
+            _html_celula(texto, extra_class="lv-cell-tratativa"),
+            unsafe_allow_html=True,
+        )
+
+
 def _render_linha(
     row,
     *,
     pode_alterar: bool,
+    pode_alterar_tratativa: bool,
     on_edit: Callable[[int], None],
     on_delete: Callable[[int], None],
+    on_edit_tratativa: Callable[[int], None],
 ) -> None:
     dados = _linha_para_exibicao(row)
     cols = st.columns(_COLS_ROW)
@@ -254,18 +353,25 @@ def _render_linha(
             unsafe_allow_html=True,
         )
     with cols[2]:
+        _render_tratativa(
+            row.id,
+            dados["tratativa"],
+            pode_alterar_tratativa=pode_alterar_tratativa,
+            on_edit=on_edit_tratativa,
+        )
+    with cols[3]:
         st.markdown(
             _html_badge(dados["nf"], extra_class="lv-badge-nf", title=dados["nf"]),
             unsafe_allow_html=True,
         )
-    with cols[3]:
+    with cols[4]:
         st.markdown(
             _html_badge(dados["valor"], extra_class="lv-badge-valor", title=dados["valor"]),
             unsafe_allow_html=True,
         )
-    with cols[4]:
-        st.markdown(_html_celula(dados["cod_cliente"]), unsafe_allow_html=True)
     with cols[5]:
+        st.markdown(_html_celula(dados["cod_cliente"]), unsafe_allow_html=True)
+    with cols[6]:
         st.markdown(
             _html_celula(
                 dados["vendedor"],
@@ -274,7 +380,7 @@ def _render_linha(
             ),
             unsafe_allow_html=True,
         )
-    with cols[6]:
+    with cols[7]:
         _render_acoes(
             row.id,
             pode_alterar=pode_alterar,
@@ -291,9 +397,13 @@ def render_listagem_operacional(rows: list) -> None:
 
     inject_listview_premium_css()
     pode_alterar = pode_editar()
+    pode_alterar_tratativa = pode_editar_tratativa()
 
     if st.session_state.get("dash_edit_id"):
         _dialog_editar(int(st.session_state["dash_edit_id"]))
+
+    if st.session_state.get("dash_tratativa_id"):
+        _dialog_editar_tratativa(int(st.session_state["dash_tratativa_id"]))
 
     if st.session_state.get("dash_del_id"):
         _dialog_excluir(int(st.session_state["dash_del_id"]))
@@ -301,10 +411,17 @@ def render_listagem_operacional(rows: list) -> None:
     def _abrir_editar(dev_id: int) -> None:
         st.session_state["dash_edit_id"] = dev_id
         st.session_state.pop("dash_del_id", None)
+        st.session_state.pop("dash_tratativa_id", None)
 
     def _abrir_excluir(dev_id: int) -> None:
         st.session_state["dash_del_id"] = dev_id
         st.session_state.pop("dash_edit_id", None)
+        st.session_state.pop("dash_tratativa_id", None)
+
+    def _abrir_tratativa(dev_id: int) -> None:
+        st.session_state["dash_tratativa_id"] = dev_id
+        st.session_state.pop("dash_edit_id", None)
+        st.session_state.pop("dash_del_id", None)
 
     st.markdown('<div class="lista-premium-stable" aria-label="Listagem operacional">', unsafe_allow_html=True)
     st.markdown(
@@ -344,8 +461,10 @@ def render_listagem_operacional(rows: list) -> None:
             _render_linha(
                 row,
                 pode_alterar=pode_alterar,
+                pode_alterar_tratativa=pode_alterar_tratativa,
                 on_edit=_abrir_editar,
                 on_delete=_abrir_excluir,
+                on_edit_tratativa=_abrir_tratativa,
             )
 
     st.markdown("</div>", unsafe_allow_html=True)

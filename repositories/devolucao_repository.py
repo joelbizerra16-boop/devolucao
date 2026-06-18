@@ -11,7 +11,7 @@ from sqlalchemy import func
 
 from core.db import get_session, get_write_session, is_postgres
 from core.search_utils import aplicar_busca_query
-from core.orm_serialize import devolucao_para_dict, parse_iso_date
+from core.orm_serialize import devolucao_para_dict, parse_iso_date, parse_iso_datetime
 from core.system_log import log_event
 from database.models import Devolucao
 
@@ -60,6 +60,9 @@ def _dict_para_devolucao_ns(d: dict[str, Any]) -> SimpleNamespace:
         usuario=d.get("usuario"),
         usuario_ultima_edicao=d.get("usuario_ultima_edicao"),
         motivo_devolucao=d.get("motivo_devolucao"),
+        tratativa=d.get("tratativa") or "Aguardando",
+        tratativa_atualizada_em=parse_iso_datetime(d.get("tratativa_atualizada_em")),
+        tratativa_atualizada_por=d.get("tratativa_atualizada_por"),
         nf_nfd=d.get("nf_nfd"),
         valor_nf=d.get("valor_nf"),
         cod_cliente=d.get("cod_cliente"),
@@ -114,6 +117,17 @@ def atualizar(
         dev.vendedor = vendedor
         dev.valor_nf = valor_nf
         dev.updated_at = datetime.utcnow()
+        return True
+
+
+def atualizar_tratativa(devolucao_id: int, tratativa: str, usuario: str) -> bool:
+    with get_write_session() as session:
+        dev = session.get(Devolucao, devolucao_id)
+        if dev is None:
+            return False
+        dev.tratativa = tratativa.strip() or "Aguardando"
+        dev.tratativa_atualizada_em = datetime.utcnow()
+        dev.tratativa_atualizada_por = str(usuario or "").strip() or None
         return True
 
 

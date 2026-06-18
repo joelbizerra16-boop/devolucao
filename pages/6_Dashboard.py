@@ -19,7 +19,9 @@ from core.layout import init_authenticated_page, safe_page_run
 from core.navigation import PAGE_DASHBOARD
 from core.styles import inject_dashboard_export_toolbar_css, page_header
 from services.export_dashboard_service import nome_arquivo_exportacao
+from core.constants import TRATATIVA_FILTRO_TODOS, TRATATIVA_FILTROS_UI
 from core.cache_read import limpar_cache_leitura
+from core.tratativa_utils import filtrar_linhas_por_tratativa
 from services.dashboard_service import (
     MESES_LABEL,
     carregar_dashboard,
@@ -105,8 +107,8 @@ def _render_dashboard() -> None:
 
     inject_dashboard_export_toolbar_css()
 
-    # BUSCA ~20% mais estreita (2.0 -> 1.6); ícones PDF + Excel à direita
-    lf1, lf2, lf3, lf4, lf5 = st.columns([1.2, 1, 1.6, 0.38, 0.38])
+    # BUSCA + TRATATIVA; ícones PDF + Excel à direita
+    lf1, lf2, lf3, lf4, lf5, lf6 = st.columns([1.1, 0.9, 1.4, 1.1, 0.38, 0.38])
     with lf1:
         lista_mes_label = st.selectbox(
             "MÊS",
@@ -127,10 +129,18 @@ def _render_dashboard() -> None:
             placeholder="NF, usuário, motivo, vendedor, código cliente...",
             key="dash_lista_busca",
         )
+    with lf4:
+        tratativa_filtro = st.selectbox(
+            "TRATATIVA",
+            options=TRATATIVA_FILTROS_UI,
+            index=0,
+            key="dash_lista_tratativa",
+        )
 
     lista_mes_num = mes_label_para_numero(lista_mes_label)
     lista_ano_num = int(lista_ano)
     busca_txt = busca_lista or ""
+    filtro_tratativa = tratativa_filtro or TRATATIVA_FILTRO_TODOS
     rows_cache = listar_devolucoes_periodo_cache(
         lista_mes_num,
         lista_ano_num,
@@ -140,20 +150,21 @@ def _render_dashboard() -> None:
         lista_mes_num,
         lista_ano_num,
         busca=busca_txt,
+        tratativa_filtro=filtro_tratativa,
     )
-
     user = get_current_user()
     usuario_exp = user.nome if user else "Sistema"
+    rows_export = tuple(filtrar_linhas_por_tratativa(list(rows_cache), filtro_tratativa))
     pdf_bytes = export_pdf_dashboard_cache(
         lista_mes_label,
         lista_ano_num,
         busca_txt,
         usuario_exp,
-        rows_cache,
+        rows_export,
     )
-    xlsx_bytes = export_excel_dashboard_cache(rows_cache)
+    xlsx_bytes = export_excel_dashboard_cache(rows_export)
 
-    with lf4:
+    with lf5:
         st.markdown('<span class="dash-export-marker-pdf"></span>', unsafe_allow_html=True)
         st.download_button(
             label="",
@@ -165,7 +176,7 @@ def _render_dashboard() -> None:
             use_container_width=True,
             key="dash_export_pdf",
         )
-    with lf5:
+    with lf6:
         st.markdown('<span class="dash-export-marker-xlsx"></span>', unsafe_allow_html=True)
         st.download_button(
             label="",
@@ -178,7 +189,7 @@ def _render_dashboard() -> None:
             key="dash_export_xlsx",
         )
 
-    filtro_sig = (lista_mes_num, lista_ano_num, busca_txt)
+    filtro_sig = (lista_mes_num, lista_ano_num, busca_txt, filtro_tratativa)
     if st.session_state.get("dash_lista_filtro_sig") != filtro_sig:
         st.session_state["dash_lista_filtro_sig"] = filtro_sig
         st.session_state["dash_lista_page"] = 1

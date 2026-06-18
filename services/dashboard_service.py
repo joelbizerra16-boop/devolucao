@@ -11,6 +11,13 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from core.cache_read import TTL_DASHBOARD
+from core.constants import TRATATIVA_FILTRO_TODOS
+from core.orm_serialize import parse_iso_datetime
+from core.tratativa_utils import (
+    calcular_indicadores_tratativa,
+    filtrar_linhas_por_tratativa,
+    formatar_pct_analisada,
+)
 from core.styles import COLORS
 from core.theme import (
     PLOTLY_AXIS_SIZE,
@@ -122,11 +129,22 @@ def _deserializar_devolucao_row(dados: dict[str, Any]) -> SimpleNamespace:
         usuario=dados.get("usuario"),
         usuario_ultima_edicao=dados.get("usuario_ultima_edicao"),
         motivo_devolucao=dados.get("motivo_devolucao"),
+        tratativa=dados.get("tratativa") or "Aguardando",
+        tratativa_atualizada_em=parse_iso_datetime(dados.get("tratativa_atualizada_em")),
+        tratativa_atualizada_por=dados.get("tratativa_atualizada_por"),
         nf_nfd=dados.get("nf_nfd"),
         valor_nf=dados.get("valor_nf"),
         cod_cliente=dados.get("cod_cliente"),
         vendedor=dados.get("vendedor"),
     )
+
+
+def _aplicar_filtro_tratativa_rows(
+    rows: tuple[dict[str, Any], ...] | list[dict[str, Any]],
+    tratativa_filtro: str,
+) -> list[dict[str, Any]]:
+    filtro = (tratativa_filtro or TRATATIVA_FILTRO_TODOS).strip()
+    return filtrar_linhas_por_tratativa(list(rows), filtro)
 
 
 @st.cache_data(ttl=TTL_DASHBOARD, show_spinner=False)
@@ -146,9 +164,29 @@ def listar_devolucoes_periodo_dashboard(
     mes: int,
     ano: int,
     busca: str = "",
+    tratativa_filtro: str = TRATATIVA_FILTRO_TODOS,
 ) -> list[SimpleNamespace]:
     """Linhas da listagem operacional (cache + objetos leves para a UI)."""
-    return [_deserializar_devolucao_row(d) for d in listar_devolucoes_periodo_cache(mes, ano, busca)]
+    rows = _aplicar_filtro_tratativa_rows(
+        listar_devolucoes_periodo_cache(mes, ano, busca),
+        tratativa_filtro,
+    )
+    return [_deserializar_devolucao_row(d) for d in rows]
+
+
+def obter_indicadores_tratativa_dashboard(
+    mes: int,
+    ano: int,
+    busca: str = "",
+    tratativa_filtro: str = TRATATIVA_FILTRO_TODOS,
+) -> dict[str, str]:
+    """Indicadores de tratativa a partir do mesmo conjunto filtrado da listagem."""
+    rows = _aplicar_filtro_tratativa_rows(
+        listar_devolucoes_periodo_cache(mes, ano, busca),
+        tratativa_filtro,
+    )
+    raw = calcular_indicadores_tratativa(rows)
+    return {chave: str(valor) for chave, valor in raw.items()}
 
 
 def _rotulo_qtd_devolucoes(qtd: int) -> str:
@@ -166,9 +204,13 @@ def _cards_formatados(raw: dict[str, Any]) -> dict[str, str]:
         principal = "N/A"
         principal_sub = ""
 
+    pct_txt = formatar_pct_analisada(float(raw.get("pct_analisada") or 0))
+
     return {
         "impacto_financeiro": _formatar_valor_br(raw.get("soma_valor_nf", 0)),
         "devolucoes": str(int(raw.get("total_devolucoes") or 0)),
+        "aguardando": str(int(raw.get("total_aguardando") or 0)),
+        "pct_analisada": pct_txt,
         "principal_motivo": principal,
         "principal_motivo_sub": principal_sub,
     }

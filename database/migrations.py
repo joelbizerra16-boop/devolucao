@@ -120,6 +120,88 @@ def seed_usuario_admin() -> None:
         log_event("db", "Seed: usuário admin padrão criado.")
 
 
+def _migrar_coluna_tratativa() -> None:
+    """Adiciona coluna tratativa com default 'Aguardando' em bancos existentes."""
+    engine = get_engine()
+    with engine.connect() as conn:
+        if engine.dialect.name == "postgresql":
+            conn.execute(
+                text(
+                    "ALTER TABLE devolucoes ADD COLUMN IF NOT EXISTS "
+                    "tratativa VARCHAR(255) NOT NULL DEFAULT 'Aguardando'"
+                )
+            )
+            conn.execute(
+                text(
+                    "UPDATE devolucoes SET tratativa = 'Aguardando' "
+                    "WHERE tratativa IS NULL OR tratativa = ''"
+                )
+            )
+            conn.commit()
+            return
+
+        tabelas = {
+            row[0]
+            for row in conn.execute(text("SELECT name FROM sqlite_master WHERE type='table'"))
+        }
+        if "devolucoes" not in tabelas:
+            return
+        existentes = {row[1] for row in conn.execute(text("PRAGMA table_info(devolucoes)"))}
+        if "tratativa" not in existentes:
+            conn.execute(
+                text(
+                    "ALTER TABLE devolucoes ADD COLUMN tratativa VARCHAR(255) "
+                    "NOT NULL DEFAULT 'Aguardando'"
+                )
+            )
+            conn.commit()
+        conn.execute(
+            text(
+                "UPDATE devolucoes SET tratativa = 'Aguardando' "
+                "WHERE tratativa IS NULL OR tratativa = ''"
+            )
+        )
+        conn.commit()
+
+
+def _migrar_rastreabilidade_tratativa() -> None:
+    """Colunas de auditoria da última alteração de tratativa."""
+    engine = get_engine()
+    with engine.connect() as conn:
+        if engine.dialect.name == "postgresql":
+            conn.execute(
+                text(
+                    "ALTER TABLE devolucoes ADD COLUMN IF NOT EXISTS "
+                    "tratativa_atualizada_em TIMESTAMP NULL"
+                )
+            )
+            conn.execute(
+                text(
+                    "ALTER TABLE devolucoes ADD COLUMN IF NOT EXISTS "
+                    "tratativa_atualizada_por VARCHAR(120) NULL"
+                )
+            )
+            conn.commit()
+            return
+
+        tabelas = {
+            row[0]
+            for row in conn.execute(text("SELECT name FROM sqlite_master WHERE type='table'"))
+        }
+        if "devolucoes" not in tabelas:
+            return
+        existentes = {row[1] for row in conn.execute(text("PRAGMA table_info(devolucoes)"))}
+        alterou = False
+        if "tratativa_atualizada_em" not in existentes:
+            conn.execute(text("ALTER TABLE devolucoes ADD COLUMN tratativa_atualizada_em DATETIME"))
+            alterou = True
+        if "tratativa_atualizada_por" not in existentes:
+            conn.execute(text("ALTER TABLE devolucoes ADD COLUMN tratativa_atualizada_por VARCHAR(120)"))
+            alterou = True
+        if alterou:
+            conn.commit()
+
+
 def run_migrations() -> None:
     try:
         _migrar_sqlite_legado()
@@ -127,6 +209,8 @@ def run_migrations() -> None:
         Base.metadata.create_all(bind=engine)
         assert_usuarios_postgres_schema(engine)
         _migrar_colunas_sqlite()
+        _migrar_coluna_tratativa()
+        _migrar_rastreabilidade_tratativa()
         _criar_indices_postgres()
         seed_motivos_padrao()
         seed_usuario_admin()
