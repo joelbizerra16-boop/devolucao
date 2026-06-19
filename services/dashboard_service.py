@@ -28,7 +28,7 @@ from core.theme import (
 )
 from repositories import dashboard_repository
 from services.devolucao_service import (
-    _formatar_data,
+    _formatar_data_relatorio,
     _formatar_valor_br,
     _nome_responsavel_exibicao,
     _texto_celula,
@@ -232,7 +232,7 @@ def preparar_listview_dashboard(rows: list) -> pd.DataFrame:
 
     linhas = []
     for r in rows:
-        data_txt = _formatar_data(r.data_devolucao)
+        data_txt = _formatar_data_relatorio(r.data_devolucao)
         usuario = _nome_responsavel_exibicao(r)
         linhas.append(
             {

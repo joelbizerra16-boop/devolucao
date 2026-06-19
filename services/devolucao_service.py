@@ -108,6 +108,23 @@ def _formatar_data(valor: Any) -> str:
         return texto
 
 
+def _formatar_data_relatorio(valor: Any) -> str:
+    """Data DD/MM/YY — somente exportações e relatórios operacionais."""
+    if valor is None:
+        return "—"
+    if isinstance(valor, date) and not isinstance(valor, datetime):
+        return valor.strftime("%d/%m/%y")
+    if isinstance(valor, datetime):
+        return valor.date().strftime("%d/%m/%y")
+    texto = str(valor).strip()
+    if not texto or texto in ("—", "NaT", "nan"):
+        return "—"
+    try:
+        return pd.to_datetime(valor, dayfirst=True).strftime("%d/%m/%y")
+    except Exception:
+        return texto
+
+
 def _formatar_valor_br(valor: Any) -> str:
     if valor is None:
         return "—"

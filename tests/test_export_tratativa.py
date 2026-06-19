@@ -43,6 +43,15 @@ def _row(
 
 
 class TestExportTratativa(unittest.TestCase):
+    def test_preparar_listview_data_formato_relatorio(self) -> None:
+        df = preparar_listview_dashboard([_row()])
+        self.assertIn("19/06/26", df.iloc[0]["DATA + USUARIO"])
+        self.assertNotIn("19/06/2026", df.iloc[0]["DATA + USUARIO"])
+
+    def test_linhas_pdf_data_formato_relatorio(self) -> None:
+        linhas = _linhas_tabela_pdf([_row()])
+        self.assertEqual(linhas[0][0], "19/06/26")
+
     def test_preparar_listview_inclui_tratativa_na_ordem(self) -> None:
         df = preparar_listview_dashboard([_row(tratativa="Aguardando")])
         self.assertEqual(

@@ -14,7 +14,7 @@ import pandas as pd
 from core.utils import sidebar_logo_path
 from services.dashboard_service import preparar_listview_dashboard
 from services.devolucao_service import (
-    _formatar_data,
+    _formatar_data_relatorio,
     _formatar_valor_br,
     _nome_responsavel_exibicao,
     _texto_celula,
@@ -165,7 +165,7 @@ def _linhas_tabela_pdf(rows: list) -> list[list[str]]:
     for r in rows:
         linhas.append(
             [
-                _formatar_data(r.data_devolucao),
+                _formatar_data_relatorio(r.data_devolucao),
                 _nome_responsavel_exibicao(r),
                 _texto_celula(r.motivo_devolucao),
                 _texto_tratativa_exibicao(getattr(r, "tratativa", None)),
