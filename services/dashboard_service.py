@@ -32,6 +32,7 @@ from services.devolucao_service import (
     _formatar_valor_br,
     _nome_responsavel_exibicao,
     _texto_celula,
+    _texto_tratativa_exibicao,
 )
 
 MESES_LABEL = [
@@ -220,6 +221,7 @@ def preparar_listview_dashboard(rows: list) -> pd.DataFrame:
     colunas = [
         "DATA + USUARIO",
         "MOTIVO",
+        "TRATATIVA",
         "NF",
         "VALOR",
         "COD CLIENTE",
@@ -236,6 +238,7 @@ def preparar_listview_dashboard(rows: list) -> pd.DataFrame:
             {
                 "DATA + USUARIO": f"{data_txt}\n{usuario}",
                 "MOTIVO": _texto_celula(r.motivo_devolucao),
+                "TRATATIVA": _texto_tratativa_exibicao(getattr(r, "tratativa", None)),
                 "NF": _texto_celula(r.nf_nfd),
                 "VALOR": _formatar_valor_br(r.valor_nf),
                 "COD CLIENTE": _texto_celula(r.cod_cliente),

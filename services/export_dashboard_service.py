@@ -18,6 +18,7 @@ from services.devolucao_service import (
     _formatar_valor_br,
     _nome_responsavel_exibicao,
     _texto_celula,
+    _texto_tratativa_exibicao,
 )
 
 # Paleta executiva — slate/navy refinado (sem azul saturado)
@@ -167,6 +168,7 @@ def _linhas_tabela_pdf(rows: list) -> list[list[str]]:
                 _formatar_data(r.data_devolucao),
                 _nome_responsavel_exibicao(r),
                 _texto_celula(r.motivo_devolucao),
+                _texto_tratativa_exibicao(getattr(r, "tratativa", None)),
                 _texto_celula(r.nf_nfd),
                 _formatar_valor_br(r.valor_nf),
                 _texto_celula(r.cod_cliente),
@@ -451,19 +453,22 @@ def export_listagem_pdf_bytes(
             "DATA",
             "USUÁRIO",
             "MOTIVO",
+            "TRATATIVA",
             "NF/NFD",
             "VALOR",
             "CÓD. CLIENTE",
             "VENDEDOR",
         ]
         col_widths = [
-            2.0 * cm,
-            2.6 * cm,
-            5.8 * cm,
-            2.1 * cm,
-            2.6 * cm,
+            1.9 * cm,
             2.4 * cm,
-            doc.width - (2.0 + 2.6 + 5.8 + 2.1 + 2.6 + 2.4) * cm,
+            4.6 * cm,
+            3.6 * cm,
+            2.0 * cm,
+            2.5 * cm,
+            2.3 * cm,
+            doc.width
+            - (1.9 + 2.4 + 4.6 + 3.6 + 2.0 + 2.5 + 2.3) * cm,
         ]
 
         header_row = [
@@ -480,10 +485,11 @@ def export_listagem_pdf_bytes(
                     Paragraph(escape(row[0]), styles["cell"]),
                     Paragraph(escape(row[1]), styles["cell"]),
                     Paragraph(escape(row[2]), styles["cell"]),
-                    Paragraph(escape(row[3]), styles["cell_center"]),
-                    Paragraph(escape(row[4]), styles["cell_right"]),
-                    Paragraph(escape(row[5]), styles["cell_center"]),
-                    Paragraph(escape(row[6]), styles["cell"]),
+                    Paragraph(escape(row[3]), styles["cell"]),
+                    Paragraph(escape(row[4]), styles["cell_center"]),
+                    Paragraph(escape(row[5]), styles["cell_right"]),
+                    Paragraph(escape(row[6]), styles["cell_center"]),
+                    Paragraph(escape(row[7]), styles["cell"]),
                 ]
             )
 
@@ -506,9 +512,9 @@ def export_listagem_pdf_bytes(
                     ("RIGHTPADDING", (0, 0), (-1, -1), 9),
                     ("TOPPADDING", (0, 1), (-1, -1), 8),
                     ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
-                    ("ALIGN", (4, 1), (4, -1), "RIGHT"),
-                    ("ALIGN", (3, 1), (3, -1), "CENTER"),
-                    ("ALIGN", (5, 1), (5, -1), "CENTER"),
+                    ("ALIGN", (5, 1), (5, -1), "RIGHT"),
+                    ("ALIGN", (4, 1), (4, -1), "CENTER"),
+                    ("ALIGN", (6, 1), (6, -1), "CENTER"),
                 ]
             )
         )
