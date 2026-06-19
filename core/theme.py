@@ -1,5 +1,5 @@
 """
-Tokens de tipografia e espaçamento — refinamento premium global (paleta inalterada).
+Tokens de tipografia e espaçamento — design system enterprise dark ERP/WMS.
 """
 
 from __future__ import annotations
@@ -24,56 +24,80 @@ TYPE_BASE = "0.875rem"      # 14px
 TYPE_MD = "0.9375rem"       # 15px
 TYPE_LG = "1.125rem"        # 18px
 TYPE_XL = "1.25rem"         # 20px — page header
-TYPE_KPI = "1.625rem"            # base valores KPI (~12% menor)
-TYPE_KPI_MONEY = "1.625rem"
-TYPE_KPI_IMPACTO = "1.625rem"    # R$ — legível sem dominar o card
-TYPE_KPI_DEVOLUCOES = "1.875rem" # contagem — leve destaque vs impacto
-TYPE_KPI_WIDE = "0.8125rem"      # principal motivo — abaixo dos números
+TYPE_KPI = "2rem"                # 32px — valor KPI corporativo
+TYPE_KPI_MONEY = "2rem"
+TYPE_KPI_IMPACTO = "2rem"
+TYPE_KPI_DEVOLUCOES = "2.125rem"  # 34px
+TYPE_KPI_WIDE = "0.8125rem"      # principal motivo
 TYPE_KPI_SM = TYPE_KPI_MONEY
-TYPE_CARD_LABEL = "0.75rem"
-KPI_CARD_MIN_HEIGHT = "7rem"
-KPI_TITLE_VALUE_GAP = "0.5rem"
-KPI_VALUE_LINE_HEIGHT = "1.05"
-# Alturas fixas anti layout-shift (px)
-KPI_VALUE_MIN_H_IMPACTO = "28px"
-KPI_VALUE_MIN_H_DEVOLUCOES = "32px"
-KPI_VALUE_MIN_H_WIDE = "16px"
+TYPE_CARD_LABEL = "0.75rem"        # 12px — título KPI
+KPI_CARD_MIN_HEIGHT = "6.5rem"
+KPI_TITLE_VALUE_GAP = "0.4rem"
+KPI_VALUE_LINE_HEIGHT = "1.15"
+KPI_VALUE_MIN_H_IMPACTO = "36px"
+KPI_VALUE_MIN_H_DEVOLUCOES = "36px"
+KPI_VALUE_MIN_H_WIDE = "18px"
+
 LISTVIEW_VISIBLE_ROWS = 20
 LISTVIEW_ROW_HEIGHT_PX = 44
 LISTVIEW_ROW_GAP_PX = 7
 LISTVIEW_SCROLL_PX = (
     LISTVIEW_VISIBLE_ROWS * LISTVIEW_ROW_HEIGHT_PX
     + (LISTVIEW_VISIBLE_ROWS - 1) * LISTVIEW_ROW_GAP_PX
-)  # 1013px — ~20 linhas visíveis (antes: 52vh ≈ 50 linhas)
+)
 LISTVIEW_PAGE_SIZE = 50
-# Grid corporativo — header e linhas compartilham exatamente estas colunas
-# Data(fr) | Motivo(fr) | Tratativa(fr) | NF(px) | Valor(px) | Cod(px) | Vendedor(fr) | Ações(px)
-LISTVIEW_GRID_COLUMNS = (
-    "minmax(110px, 9.5fr) minmax(168px, 24.9fr) minmax(290px, 27.3fr) "
-    "76px 92px 88px minmax(128px, 17.9fr) 56px"
-)
-LISTVIEW_GRID_COLUMNS_MD = (
-    "minmax(100px, 9.2fr) minmax(150px, 24.2fr) minmax(270px, 27.5fr) "
-    "70px 86px 82px minmax(118px, 17.5fr) 52px"
-)
-LISTVIEW_ROW_MIN_HEIGHT = "2.85rem"
-LISTVIEW_ROW_PADDING = "0.38rem 0.44rem"
 
-LINE_HEIGHT_TIGHT = "1.2"
-LINE_HEIGHT_NORMAL = "1.45"
+# Larguras corporativas (px) — proporção 180:450:180:110:140:140:220:120
+LISTVIEW_COL_DATA = 180
+LISTVIEW_COL_MOTIVO = 450
+LISTVIEW_COL_TRATATIVA = 180
+LISTVIEW_COL_NF = 110
+LISTVIEW_COL_VALOR = 140
+LISTVIEW_COL_COD = 140
+LISTVIEW_COL_VENDEDOR = 220
+LISTVIEW_COL_ACOES = 120
+LISTVIEW_GRID_MIN_WIDTH = (
+    LISTVIEW_COL_DATA
+    + LISTVIEW_COL_MOTIVO
+    + LISTVIEW_COL_TRATATIVA
+    + LISTVIEW_COL_NF
+    + LISTVIEW_COL_VALOR
+    + LISTVIEW_COL_COD
+    + LISTVIEW_COL_VENDEDOR
+    + LISTVIEW_COL_ACOES
+)  # 1540px
+
+# Grid fixo desktop — header e linhas idênticos
+LISTVIEW_GRID_COLUMNS = (
+    f"{LISTVIEW_COL_DATA}px {LISTVIEW_COL_MOTIVO}px {LISTVIEW_COL_TRATATIVA}px "
+    f"{LISTVIEW_COL_NF}px {LISTVIEW_COL_VALOR}px {LISTVIEW_COL_COD}px "
+    f"{LISTVIEW_COL_VENDEDOR}px {LISTVIEW_COL_ACOES}px"
+)
+# Proporções fr para viewports < 1540px úteis (mesma razão)
+LISTVIEW_GRID_COLUMNS_MD = (
+    "minmax(96px, 1.17fr) minmax(140px, 2.92fr) minmax(96px, 1.17fr) "
+    "minmax(72px, 0.71fr) minmax(88px, 0.91fr) minmax(88px, 0.91fr) "
+    "minmax(110px, 1.43fr) minmax(72px, 0.78fr)"
+)
+LISTVIEW_ROW_MIN_HEIGHT = "2.75rem"
+LISTVIEW_ROW_PADDING = "0.5rem 0.75rem"
+LISTVIEW_COL_GAP = "0.75rem"
+
+LINE_HEIGHT_TIGHT = "1.25"
+LINE_HEIGHT_NORMAL = "1.5"
 LINE_HEIGHT_RELAXED = "1.55"
 
-RADIUS_SM = "8px"
-RADIUS_MD = "10px"
-RADIUS_LG = "12px"
+RADIUS_SM = "6px"
+RADIUS_MD = "8px"
+RADIUS_LG = "10px"
 
-SHADOW_CARD = "0 1px 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.18)"
-SHADOW_CARD_HOVER = "0 2px 8px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.22)"
-SHADOW_SUBTLE = "0 1px 3px rgba(0,0,0,0.14)"
+SHADOW_CARD = "0 1px 2px rgba(0,0,0,0.18)"
+SHADOW_CARD_HOVER = "0 2px 6px rgba(0,0,0,0.22)"
+SHADOW_SUBTLE = "0 1px 2px rgba(0,0,0,0.12)"
 
 # Plotly — tipografia alinhada ao sistema
 PLOTLY_FONT = FONT_FAMILY_PLAIN
-PLOTLY_TITLE_SIZE = 15
+PLOTLY_TITLE_SIZE = 14
 PLOTLY_AXIS_SIZE = 11
 PLOTLY_HOVER_SIZE = 12
 PLOTLY_BAR_LABEL_SIZE = 11

@@ -29,8 +29,10 @@ from core.theme import (
     KPI_VALUE_MIN_H_WIDE,
     LISTVIEW_GRID_COLUMNS,
     LISTVIEW_GRID_COLUMNS_MD,
+    LISTVIEW_GRID_MIN_WIDTH,
     LISTVIEW_ROW_MIN_HEIGHT,
     LISTVIEW_ROW_PADDING,
+    LISTVIEW_COL_GAP,
     LISTVIEW_SCROLL_PX,
     TYPE_CARD_LABEL,
     TYPE_KPI,
@@ -74,10 +76,12 @@ def _base_css() -> str:
             font-size: {TYPE_BASE};
             font-weight: {FONT_WEIGHT_REGULAR};
             line-height: {LINE_HEIGHT_NORMAL};
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }}
 
         .stApp {{
-            background: linear-gradient(160deg, {COLORS["bg_primary"]} 0%, {COLORS["bg_secondary"]} 100%);
+            background: {COLORS["bg_primary"]};
         }}
 
         section.main .block-container {{
@@ -279,30 +283,22 @@ def inject_login_css(background_url: str | None = None) -> None:
 
 
 def _operational_cards_premium_css() -> str:
-    """Cards KPI — glass, profundidade e glow (Stripe/Linear/Supabase style)."""
+    """Cards KPI — enterprise dark (SAP Fiori / Salesforce style)."""
     return f"""
         /* Cards KPI — layout uniforme */
         div[data-testid="stHorizontalBlock"]:has(.op-card) {{
             align-items: stretch !important;
-            gap: 0.65rem !important;
+            gap: 0.75rem !important;
         }}
         div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) {{
-            gap: 0.5rem !important;
+            gap: 0.75rem !important;
         }}
         @media (max-width: 1280px) {{
             div[data-testid="stHorizontalBlock"]:has(.op-card-dashboard-row) {{
-                gap: 0.4rem !important;
+                gap: 0.5rem !important;
             }}
             .op-card {{
-                padding: 0.5rem 0.75rem 0.45rem !important;
-            }}
-            [data-testid="stMarkdownContainer"] .op-card p.op-card-value--impacto,
-            p.op-card-value--impacto {{
-                font-size: calc({TYPE_KPI_IMPACTO} * 0.92) !important;
-            }}
-            [data-testid="stMarkdownContainer"] .op-card p.op-card-value--devolucoes,
-            p.op-card-value--devolucoes {{
-                font-size: calc({TYPE_KPI_DEVOLUCOES} * 0.92) !important;
+                padding: 0.65rem 0.85rem !important;
             }}
         }}
         @media (max-width: 992px) {{
@@ -346,111 +342,61 @@ def _operational_cards_premium_css() -> str:
 
         .op-card {{
             position: relative;
-            isolation: isolate;
-            background: linear-gradient(
-                155deg,
-                rgba(38, 48, 68, 0.55) 0%,
-                rgba(22, 28, 40, 0.82) 48%,
-                rgba(17, 24, 39, 0.92) 100%
-            );
-            backdrop-filter: blur(14px) saturate(1.15);
-            -webkit-backdrop-filter: blur(14px) saturate(1.15);
-            border: 1px solid rgba(255, 255, 255, 0.09);
+            background: {COLORS["bg_card"]};
+            border: 1px solid {COLORS["border"]};
             border-radius: {RADIUS_LG};
-            margin-bottom: 0.35rem;
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.07),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-                0 1px 2px rgba(0, 0, 0, 0.22),
-                0 8px 28px rgba(0, 0, 0, 0.28);
-            transition:
-                transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-                border-color 0.22s ease,
-                box-shadow 0.22s ease;
-            /* sem transition em font-size — evita font jump */
+            margin-bottom: 0;
+            box-shadow: {SHADOW_SUBTLE};
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
             box-sizing: border-box;
             min-height: {KPI_CARD_MIN_HEIGHT};
             max-height: {KPI_CARD_MIN_HEIGHT};
             height: {KPI_CARD_MIN_HEIGHT};
             width: 100%;
-            padding: 0.58rem 1.1rem 0.52rem;
+            padding: 0.7rem 1rem 0.65rem;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             flex: 1 1 auto;
             overflow: hidden;
         }}
-        .op-card::before {{
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.06) 0%,
-                rgba(255, 255, 255, 0.01) 38%,
-                transparent 62%
-            );
-            pointer-events: none;
-            z-index: 0;
-        }}
+        .op-card::before,
         .op-card::after {{
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 8%;
-            right: 8%;
-            height: 1px;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.14),
-                transparent
-            );
-            pointer-events: none;
-            z-index: 1;
-        }}
-        .op-card > * {{
-            position: relative;
-            z-index: 2;
+            display: none;
         }}
         .op-card:hover {{
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.14);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.09),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.2),
-                0 4px 12px rgba(0, 0, 0, 0.25),
-                0 14px 36px rgba(0, 0, 0, 0.32);
+            border-color: rgba(139, 148, 158, 0.45);
+            box-shadow: {SHADOW_CARD};
         }}
 
         .op-card-title {{
-            color: rgba(230, 237, 243, 0.72);
+            color: {COLORS["text_muted"]};
             font-size: {TYPE_CARD_LABEL};
             font-weight: {FONT_WEIGHT_MEDIUM};
             text-transform: uppercase;
-            letter-spacing: 0.07em;
+            letter-spacing: 0.05em;
             margin: 0 0 {KPI_TITLE_VALUE_GAP} 0;
-            line-height: 1.25;
+            line-height: 1.3;
             flex: 0 0 auto;
         }}
-        /* Tipografia travada — sem clamp/vw; inline no HTML reforça primeiro paint */
         [data-testid="stMarkdownContainer"] .op-card p.op-card-title,
         .op-card p.op-card-title {{
             font-size: {TYPE_CARD_LABEL} !important;
-            line-height: 1.25 !important;
+            font-weight: {FONT_WEIGHT_MEDIUM} !important;
+            line-height: 1.3 !important;
         }}
         [data-testid="stMarkdownContainer"] .op-card p.op-card-value,
         .op-card p.op-card-value {{
             font-size: {TYPE_KPI} !important;
             font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
             line-height: {KPI_VALUE_LINE_HEIGHT} !important;
-            letter-spacing: -0.025em !important;
+            letter-spacing: -0.02em !important;
             margin: 0 !important;
             padding: 0 !important;
             flex: 0 0 auto;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-shadow: none !important;
         }}
         .op-card-value--impacto,
         p.op-card-value--impacto {{
@@ -458,8 +404,8 @@ def _operational_cards_premium_css() -> str:
             line-height: {KPI_VALUE_LINE_HEIGHT} !important;
             min-height: {KPI_VALUE_MIN_H_IMPACTO} !important;
             max-height: {KPI_VALUE_MIN_H_IMPACTO} !important;
-            letter-spacing: -0.03em !important;
-            text-shadow: 0 0 28px rgba(212, 160, 33, 0.28);
+            letter-spacing: -0.02em !important;
+            text-shadow: none !important;
         }}
         .op-card-value--devolucoes,
         p.op-card-value--devolucoes {{
@@ -467,18 +413,18 @@ def _operational_cards_premium_css() -> str:
             line-height: {KPI_VALUE_LINE_HEIGHT} !important;
             min-height: {KPI_VALUE_MIN_H_DEVOLUCOES} !important;
             max-height: {KPI_VALUE_MIN_H_DEVOLUCOES} !important;
-            letter-spacing: -0.03em !important;
-            text-shadow: 0 0 24px rgba(121, 192, 255, 0.26);
+            letter-spacing: -0.02em !important;
+            text-shadow: none !important;
         }}
         .op-card-value--wide,
         p.op-card-value--wide {{
             font-size: {TYPE_KPI_WIDE} !important;
-            line-height: 1.3 !important;
+            line-height: 1.35 !important;
             min-height: {KPI_VALUE_MIN_H_WIDE} !important;
             max-height: none !important;
             font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
-            letter-spacing: -0.015em !important;
-            text-shadow: 0 0 20px rgba(63, 185, 80, 0.22);
+            letter-spacing: -0.01em !important;
+            text-shadow: none !important;
             white-space: normal;
         }}
         .op-card-sub {{
@@ -486,94 +432,33 @@ def _operational_cards_premium_css() -> str:
             font-size: {TYPE_SM};
             font-weight: {FONT_WEIGHT_REGULAR};
             color: {COLORS["text_muted"]};
-            line-height: 1.35;
+            line-height: 1.4;
             margin: auto 0 0 0;
-            padding-top: 0.35rem;
+            padding-top: 0.3rem;
             flex: 0 0 auto;
         }}
         .op-card-sub-placeholder {{
             visibility: hidden;
             display: block;
             font-size: {TYPE_SM};
-            line-height: 1.35;
+            line-height: 1.4;
             margin: auto 0 0 0;
-            padding-top: 0.35rem;
+            padding-top: 0.3rem;
             min-height: 1.35em;
             flex: 0 0 auto;
         }}
 
         .op-card-accent-pendente {{
-            border-left: 4px solid rgba(210, 153, 33, 0.85);
-            background: linear-gradient(
-                155deg,
-                rgba(48, 42, 28, 0.42) 0%,
-                rgba(22, 28, 40, 0.86) 55%,
-                rgba(17, 24, 39, 0.94) 100%
-            );
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.07),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-                0 8px 28px rgba(0, 0, 0, 0.28),
-                0 0 32px rgba(210, 153, 33, 0.07);
+            border-left: 3px solid {COLORS["warning"]};
         }}
-        .op-card-accent-pendente:hover {{
-            border-left-color: rgba(212, 160, 33, 1);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.09),
-                0 14px 36px rgba(0, 0, 0, 0.32),
-                0 0 40px rgba(210, 153, 33, 0.14);
-        }}
-
         .op-card-accent-conferencia {{
-            border-left: 4px solid rgba(121, 192, 255, 0.88);
-            background: linear-gradient(
-                155deg,
-                rgba(28, 38, 58, 0.48) 0%,
-                rgba(22, 28, 40, 0.86) 55%,
-                rgba(17, 24, 39, 0.94) 100%
-            );
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.07),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-                0 8px 28px rgba(0, 0, 0, 0.28),
-                0 0 32px rgba(47, 128, 237, 0.08);
+            border-left: 3px solid {COLORS["accent_light"]};
         }}
-        .op-card-accent-conferencia:hover {{
-            border-left-color: rgba(121, 192, 255, 1);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.09),
-                0 14px 36px rgba(0, 0, 0, 0.32),
-                0 0 40px rgba(47, 128, 237, 0.16);
-        }}
-
         .op-card-accent-finalizada {{
-            border-left: 4px solid rgba(63, 185, 80, 0.88);
-            background: linear-gradient(
-                155deg,
-                rgba(24, 42, 32, 0.42) 0%,
-                rgba(22, 28, 40, 0.86) 55%,
-                rgba(17, 24, 39, 0.94) 100%
-            );
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.07),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-                0 8px 28px rgba(0, 0, 0, 0.28),
-                0 0 32px rgba(63, 185, 80, 0.07);
+            border-left: 3px solid {COLORS["success"]};
         }}
-        .op-card-accent-finalizada:hover {{
-            border-left-color: rgba(63, 185, 80, 1);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.09),
-                0 14px 36px rgba(0, 0, 0, 0.32),
-                0 0 40px rgba(63, 185, 80, 0.14);
-        }}
-
         .op-card-accent-coleta {{
-            border-left: 4px solid rgba(248, 81, 73, 0.88);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.07),
-                0 8px 28px rgba(0, 0, 0, 0.28),
-                0 0 28px rgba(248, 81, 73, 0.08);
+            border-left: 3px solid {COLORS["danger"]};
         }}
     """
 
@@ -789,45 +674,44 @@ def inject_listview_premium_css() -> None:
     st.markdown(
         f"""
         <style>
-        /* Escopo estável — evita conflito com CSS global em reruns/navegação */
+        /* Escopo estável — grade corporativa enterprise */
         .lista-premium-stable {{
             width: 100%;
             max-width: 100%;
             margin-top: 0.5rem;
         }}
         .lista-premium-header {{
-            background: rgba(255,255,255,0.02);
-            border-top: 1px solid rgba(255,255,255,0.08);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            border-radius: {RADIUS_LG};
+            background: {COLORS["bg_card"]};
+            border: 1px solid {COLORS["border"]};
+            border-radius: {RADIUS_LG} {RADIUS_LG} 0 0;
             padding: 0;
-            margin-bottom: 0.45rem;
+            margin-bottom: 0;
         }}
         .lista-premium-header-sticky {{
             position: sticky;
             top: 0;
             z-index: 3;
-            backdrop-filter: blur(6px);
         }}
-        /* Scroll — mesmo container para header + linhas (larguras idênticas) */
+        /* Scroll — header + linhas compartilham largura de grade */
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) {{
             max-height: {LISTVIEW_SCROLL_PX}px !important;
             height: {LISTVIEW_SCROLL_PX}px !important;
             overflow: hidden !important;
-            border: none !important;
-            background: transparent !important;
+            border: 1px solid {COLORS["border"]} !important;
+            border-radius: {RADIUS_LG} !important;
+            background: {COLORS["bg_secondary"]} !important;
         }}
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
             > div[data-testid="stVerticalBlock"] {{
             display: flex !important;
             flex-direction: column !important;
-            gap: 0.45rem !important;
+            gap: 0 !important;
             max-height: {LISTVIEW_SCROLL_PX}px !important;
             height: 100% !important;
             min-height: 0 !important;
             overflow-y: auto !important;
-            overflow-x: hidden !important;
-            padding-right: 0.5rem;
+            overflow-x: auto !important;
+            padding-right: 0;
             scrollbar-gutter: stable;
             scrollbar-width: thin;
             scrollbar-color: rgba(139, 148, 158, 0.4) rgba(255, 255, 255, 0.04);
@@ -848,37 +732,42 @@ def inject_listview_premium_css() -> None:
             border: 2px solid transparent;
             background-clip: padding-box;
         }}
-        /* Grid fixo — header e linhas com mesma geometria */
+        /* Grid fixo — header e linhas com mesma geometria (1540px desktop) */
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
             display: grid !important;
             grid-template-columns: {LISTVIEW_GRID_COLUMNS} !important;
-            column-gap: 0.34rem !important;
+            column-gap: {LISTVIEW_COL_GAP} !important;
             row-gap: 0 !important;
             align-items: center !important;
             width: 100% !important;
-            max-width: 100% !important;
+            min-width: {LISTVIEW_GRID_MIN_WIDTH}px !important;
+            max-width: none !important;
             min-height: {LISTVIEW_ROW_MIN_HEIGHT} !important;
             padding: {LISTVIEW_ROW_PADDING} !important;
             box-sizing: border-box !important;
         }}
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
+            background: {COLORS["bg_card"]};
+            border: none;
+            border-bottom: 1px solid {COLORS["border"]};
+            box-shadow: none;
+            margin: 0;
+            min-height: 2.5rem !important;
+        }}
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
             background: transparent;
             border: none;
+            border-bottom: 1px solid {COLORS["border"]};
+            border-radius: 0;
             box-shadow: none;
             margin: 0;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
-            background: rgba(17,24,39,0.35);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: {RADIUS_LG};
-            box-shadow: {SHADOW_SUBTLE};
-            margin: 0;
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker):last-child {{
+            border-bottom: none;
         }}
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker):hover {{
-            background: rgba(17,24,39,0.5);
-            border-color: rgba(96, 165, 250, 0.22);
-            box-shadow: 0 14px 34px rgba(59,130,246,0.12);
+            background: rgba(28, 35, 51, 0.55);
         }}
         .lista-premium-stable [data-testid="column"],
         .lista-premium-stable [data-testid="stColumn"] {{
@@ -905,38 +794,55 @@ def inject_listview_premium_css() -> None:
         .lista-dash-th {{
             color: {COLORS["text_muted"]};
             font-size: {TYPE_XS};
-            font-weight: {FONT_WEIGHT_MEDIUM};
-            letter-spacing: 0.04em;
+            font-weight: {FONT_WEIGHT_SEMIBOLD};
+            letter-spacing: 0.03em;
             margin: 0;
             text-transform: uppercase;
             line-height: 1.2;
+            white-space: nowrap;
         }}
-        .lista-dash-th-acoes {{
+        .lista-dash-th-acoes,
+        .lista-dash-th-center {{
             text-align: center !important;
             white-space: nowrap !important;
         }}
-        /* Alinhamento por coluna — mesma geometria no header e nas linhas */
+        /* Colunas NF, Valor, Cod, Vendedor, Ações — alinhamento central */
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(8),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(8) {{
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
+            text-align: center !important;
         }}
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4) [data-testid="stMarkdown"],
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5) [data-testid="stMarkdown"],
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4) [data-testid="stMarkdown"],
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5) [data-testid="stMarkdown"],
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6) [data-testid="stMarkdown"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6) [data-testid="stMarkdown"] {{
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6) [data-testid="stMarkdown"],
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7) [data-testid="stMarkdown"],
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7) [data-testid="stMarkdown"] {{
             width: 100% !important;
             display: flex !important;
             justify-content: center !important;
+        }}
+        .lv-col-nf,
+        .lv-col-valor,
+        .lv-col-cod,
+        .lv-col-vendedor {{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+            width: 100%;
         }}
         .lv-cell {{
             color: {COLORS["text"]};
@@ -990,23 +896,20 @@ def inject_listview_premium_css() -> None:
         }}
         .lv-cell-motivo {{
             font-weight: {FONT_WEIGHT_MEDIUM};
-            color: rgba(248, 250, 252, 0.96);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            color: {COLORS["text"]};
+            white-space: nowrap;
             overflow: hidden;
-            line-height: 1.2;
+            text-overflow: ellipsis;
+            line-height: {LINE_HEIGHT_TIGHT};
             max-width: 100%;
         }}
         .lv-cell-tratativa {{
             font-weight: {FONT_WEIGHT_REGULAR};
-            color: rgba(241, 245, 249, 0.94);
-            white-space: normal;
-            overflow: visible;
-            text-overflow: unset;
-            word-break: normal;
-            overflow-wrap: anywhere;
-            line-height: 1.25;
+            color: {COLORS["text"]};
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: {LINE_HEIGHT_TIGHT};
             max-width: 100%;
         }}
         .lv-cell-truncate {{
@@ -1018,37 +921,36 @@ def inject_listview_premium_css() -> None:
         }}
         .lv-cell-vendedor {{
             max-width: 100%;
-            color: rgba(241, 245, 249, 0.94);
+            color: {COLORS["text"]};
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             display: block;
-            line-height: 1.25;
+            line-height: {LINE_HEIGHT_TIGHT};
+            text-align: center;
         }}
         .lv-badge {{
-            display: inline-flex;
+            display: inline-block;
             align-items: center;
             justify-content: center;
-            min-height: 1.75rem;
-            padding: 0.28rem 0.6rem;
-            border-radius: {RADIUS_SM};
+            min-height: auto;
+            padding: 0;
+            border-radius: 0;
             font-size: {TYPE_SM};
             font-weight: {FONT_WEIGHT_MEDIUM};
-            line-height: 1;
+            line-height: {LINE_HEIGHT_TIGHT};
             white-space: nowrap;
             max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
+            background: transparent;
+            border: none;
         }}
         .lv-badge-nf {{
-            color: #93c5fd;
-            background: rgba(59,130,246,0.10);
-            border: 1px solid rgba(59,130,246,0.18);
+            color: {COLORS["accent_light"]};
         }}
         .lv-badge-valor {{
-            color: #4ade80;
-            background: rgba(34,197,94,0.10);
-            border: 1px solid rgba(34,197,94,0.20);
+            color: {COLORS["success"]};
             font-variant-numeric: tabular-nums;
         }}
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stMarkdownContainer"],
@@ -1146,10 +1048,11 @@ def inject_listview_premium_css() -> None:
             min-height: 1.7rem !important;
             padding: 0 !important;
         }}
-        @media (max-width: 1400px) {{
+        @media (max-width: 1540px) {{
             .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
             .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
                 grid-template-columns: {LISTVIEW_GRID_COLUMNS_MD} !important;
+                min-width: 0 !important;
             }}
         }}
         </style>

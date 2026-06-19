@@ -27,10 +27,9 @@ from services.devolucao_service import (
     excluir_devolucao,
 )
 
-# Proporções fixas (soma 9.97) — espelham LISTVIEW_GRID_COLUMNS em core/theme.py
-# Data | Motivo | Tratativa | NF | Valor | Cod | Vendedor | Ações
-_COLS_DADOS = [0.95, 2.48, 2.72, 0.46, 0.52, 0.70, 1.78]
-_COLS_ACOES = 0.36
+# Proporções — espelham LISTVIEW_GRID (180:450:180:110:140:140:220:120)
+_COLS_DADOS = [1.17, 2.92, 1.17, 0.71, 0.91, 0.91, 1.43]
+_COLS_ACOES = 0.78
 _COLS_HEADER = [*_COLS_DADOS, _COLS_ACOES]
 _COLS_ROW = _COLS_HEADER
 
@@ -43,7 +42,7 @@ COLUNAS_LISTVIEW_OPERACIONAL = [
     "Tratativa",
     "NF",
     "Valor",
-    "Cod Cliente",
+    "Cod. Cliente",
     "Vendedor",
     "Ações",
 ]
@@ -313,7 +312,12 @@ def _render_cabecalho_tabela() -> None:
                     unsafe_allow_html=True,
                 )
             if label:
-                cls = "lista-dash-th lista-dash-th-acoes" if label == "Ações" else "lista-dash-th"
+                if label == "Ações":
+                    cls = "lista-dash-th lista-dash-th-acoes"
+                elif label in ("NF", "Valor", "Cod. Cliente"):
+                    cls = "lista-dash-th lista-dash-th-center"
+                else:
+                    cls = "lista-dash-th"
                 st.markdown(f'<p class="{cls}">{label}</p>', unsafe_allow_html=True)
 
 
@@ -428,12 +432,15 @@ def _render_linha(
             unsafe_allow_html=True,
         )
     with cols[5]:
-        st.markdown(_html_celula(dados["cod_cliente"]), unsafe_allow_html=True)
+        st.markdown(
+            _html_celula(dados["cod_cliente"], extra_class="lv-col-cod"),
+            unsafe_allow_html=True,
+        )
     with cols[6]:
         st.markdown(
             _html_celula(
                 dados["vendedor"],
-                extra_class="lv-cell-vendedor lv-cell-truncate",
+                extra_class="lv-cell-vendedor lv-col-vendedor",
                 title=dados["vendedor"],
             ),
             unsafe_allow_html=True,
