@@ -32,6 +32,7 @@ from core.theme import (
     LISTVIEW_GRID_MIN_WIDTH,
     LISTVIEW_ROW_MIN_HEIGHT,
     LISTVIEW_ROW_PADDING,
+    LISTVIEW_ROW_CLAMP_LINE_HEIGHT,
     LISTVIEW_COL_GAP,
     LISTVIEW_COL_COD,
     LISTVIEW_COL_VALOR,
@@ -756,7 +757,14 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             border-bottom: 1px solid {COLORS["border"]};
             box-shadow: none;
             margin: 0;
-            min-height: 2.5rem !important;
+            min-height: 2.125rem !important;
+        }}
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            > div[data-testid="stVerticalBlock"] > div:has([data-testid="stHorizontalBlock"]:has(.lv-row-marker)),
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stElementContainer"]:has([data-testid="stHorizontalBlock"]:has(.lv-row-marker)) {{
+            margin: 0 !important;
+            padding: 0 !important;
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
             background: transparent;
@@ -909,17 +917,17 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             word-break: normal;
         }}
         .lv-cell-user {{
-            line-height: 1.06;
-            padding-right: 0.12rem;
+            line-height: 1.02;
+            padding-right: 0.08rem;
             display: flex;
             flex-direction: column;
-            gap: 0.14rem;
+            gap: 0.05rem;
             min-width: 0;
         }}
         .lv-meta-row {{
             display: flex;
             align-items: center;
-            gap: 0.34rem;
+            gap: 0.25rem;
             min-width: 0;
         }}
         .lv-meta-row-date {{
@@ -959,8 +967,8 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal;
-            line-height: 1.4;
-            max-height: calc(1.4em * 2);
+            line-height: {LISTVIEW_ROW_CLAMP_LINE_HEIGHT};
+            max-height: calc({LISTVIEW_ROW_CLAMP_LINE_HEIGHT}em * 2);
             max-width: 100%;
         }}
         .lv-cell-tratativa {{
@@ -972,8 +980,8 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal;
-            line-height: 1.4;
-            max-height: calc(1.4em * 2);
+            line-height: {LISTVIEW_ROW_CLAMP_LINE_HEIGHT};
+            max-height: calc({LISTVIEW_ROW_CLAMP_LINE_HEIGHT}em * 2);
             max-width: 100%;
         }}
         .lv-cell-truncate {{
@@ -992,9 +1000,17 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal;
-            line-height: 1.4;
-            max-height: calc(1.4em * 2);
+            line-height: {LISTVIEW_ROW_CLAMP_LINE_HEIGHT};
+            max-height: calc({LISTVIEW_ROW_CLAMP_LINE_HEIGHT}em * 2);
             text-align: center;
+        }}
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stHorizontalBlock"]:has(.lv-row-marker) p.lv-cell,
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stHorizontalBlock"]:has(.lv-row-marker) .lv-cell-user {{
+            margin: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
         }}
         .lv-badge {{
             display: inline-block;
@@ -1088,8 +1104,8 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         div[data-testid="column"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"],
         div[data-testid="stColumn"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"] {{
             display: grid !important;
-            grid-template-columns: 1.7rem 1.7rem !important;
-            column-gap: 0.28rem !important;
+            grid-template-columns: 1.45rem 1.45rem !important;
+            column-gap: 0.22rem !important;
             align-items: center !important;
             justify-content: center !important;
             width: auto !important;
@@ -1098,17 +1114,17 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         }}
         div[data-testid="column"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"] > div,
         div[data-testid="stColumn"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"] > div {{
-            flex: 0 0 1.7rem !important;
-            width: 1.7rem !important;
-            min-width: 1.7rem !important;
-            max-width: 1.7rem !important;
+            flex: 0 0 1.45rem !important;
+            width: 1.45rem !important;
+            min-width: 1.45rem !important;
+            max-width: 1.45rem !important;
         }}
         div[data-testid="column"]:has(.lista-dash-col-acoes-marker) button,
         div[data-testid="stColumn"]:has(.lista-dash-col-acoes-marker) button {{
-            width: 1.7rem !important;
-            min-width: 1.7rem !important;
-            height: 1.7rem !important;
-            min-height: 1.7rem !important;
+            width: 1.45rem !important;
+            min-width: 1.45rem !important;
+            height: 1.45rem !important;
+            min-height: 1.45rem !important;
             padding: 0 !important;
             border-radius: 7px !important;
             border: 1px solid rgba(255,255,255,0.08) !important;
@@ -1145,24 +1161,24 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         div[data-testid="column"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"],
         div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] {{
             display: grid !important;
-            grid-template-columns: minmax(0, 1fr) 1.7rem !important;
+            grid-template-columns: minmax(0, 1fr) 1.45rem !important;
             align-items: center !important;
-            gap: 0.24rem !important;
+            gap: 0.18rem !important;
             width: 100% !important;
         }}
         div[data-testid="column"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] > div:last-child,
         div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] > div:last-child {{
-            flex: 0 0 1.7rem !important;
-            width: 1.7rem !important;
-            min-width: 1.7rem !important;
-            max-width: 1.7rem !important;
+            flex: 0 0 1.45rem !important;
+            width: 1.45rem !important;
+            min-width: 1.45rem !important;
+            max-width: 1.45rem !important;
         }}
         div[data-testid="column"]:has(.lista-dash-col-tratativa-marker) button,
         div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) button {{
-            width: 1.7rem !important;
-            min-width: 1.7rem !important;
-            height: 1.7rem !important;
-            min-height: 1.7rem !important;
+            width: 1.45rem !important;
+            min-width: 1.45rem !important;
+            height: 1.45rem !important;
+            min-height: 1.45rem !important;
             padding: 0 !important;
         }}
         @media (max-width: {LISTVIEW_GRID_MIN_WIDTH}px) {{
