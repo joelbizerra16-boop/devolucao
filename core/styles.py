@@ -712,8 +712,11 @@ def inject_listview_premium_css() -> None:
             display: flex !important;
             flex-direction: column !important;
             gap: 0 !important;
+            justify-content: flex-start !important;
+            align-content: flex-start !important;
+            align-items: stretch !important;
             max-height: {LISTVIEW_SCROLL_PX}px !important;
-            height: 100% !important;
+            height: auto !important;
             min-height: 0 !important;
             overflow-y: auto !important;
             overflow-x: auto !important;
@@ -757,10 +760,11 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
             align-items: start !important;
-            grid-auto-rows: min-content !important;
             min-height: {LISTVIEW_ROW_MIN_HEIGHT} !important;
             height: auto !important;
             padding: {LISTVIEW_ROW_PADDING} !important;
+            flex: 0 0 auto !important;
+            flex-grow: 0 !important;
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
             background: {COLORS["bg_card"]};
@@ -773,10 +777,18 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             > div[data-testid="stVerticalBlock"] > * {{
             margin-block: 0 !important;
             padding-block: 0 !important;
+            flex: 0 0 auto !important;
+            flex-grow: 0 !important;
+            flex-shrink: 0 !important;
+            height: auto !important;
+            max-height: none !important;
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stElementContainer"] {{
             margin: 0 !important;
             padding: 0 !important;
+            flex: 0 0 auto !important;
+            flex-grow: 0 !important;
+            height: auto !important;
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
             [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stVerticalBlock"],
@@ -806,6 +818,10 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             [data-testid="stElementContainer"]:has([data-testid="stHorizontalBlock"]:has(.lv-row-marker)) {{
             margin: 0 !important;
             padding: 0 !important;
+            flex: 0 0 auto !important;
+            flex-grow: 0 !important;
+            height: auto !important;
+            max-height: none !important;
         }}
         /* Divisor entre registros — linha cinza visível em toda a largura do grid */
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) .lv-row-divider {{
@@ -1021,23 +1037,29 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             white-space: nowrap;
             text-overflow: ellipsis;
         }}
-        /* Clamp 2 linhas — altura dinâmica: 1 linha compacta, 2 linhas só quando necessário */
+        /* Clamp 2 linhas — altura pelo conteúdo (1 ou 2 linhas), sem reserva fixa */
         .lv-cell-motivo,
         .lv-cell-tratativa,
         .lv-cell-vendedor {{
+            display: block;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal;
             word-break: break-word;
             line-height: {LISTVIEW_ROW_CLAMP_LINE_HEIGHT};
-            line-clamp: 2;
-            -webkit-line-clamp: 2;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
             height: auto;
             min-height: 0;
-            max-height: none;
             max-width: 100%;
+        }}
+        @supports ((-webkit-line-clamp: 2) or (line-clamp: 2)) {{
+            .lv-cell-motivo,
+            .lv-cell-tratativa,
+            .lv-cell-vendedor {{
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+            }}
         }}
         .lv-cell-motivo {{
             font-weight: {FONT_WEIGHT_MEDIUM};
