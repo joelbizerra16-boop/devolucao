@@ -47,15 +47,15 @@ LISTVIEW_SCROLL_PX = (
 )
 LISTVIEW_PAGE_SIZE = 50
 
-# Larguras corporativas (px) — proporção 180:450:180:110:140:140:220:120
-LISTVIEW_COL_DATA = 180
-LISTVIEW_COL_MOTIVO = 450
-LISTVIEW_COL_TRATATIVA = 180
+# Larguras corporativas (px) — proporção 190:410:230:110:140:160:250:130
+LISTVIEW_COL_DATA = 190
+LISTVIEW_COL_MOTIVO = 410
+LISTVIEW_COL_TRATATIVA = 230
 LISTVIEW_COL_NF = 110
 LISTVIEW_COL_VALOR = 140
-LISTVIEW_COL_COD = 140
-LISTVIEW_COL_VENDEDOR = 220
-LISTVIEW_COL_ACOES = 120
+LISTVIEW_COL_COD = 160
+LISTVIEW_COL_VENDEDOR = 250
+LISTVIEW_COL_ACOES = 130
 LISTVIEW_GRID_MIN_WIDTH = (
     LISTVIEW_COL_DATA
     + LISTVIEW_COL_MOTIVO
@@ -65,7 +65,7 @@ LISTVIEW_GRID_MIN_WIDTH = (
     + LISTVIEW_COL_COD
     + LISTVIEW_COL_VENDEDOR
     + LISTVIEW_COL_ACOES
-)  # 1540px
+)  # 1620px
 
 # Grid fixo desktop — header e linhas idênticos
 LISTVIEW_GRID_COLUMNS = (
@@ -73,11 +73,11 @@ LISTVIEW_GRID_COLUMNS = (
     f"{LISTVIEW_COL_NF}px {LISTVIEW_COL_VALOR}px {LISTVIEW_COL_COD}px "
     f"{LISTVIEW_COL_VENDEDOR}px {LISTVIEW_COL_ACOES}px"
 )
-# Proporções fr para viewports < 1540px úteis (mesma razão)
+# Proporções fr para viewports < LISTVIEW_GRID_MIN_WIDTH (mesma razão)
 LISTVIEW_GRID_COLUMNS_MD = (
-    "minmax(96px, 1.17fr) minmax(140px, 2.92fr) minmax(96px, 1.17fr) "
-    "minmax(72px, 0.71fr) minmax(88px, 0.91fr) minmax(88px, 0.91fr) "
-    "minmax(110px, 1.43fr) minmax(72px, 0.78fr)"
+    "minmax(96px, 1.14fr) minmax(140px, 2.46fr) minmax(110px, 1.38fr) "
+    "minmax(72px, 0.66fr) minmax(88px, 0.84fr) minmax(88px, 0.96fr) "
+    "minmax(110px, 1.5fr) minmax(72px, 0.78fr)"
 )
 LISTVIEW_ROW_MIN_HEIGHT = "2.75rem"
 LISTVIEW_ROW_PADDING = "0.5rem 0.75rem"

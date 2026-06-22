@@ -27,8 +27,8 @@ from services.devolucao_service import (
     excluir_devolucao,
 )
 
-# Proporções — espelham LISTVIEW_GRID (180:450:180:110:140:140:220:120)
-_COLS_DADOS = [1.17, 2.92, 1.17, 0.71, 0.91, 0.91, 1.43]
+# Proporções — espelham LISTVIEW_GRID (190:410:230:110:140:160:250:130)
+_COLS_DADOS = [1.14, 2.46, 1.38, 0.66, 0.84, 0.96, 1.5]
 _COLS_ACOES = 0.78
 _COLS_HEADER = [*_COLS_DADOS, _COLS_ACOES]
 _COLS_ROW = _COLS_HEADER
@@ -63,16 +63,25 @@ def _linha_para_exibicao(row) -> dict[str, str]:
     }
 
 
+def _tip_markup(texto: str | None) -> tuple[str, str]:
+    """Classe e atributo para tooltip estilizado (sem title nativo)."""
+    if not texto or texto == "—":
+        return "", ""
+    return " lv-tip", f' data-lv-tip="{escape(texto, quote=True)}"'
+
+
 def _html_celula_usuario(data_txt: str, usuario: str) -> str:
+    tip_data_cls, tip_data_attr = _tip_markup(data_txt)
+    tip_user_cls, tip_user_attr = _tip_markup(usuario)
     return (
         f'<div class="lv-cell lv-cell-user">'
         f'<span class="lv-meta-row lv-meta-row-date">'
         f'<span class="lv-meta-icon">◷</span>'
-        f'<span class="lv-date" title="{escape(data_txt, quote=True)}">{escape(data_txt)}</span>'
+        f'<span class="lv-date{tip_data_cls}"{tip_data_attr}>{escape(data_txt)}</span>'
         f"</span>"
         f'<span class="lv-meta-row lv-meta-row-user">'
         f'<span class="lv-meta-icon">◦</span>'
-        f'<span class="lv-name" title="{escape(usuario, quote=True)}">{escape(usuario)}</span>'
+        f'<span class="lv-name{tip_user_cls}"{tip_user_attr}>{escape(usuario)}</span>'
         f"</span>"
         f"</div>"
     )
@@ -90,16 +99,20 @@ def _html_celula(
         classes.append("lv-cell-valor")
     if extra_class:
         classes.append(extra_class)
-    title_attr = f' title="{escape(title, quote=True)}"' if title else ""
-    return f'<p class="{" ".join(classes)}"{title_attr}>{escape(texto)}</p>'
+    tip_cls, tip_attr = _tip_markup(title)
+    if tip_cls:
+        classes.append(tip_cls.strip())
+    return f'<p class="{" ".join(classes)}"{tip_attr}>{escape(texto)}</p>'
 
 
 def _html_badge(texto: str, *, extra_class: str = "", title: str | None = None) -> str:
     classes = ["lv-badge"]
     if extra_class:
         classes.append(extra_class)
-    title_attr = f' title="{escape(title, quote=True)}"' if title else ""
-    return f'<span class="{" ".join(classes)}"{title_attr}>{escape(texto)}</span>'
+    tip_cls, tip_attr = _tip_markup(title)
+    if tip_cls:
+        classes.append(tip_cls.strip())
+    return f'<span class="{" ".join(classes)}"{tip_attr}>{escape(texto)}</span>'
 
 
 @st.dialog("Editar devolução")

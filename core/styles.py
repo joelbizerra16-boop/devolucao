@@ -732,7 +732,7 @@ def inject_listview_premium_css() -> None:
             border: 2px solid transparent;
             background-clip: padding-box;
         }}
-        /* Grid fixo — header e linhas com mesma geometria (1540px desktop) */
+        /* Grid fixo — header e linhas com mesma geometria ({LISTVIEW_GRID_MIN_WIDTH}px desktop) */
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
             display: grid !important;
@@ -953,6 +953,53 @@ def inject_listview_premium_css() -> None:
             color: {COLORS["success"]};
             font-variant-numeric: tabular-nums;
         }}
+        /* Tooltip estilizado — legibilidade (substitui title nativo) */
+        .lista-premium-stable .lv-tip[data-lv-tip] {{
+            position: relative;
+            cursor: default;
+        }}
+        .lista-premium-stable .lv-tip[data-lv-tip]::after {{
+            content: attr(data-lv-tip);
+            position: absolute;
+            left: 0;
+            bottom: calc(100% + 0.35rem);
+            z-index: 30;
+            display: block;
+            width: max-content;
+            max-width: min(22rem, 88vw);
+            padding: 0.45rem 0.65rem;
+            font-size: {TYPE_MD};
+            font-weight: {FONT_WEIGHT_REGULAR};
+            line-height: {LINE_HEIGHT_NORMAL};
+            color: {COLORS["text"]};
+            background: {COLORS["bg_card"]};
+            border: 1px solid {COLORS["border"]};
+            border-radius: {RADIUS_SM};
+            box-shadow: {SHADOW_CARD};
+            white-space: normal;
+            word-break: break-word;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.12s ease;
+        }}
+        .lista-premium-stable .lv-tip[data-lv-tip]:hover {{
+            z-index: 25;
+            overflow: visible;
+        }}
+        .lista-premium-stable .lv-tip[data-lv-tip]:hover::after {{
+            opacity: 1;
+            visibility: visible;
+        }}
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:has(.lv-tip:hover),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:has(.lv-tip:hover) {{
+            overflow: visible !important;
+            z-index: 12;
+        }}
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stMarkdownContainer"]:has(.lv-tip:hover),
+        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stMarkdownContainer"]:has(.lv-tip:hover) {{
+            overflow: visible !important;
+        }}
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stMarkdownContainer"],
         .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stMarkdownContainer"] {{
             margin: 0 !important;
@@ -1048,7 +1095,7 @@ def inject_listview_premium_css() -> None:
             min-height: 1.7rem !important;
             padding: 0 !important;
         }}
-        @media (max-width: 1540px) {{
+        @media (max-width: {LISTVIEW_GRID_MIN_WIDTH}px) {{
             .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
             .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
                 grid-template-columns: {LISTVIEW_GRID_COLUMNS_MD} !important;
