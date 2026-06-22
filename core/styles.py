@@ -840,8 +840,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         }}
         .lv-col-nf,
         .lv-col-valor,
-        .lv-col-cod,
-        .lv-col-vendedor {{
+        .lv-col-cod {{
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -901,19 +900,27 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         .lv-cell-motivo {{
             font-weight: {FONT_WEIGHT_MEDIUM};
             color: {COLORS["text"]};
-            white-space: nowrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: {LINE_HEIGHT_TIGHT};
+            white-space: normal;
+            line-height: 1.4;
+            max-height: calc(1.4em * 2);
             max-width: 100%;
         }}
         .lv-cell-tratativa {{
             font-weight: {FONT_WEIGHT_REGULAR};
             color: {COLORS["text"]};
-            white-space: nowrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: {LINE_HEIGHT_TIGHT};
+            white-space: normal;
+            line-height: 1.4;
+            max-height: calc(1.4em * 2);
             max-width: 100%;
         }}
         .lv-cell-truncate {{
@@ -926,11 +933,14 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         .lv-cell-vendedor {{
             max-width: 100%;
             color: {COLORS["text"]};
-            white-space: nowrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: block;
-            line-height: {LINE_HEIGHT_TIGHT};
+            white-space: normal;
+            line-height: 1.4;
+            max-height: calc(1.4em * 2);
             text-align: center;
         }}
         .lv-badge {{
