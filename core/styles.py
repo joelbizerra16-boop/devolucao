@@ -1021,31 +1021,35 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             white-space: nowrap;
             text-overflow: ellipsis;
         }}
-        .lv-cell-motivo {{
-            font-weight: {FONT_WEIGHT_MEDIUM};
-            color: {COLORS["text"]};
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+        /* Clamp 2 linhas — altura dinâmica: 1 linha compacta, 2 linhas só quando necessário */
+        .lv-cell-motivo,
+        .lv-cell-tratativa,
+        .lv-cell-vendedor {{
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal;
+            word-break: break-word;
             line-height: {LISTVIEW_ROW_CLAMP_LINE_HEIGHT};
-            max-height: calc({LISTVIEW_ROW_CLAMP_LINE_HEIGHT}em * 2);
+            line-clamp: 2;
+            -webkit-line-clamp: 2;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            height: auto;
+            min-height: 0;
+            max-height: none;
             max-width: 100%;
+        }}
+        .lv-cell-motivo {{
+            font-weight: {FONT_WEIGHT_MEDIUM};
+            color: {COLORS["text"]};
         }}
         .lv-cell-tratativa {{
             font-weight: {FONT_WEIGHT_REGULAR};
             color: {COLORS["text"]};
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-            line-height: {LISTVIEW_ROW_CLAMP_LINE_HEIGHT};
-            max-height: calc({LISTVIEW_ROW_CLAMP_LINE_HEIGHT}em * 2);
-            max-width: 100%;
+        }}
+        .lv-cell-vendedor {{
+            color: {COLORS["text"]};
+            text-align: center;
         }}
         .lv-cell-truncate {{
             overflow: hidden;
@@ -1054,18 +1058,15 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             display: block;
             width: 100%;
         }}
-        .lv-cell-vendedor {{
-            max-width: 100%;
-            color: {COLORS["text"]};
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-            line-height: {LISTVIEW_ROW_CLAMP_LINE_HEIGHT};
-            max-height: calc({LISTVIEW_ROW_CLAMP_LINE_HEIGHT}em * 2);
-            text-align: center;
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdownContainer"] p.lv-cell-motivo,
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdownContainer"] p.lv-cell-tratativa,
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdownContainer"] p.lv-cell-vendedor {{
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
         }}
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
             [data-testid="stHorizontalBlock"]:has(.lv-row-marker) p.lv-cell,
