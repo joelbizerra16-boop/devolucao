@@ -27,8 +27,8 @@ from services.devolucao_service import (
     excluir_devolucao,
 )
 
-# Proporções — espelham LISTVIEW_GRID (190:410:230:110:140:160:250:130)
-_COLS_DADOS = [1.14, 2.46, 1.38, 0.66, 0.84, 0.96, 1.5]
+# Proporções — espelham LISTVIEW_GRID (190:390:270:110:140:160:250:130)
+_COLS_DADOS = [1.12, 2.05, 1.72, 0.66, 0.84, 0.96, 1.5]
 _COLS_ACOES = 0.78
 _COLS_HEADER = [*_COLS_DADOS, _COLS_ACOES]
 _COLS_ROW = _COLS_HEADER
@@ -64,10 +64,11 @@ def _linha_para_exibicao(row) -> dict[str, str]:
 
 
 def _tip_markup(texto: str | None) -> tuple[str, str]:
-    """Classe e atributo para tooltip estilizado (sem title nativo)."""
+    """Tooltip: title nativo (fallback) + data-lv-tip para estilo ampliado."""
     if not texto or texto == "—":
         return "", ""
-    return " lv-tip", f' data-lv-tip="{escape(texto, quote=True)}"'
+    escaped = escape(texto, quote=True)
+    return " lv-tip", f' title="{escaped}" data-lv-tip="{escaped}"'
 
 
 def _html_celula_usuario(data_txt: str, usuario: str) -> str:
@@ -513,10 +514,6 @@ def render_listagem_operacional(rows: list) -> None:
         st.rerun()
 
     st.markdown('<div class="lista-premium-stable" aria-label="Listagem operacional">', unsafe_allow_html=True)
-    st.markdown(
-        '<span class="lista-premium-scroller-marker" aria-hidden="true"></span>',
-        unsafe_allow_html=True,
-    )
 
     total = len(rows)
     page_size = LISTVIEW_PAGE_SIZE
@@ -542,6 +539,10 @@ def render_listagem_operacional(rows: list) -> None:
     st.session_state["_lv_last_filtro"] = filtro_sig
 
     with st.container(height=LISTVIEW_SCROLL_PX, border=False):
+        st.markdown(
+            '<span class="lista-premium-scroller-marker" aria-hidden="true"></span>',
+            unsafe_allow_html=True,
+        )
         st.markdown('<div class="lista-premium-header lista-premium-header-sticky">', unsafe_allow_html=True)
         _render_cabecalho_tabela()
         st.markdown("</div>", unsafe_allow_html=True)

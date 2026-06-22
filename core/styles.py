@@ -733,8 +733,8 @@ def inject_listview_premium_css() -> None:
             background-clip: padding-box;
         }}
         /* Grid fixo — header e linhas com mesma geometria ({LISTVIEW_GRID_MIN_WIDTH}px desktop) */
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
             display: grid !important;
             grid-template-columns: {LISTVIEW_GRID_COLUMNS} !important;
             column-gap: {LISTVIEW_COL_GAP} !important;
@@ -747,7 +747,7 @@ def inject_listview_premium_css() -> None:
             padding: {LISTVIEW_ROW_PADDING} !important;
             box-sizing: border-box !important;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
             background: {COLORS["bg_card"]};
             border: none;
             border-bottom: 1px solid {COLORS["border"]};
@@ -755,7 +755,7 @@ def inject_listview_premium_css() -> None:
             margin: 0;
             min-height: 2.5rem !important;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
             background: transparent;
             border: none;
             border-bottom: 1px solid {COLORS["border"]};
@@ -763,22 +763,26 @@ def inject_listview_premium_css() -> None:
             box-shadow: none;
             margin: 0;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker):last-child {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker):last-child {{
             border-bottom: none;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker):hover {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker):hover {{
             background: rgba(28, 35, 51, 0.55);
         }}
-        .lista-premium-stable [data-testid="column"],
-        .lista-premium-stable [data-testid="stColumn"] {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="column"],
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="column"],
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stColumn"],
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stColumn"] {{
             width: 100% !important;
             min-width: 0 !important;
             max-width: 100% !important;
             flex: none !important;
             align-self: center !important;
         }}
-        .lista-premium-stable [data-testid="column"] > div,
-        .lista-premium-stable [data-testid="stColumn"] > div {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="column"] > div,
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="column"] > div,
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stColumn"] > div,
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stColumn"] > div {{
             width: 100% !important;
             min-width: 0 !important;
         }}
@@ -807,29 +811,29 @@ def inject_listview_premium_css() -> None:
             white-space: nowrap !important;
         }}
         /* Colunas NF, Valor, Cod, Vendedor, Ações — alinhamento central */
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(8),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(8) {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(8),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(8) {{
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4) [data-testid="stMarkdown"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5) [data-testid="stMarkdown"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4) [data-testid="stMarkdown"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5) [data-testid="stMarkdown"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6) [data-testid="stMarkdown"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6) [data-testid="stMarkdown"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7) [data-testid="stMarkdown"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7) [data-testid="stMarkdown"] {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7) [data-testid="stMarkdown"] {{
             width: 100% !important;
             display: flex !important;
             justify-content: center !important;
@@ -953,24 +957,24 @@ def inject_listview_premium_css() -> None:
             color: {COLORS["success"]};
             font-variant-numeric: tabular-nums;
         }}
-        /* Tooltip estilizado — legibilidade (substitui title nativo) */
-        .lista-premium-stable .lv-tip[data-lv-tip] {{
+        /* Tooltip — title nativo + camada estilizada (fonte ampliada) */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) .lv-tip[data-lv-tip] {{
             position: relative;
             cursor: default;
         }}
-        .lista-premium-stable .lv-tip[data-lv-tip]::after {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) .lv-tip[data-lv-tip]::after {{
             content: attr(data-lv-tip);
             position: absolute;
             left: 0;
-            bottom: calc(100% + 0.35rem);
-            z-index: 30;
+            top: calc(100% + 0.35rem);
+            z-index: 9999;
             display: block;
             width: max-content;
-            max-width: min(22rem, 88vw);
-            padding: 0.45rem 0.65rem;
-            font-size: {TYPE_MD};
+            max-width: min(24rem, 90vw);
+            padding: 10px 14px;
+            font-size: 15px;
             font-weight: {FONT_WEIGHT_REGULAR};
-            line-height: {LINE_HEIGHT_NORMAL};
+            line-height: 1.45;
             color: {COLORS["text"]};
             background: {COLORS["bg_card"]};
             border: 1px solid {COLORS["border"]};
@@ -983,25 +987,28 @@ def inject_listview_premium_css() -> None:
             visibility: hidden;
             transition: opacity 0.12s ease;
         }}
-        .lista-premium-stable .lv-tip[data-lv-tip]:hover {{
-            z-index: 25;
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) .lv-tip[data-lv-tip]:hover {{
+            z-index: 9998;
             overflow: visible;
         }}
-        .lista-premium-stable .lv-tip[data-lv-tip]:hover::after {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) .lv-tip[data-lv-tip]:hover::after {{
             opacity: 1;
             visibility: visible;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:has(.lv-tip:hover),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:has(.lv-tip:hover) {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:has(.lv-tip:hover),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:has(.lv-tip:hover) {{
             overflow: visible !important;
-            z-index: 12;
+            z-index: 9997;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stMarkdownContainer"]:has(.lv-tip:hover),
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stMarkdownContainer"]:has(.lv-tip:hover) {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stMarkdownContainer"]:has(.lv-tip:hover),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stMarkdownContainer"]:has(.lv-tip:hover) {{
             overflow: visible !important;
         }}
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stMarkdownContainer"],
-        .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stMarkdownContainer"] {{
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker):has(.lv-tip:hover) > div[data-testid="stVerticalBlock"] {{
+            overflow: visible !important;
+        }}
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stMarkdownContainer"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stMarkdownContainer"] {{
             margin: 0 !important;
             padding: 0 !important;
         }}
@@ -1096,8 +1103,8 @@ def inject_listview_premium_css() -> None:
             padding: 0 !important;
         }}
         @media (max-width: {LISTVIEW_GRID_MIN_WIDTH}px) {{
-            .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
-            .lista-premium-stable [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
+    div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker),
+    div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) {{
                 grid-template-columns: {LISTVIEW_GRID_COLUMNS_MD} !important;
                 min-width: 0 !important;
             }}
