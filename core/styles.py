@@ -758,7 +758,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
             background: transparent;
             border: none;
-            border-bottom: 1px solid {COLORS["border"]};
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 0;
             box-shadow: none;
             margin: 0;
@@ -768,6 +768,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker):hover {{
             background: rgba(28, 35, 51, 0.55);
+            border-bottom-color: rgba(255, 255, 255, 0.1);
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="column"],
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="column"],
