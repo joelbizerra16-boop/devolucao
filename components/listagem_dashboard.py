@@ -68,7 +68,7 @@ def _html_celula_usuario(data_txt: str, usuario: str) -> str:
         f'<div class="lv-cell lv-cell-user">'
         f'<span class="lv-meta-row lv-meta-row-date">'
         f'<span class="lv-meta-icon">◷</span>'
-        f'<span class="lv-date">{escape(data_txt)}</span>'
+        f'<span class="lv-date" title="{escape(data_txt, quote=True)}">{escape(data_txt)}</span>'
         f"</span>"
         f'<span class="lv-meta-row lv-meta-row-user">'
         f'<span class="lv-meta-icon">◦</span>'
@@ -372,7 +372,7 @@ def _render_tratativa(
         col_txt, col_btn = st.columns([7, 1])
         with col_txt:
             st.markdown(
-                _html_celula(texto, extra_class="lv-cell-tratativa"),
+                _html_celula(texto, extra_class="lv-cell-tratativa", title=texto),
                 unsafe_allow_html=True,
             )
         with col_btn:
@@ -386,7 +386,7 @@ def _render_tratativa(
                 on_edit(row_id)
     else:
         st.markdown(
-            _html_celula(texto, extra_class="lv-cell-tratativa"),
+            _html_celula(texto, extra_class="lv-cell-tratativa", title=texto),
             unsafe_allow_html=True,
         )
 
@@ -411,7 +411,11 @@ def _render_linha(
         )
     with cols[1]:
         st.markdown(
-            _html_celula(dados["motivo"], extra_class="lv-cell-motivo"),
+            _html_celula(
+                dados["motivo"],
+                extra_class="lv-cell-motivo",
+                title=dados["motivo"],
+            ),
             unsafe_allow_html=True,
         )
     with cols[2]:
@@ -433,7 +437,11 @@ def _render_linha(
         )
     with cols[5]:
         st.markdown(
-            _html_celula(dados["cod_cliente"], extra_class="lv-col-cod"),
+            _html_celula(
+                dados["cod_cliente"],
+                extra_class="lv-col-cod",
+                title=dados["cod_cliente"],
+            ),
             unsafe_allow_html=True,
         )
     with cols[6]:
