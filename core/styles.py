@@ -758,17 +758,33 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
             background: transparent;
             border: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 0;
             box-shadow: none;
             margin: 0;
         }}
-div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker):last-child {{
-            border-bottom: none;
-        }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker):hover {{
             background: rgba(28, 35, 51, 0.55);
-            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }}
+        /* Divisor entre registros — elemento dedicado por linha */
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) .lv-row-divider {{
+            display: block;
+            width: 100%;
+            min-width: {LISTVIEW_GRID_MIN_WIDTH}px;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-sizing: border-box;
+            pointer-events: none;
+        }}
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdownContainer"]:has(.lv-row-divider) {{
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-width: {LISTVIEW_GRID_MIN_WIDTH}px !important;
+            max-width: none !important;
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="column"],
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="column"],

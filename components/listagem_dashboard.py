@@ -547,7 +547,7 @@ def render_listagem_operacional(rows: list) -> None:
         _render_cabecalho_tabela()
         st.markdown("</div>", unsafe_allow_html=True)
 
-        for row in slice_rows:
+        for idx, row in enumerate(slice_rows):
             _render_linha(
                 row,
                 pode_alterar=pode_alterar,
@@ -556,6 +556,11 @@ def render_listagem_operacional(rows: list) -> None:
                 on_delete=_abrir_excluir,
                 on_edit_tratativa=_abrir_tratativa,
             )
+            if idx < len(slice_rows) - 1:
+                st.markdown(
+                    '<div class="lv-row-divider" role="presentation"></div>',
+                    unsafe_allow_html=True,
+                )
 
     st.markdown("</div>", unsafe_allow_html=True)
 
