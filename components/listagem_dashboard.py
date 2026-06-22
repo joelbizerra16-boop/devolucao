@@ -42,7 +42,7 @@ COLUNAS_LISTVIEW_OPERACIONAL = [
     "Tratativa",
     "NF",
     "Valor",
-    "Cod. Cliente",
+    "Cliente",
     "Vendedor",
     "Ações",
 ]
@@ -328,7 +328,7 @@ def _render_cabecalho_tabela() -> None:
             if label:
                 if label == "Ações":
                     cls = "lista-dash-th lista-dash-th-acoes"
-                elif label in ("NF", "Valor", "Cod. Cliente", "Vendedor"):
+                elif label in ("NF", "Valor", "Cliente", "Vendedor"):
                     cls = "lista-dash-th lista-dash-th-center"
                 else:
                     cls = "lista-dash-th"

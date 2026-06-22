@@ -34,6 +34,7 @@ from core.theme import (
     LISTVIEW_ROW_PADDING,
     LISTVIEW_COL_GAP,
     LISTVIEW_COL_COD,
+    LISTVIEW_COL_VALOR,
     LISTVIEW_COL_VENDEDOR,
     LISTVIEW_SCROLL_PX,
     TYPE_CARD_LABEL,
@@ -814,7 +815,11 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             width: 100% !important;
             min-width: 0 !important;
         }}
-        /* Cod. Cliente e Vendedor — largura mínima do grid (evita colisão de cabeçalho) */
+        /* Valor, Cliente e Vendedor — largura mínima do grid (evita colisão de cabeçalho) */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5) {{
+            min-width: {LISTVIEW_COL_VALOR}px !important;
+        }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6),
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6) {{
             min-width: {LISTVIEW_COL_COD}px !important;
@@ -841,6 +846,17 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             text-transform: uppercase;
             line-height: 1.2;
             white-space: nowrap;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }}
+        /* Cabeçalho — texto centralizado dentro da faixa do grid, sem transbordar */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(8) {{
+            justify-content: stretch !important;
         }}
         .lista-dash-th-acoes,
         .lista-dash-th-center {{
