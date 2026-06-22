@@ -27,8 +27,8 @@ from services.devolucao_service import (
     excluir_devolucao,
 )
 
-# Proporções — espelham LISTVIEW_GRID (190:390:270:110:140:160:250:130)
-_COLS_DADOS = [1.12, 2.05, 1.72, 0.66, 0.84, 0.96, 1.5]
+# Proporções — espelham LISTVIEW_GRID (190:390:270:110:140:180:250:130)
+_COLS_DADOS = [1.12, 2.05, 1.72, 0.66, 0.84, 1.08, 1.5]
 _COLS_ACOES = 0.78
 _COLS_HEADER = [*_COLS_DADOS, _COLS_ACOES]
 _COLS_ROW = _COLS_HEADER
@@ -328,7 +328,7 @@ def _render_cabecalho_tabela() -> None:
             if label:
                 if label == "Ações":
                     cls = "lista-dash-th lista-dash-th-acoes"
-                elif label in ("NF", "Valor", "Cod. Cliente"):
+                elif label in ("NF", "Valor", "Cod. Cliente", "Vendedor"):
                     cls = "lista-dash-th lista-dash-th-center"
                 else:
                     cls = "lista-dash-th"

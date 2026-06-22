@@ -33,6 +33,8 @@ from core.theme import (
     LISTVIEW_ROW_MIN_HEIGHT,
     LISTVIEW_ROW_PADDING,
     LISTVIEW_COL_GAP,
+    LISTVIEW_COL_COD,
+    LISTVIEW_COL_VENDEDOR,
     LISTVIEW_SCROLL_PX,
     TYPE_CARD_LABEL,
     TYPE_KPI,
@@ -811,6 +813,15 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="stColumn"] > div {{
             width: 100% !important;
             min-width: 0 !important;
+        }}
+        /* Cod. Cliente e Vendedor — largura mínima do grid (evita colisão de cabeçalho) */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6) {{
+            min-width: {LISTVIEW_COL_COD}px !important;
+        }}
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7) {{
+            min-width: {LISTVIEW_COL_VENDEDOR}px !important;
         }}
         .lv-row-marker,
         .lv-table-header-marker {{
