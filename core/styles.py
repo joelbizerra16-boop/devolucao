@@ -757,6 +757,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) {{
             align-items: start !important;
+            grid-auto-rows: min-content !important;
             min-height: {LISTVIEW_ROW_MIN_HEIGHT} !important;
             height: auto !important;
             padding: {LISTVIEW_ROW_PADDING} !important;
@@ -772,6 +773,10 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             > div[data-testid="stVerticalBlock"] > * {{
             margin-block: 0 !important;
             padding-block: 0 !important;
+        }}
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stElementContainer"] {{
+            margin: 0 !important;
+            padding: 0 !important;
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
             [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="stVerticalBlock"],
@@ -904,21 +909,36 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             text-align: center !important;
             white-space: nowrap !important;
         }}
-        /* Colunas NF, Valor, Cod, Vendedor, Ações — alinhamento central */
-div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4),
-div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5),
+        /* Cabeçalho — NF, Valor, Cliente, Vendedor, Ações centralizados */
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4),
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5),
-div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6),
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6),
-div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7),
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7),
-div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(8),
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(8) {{
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
+        }}
+        /* Linhas de dados — topo da célula (evita centralização vertical na altura da linha) */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(6),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(8) {{
+            display: block !important;
+            align-self: start !important;
+            text-align: center !important;
+        }}
+        /* Tipografia das células — sobrescreve assets/styles.css (line-height 1.45 global) */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdownContainer"] p.lv-cell,
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdownContainer"] p.lista-dash-th,
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdownContainer"] p.lista-dash-acoes-empty {{
+            line-height: {LISTVIEW_ROW_CLAMP_LINE_HEIGHT} !important;
+            margin: 0 !important;
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(4) [data-testid="stMarkdown"],
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(5) [data-testid="stMarkdown"],
@@ -929,6 +949,14 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) > div:nth-child(7) [data-testid="stMarkdown"],
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7) [data-testid="stMarkdown"] {{
             width: 100% !important;
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(4) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(5) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(6) [data-testid="stMarkdown"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) > div:nth-child(7) [data-testid="stMarkdown"] {{
             display: flex !important;
             justify-content: center !important;
         }}
@@ -1132,9 +1160,9 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
             min-width: 0 !important;
             max-width: 100% !important;
             display: flex !important;
-            align-items: center !important;
+            align-items: flex-start !important;
             justify-content: center !important;
-            align-self: center !important;
+            align-self: start !important;
         }}
         div[data-testid="column"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"],
         div[data-testid="stColumn"]:has(.lista-dash-col-acoes-marker) [data-testid="stHorizontalBlock"] {{
@@ -1197,7 +1225,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
         div[data-testid="stColumn"]:has(.lista-dash-col-tratativa-marker) [data-testid="stHorizontalBlock"] {{
             display: grid !important;
             grid-template-columns: minmax(0, 1fr) 1.25rem !important;
-            align-items: center !important;
+            align-items: start !important;
             gap: 0.12rem !important;
             width: 100% !important;
         }}
