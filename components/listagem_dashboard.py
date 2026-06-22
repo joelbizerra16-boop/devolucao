@@ -558,7 +558,7 @@ def render_listagem_operacional(rows: list) -> None:
             )
             if idx < len(slice_rows) - 1:
                 st.markdown(
-                    '<div class="lv-row-divider" role="presentation"></div>',
+                    '<hr class="lv-row-divider" role="presentation" />',
                     unsafe_allow_html=True,
                 )
 

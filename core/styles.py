@@ -765,26 +765,35 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-mark
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker):hover {{
             background: rgba(28, 35, 51, 0.55);
         }}
-        /* Divisor entre registros — elemento dedicado por linha */
+        /* Divisor entre registros — linha cinza visível em toda a largura do grid */
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) .lv-row-divider {{
             display: block;
             width: 100%;
             min-width: {LISTVIEW_GRID_MIN_WIDTH}px;
-            height: 0;
+            height: 1px;
             margin: 0;
             padding: 0;
             border: 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(148, 163, 184, 0.35);
             box-sizing: border-box;
             pointer-events: none;
+            flex-shrink: 0;
         }}
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
-            [data-testid="stMarkdownContainer"]:has(.lv-row-divider) {{
+            > div[data-testid="stVerticalBlock"] > div:has(.lv-row-divider),
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stElementContainer"]:has(.lv-row-divider),
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdownContainer"]:has(.lv-row-divider),
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker)
+            [data-testid="stMarkdown"]:has(.lv-row-divider) {{
             margin: 0 !important;
             padding: 0 !important;
             width: 100% !important;
             min-width: {LISTVIEW_GRID_MIN_WIDTH}px !important;
             max-width: none !important;
+            align-self: stretch !important;
+            flex: 0 0 auto !important;
         }}
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-row-marker) [data-testid="column"],
         div[data-testid="stVerticalBlockBorderWrapper"]:has(.lista-premium-scroller-marker) [data-testid="stHorizontalBlock"]:has(.lv-table-header-marker) [data-testid="column"],
