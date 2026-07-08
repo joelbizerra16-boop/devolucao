@@ -11,6 +11,7 @@ from core.navigation import (
     PAGE_CADASTRO,
     PAGE_DASHBOARD,
     PAGE_MOTIVOS,
+    PAGE_RESUMO,
     PAGE_UPLOAD,
     PAGE_USUARIOS,
     page_link_query,
@@ -39,6 +40,12 @@ def render_sidebar() -> None:
             label="Dashboard",
             icon="📊",
             query_params=page_link_query(PAGE_DASHBOARD),
+        )
+        st.page_link(
+            "pages/7_Resumo.py",
+            label="Resumo",
+            icon="📈",
+            query_params=page_link_query(PAGE_RESUMO),
         )
         # Consultar Devoluções — oculto temporariamente no menu
         st.page_link(

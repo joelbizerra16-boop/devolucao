@@ -47,6 +47,7 @@ from core.theme import (
     TYPE_KPI_MONEY,
     TYPE_KPI_SM,
     TYPE_KPI_WIDE,
+    TYPE_KPI_PRINCIPAL_MOTIVO,
     TYPE_LG,
     TYPE_MD,
     TYPE_SM,
@@ -432,6 +433,24 @@ def _operational_cards_premium_css() -> str:
             letter-spacing: -0.01em !important;
             text-shadow: none !important;
             white-space: normal;
+        }}
+        .op-card-value--principal-motivo,
+        p.op-card-value--principal-motivo {{
+            font-size: {TYPE_KPI_PRINCIPAL_MOTIVO} !important;
+            line-height: 1.35 !important;
+            min-height: {KPI_VALUE_MIN_H_WIDE} !important;
+            max-height: none !important;
+            font-weight: {FONT_WEIGHT_SEMIBOLD} !important;
+            letter-spacing: -0.01em !important;
+            text-shadow: none !important;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }}
         .op-card-sub {{
             display: block;

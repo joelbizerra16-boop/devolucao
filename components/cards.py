@@ -12,6 +12,7 @@ from core.theme import (
     KPI_VALUE_MIN_H_WIDE,
     TYPE_KPI_DEVOLUCOES,
     TYPE_KPI_IMPACTO,
+    TYPE_KPI_PRINCIPAL_MOTIVO,
     TYPE_KPI_WIDE,
 )
 
@@ -29,7 +30,19 @@ DASHBOARD_CARD_CONFIG = [
     ("principal_motivo", "Principal Motivo", "📊", "op-card-accent-finalizada", COLORS["success"], True),
 ]
 
-_NUMERIC_CARD_KEYS = frozenset({"devolucoes", "aguardando", "pct_analisada"})
+RESUMO_CARD_CONFIG = [
+    ("total_devolucoes", "Total de Devoluções", "📦", "op-card-accent-conferencia", COLORS["accent_light"], False),
+    ("valor_total", "Valor Total Devolvido", "💰", "op-card-accent-pendente", COLORS["warning"], False),
+    ("ticket_medio", "Ticket Médio", "🎫", "op-card-accent-pendente", COLORS["warning"], False),
+    ("media_movel", "Média Móvel", "📈", "op-card-accent-conferencia", COLORS["accent_light"], False),
+]
+
+_NUMERIC_CARD_KEYS = frozenset({
+    "devolucoes",
+    "aguardando",
+    "pct_analisada",
+    "total_devolucoes",
+})
 
 
 def _render_card(
@@ -42,6 +55,7 @@ def _render_card(
     metricas: dict[str, str],
     *,
     wide: bool = False,
+    principal_motivo_dashboard: bool = False,
 ) -> None:
     valor = metricas.get(key, "—")
     sub = metricas.get(f"{key}_sub", "")
@@ -52,7 +66,7 @@ def _render_card(
     value_class = "op-card-value"
     font_size = TYPE_KPI_IMPACTO
     min_h = KPI_VALUE_MIN_H_IMPACTO
-    if key == "impacto_financeiro":
+    if key in ("impacto_financeiro", "valor_total", "ticket_medio", "media_movel"):
         value_class += " op-card-value--impacto"
         font_size = TYPE_KPI_IMPACTO
         min_h = KPI_VALUE_MIN_H_IMPACTO
@@ -60,13 +74,17 @@ def _render_card(
         value_class += " op-card-value--devolucoes"
         font_size = TYPE_KPI_DEVOLUCOES
         min_h = KPI_VALUE_MIN_H_DEVOLUCOES
-    elif key == "principal_motivo" and wide:
+    elif key == "principal_motivo" and principal_motivo_dashboard:
+        value_class += " op-card-value--principal-motivo"
+        font_size = TYPE_KPI_PRINCIPAL_MOTIVO
+        min_h = KPI_VALUE_MIN_H_WIDE
+    elif key in ("principal_motivo", "maior_motivo", "cliente_maior") and wide:
         value_class += " op-card-value--wide"
         font_size = TYPE_KPI_WIDE
         min_h = KPI_VALUE_MIN_H_WIDE
     wrap = "word-wrap:break-word;" if wide else ""
     height_lock = ""
-    if key != "principal_motivo":
+    if key not in ("principal_motivo", "maior_motivo", "cliente_maior"):
         height_lock = f"min-height:{min_h};max-height:{min_h};"
     elif wide:
         height_lock = f"min-height:{min_h};"
@@ -119,6 +137,31 @@ def render_dashboard_cards(metricas: dict[str, str]) -> None:
     )
     c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 2])
     for col, cfg in zip([c1, c2, c3, c4, c5], DASHBOARD_CARD_CONFIG):
+        key, label, icon, css_class, color, wide = cfg
+        _render_card(
+            col,
+            key,
+            label,
+            icon,
+            css_class,
+            color,
+            metricas,
+            wide=wide,
+            principal_motivo_dashboard=(key == "principal_motivo"),
+        )
+
+
+def render_resumo_cards(metricas: dict[str, str]) -> None:
+    """Quatro cards — Resumo Operacional (1:1:1:1)."""
+    from core.styles import inject_operational_cards_premium_css
+
+    inject_operational_cards_premium_css()
+    st.markdown(
+        '<span class="op-card-dashboard-row" aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
+    c1, c2, c3, c4 = st.columns(4)
+    for col, cfg in zip([c1, c2, c3, c4], RESUMO_CARD_CONFIG):
         key, label, icon, css_class, color, wide = cfg
         _render_card(
             col, key, label, icon, css_class, color, metricas, wide=wide,

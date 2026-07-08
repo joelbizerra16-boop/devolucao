@@ -15,6 +15,7 @@ CURRENT_PAGE_KEY = "current_page"
 QUERY_PAGE_KEY = "page"
 
 PAGE_DASHBOARD = "dashboard"
+PAGE_RESUMO = "resumo"
 PAGE_CADASTRO = "cadastro"
 PAGE_UPLOAD = "upload"
 PAGE_MOTIVOS = "motivos"
@@ -25,6 +26,10 @@ PAGES: dict[str, dict[str, str]] = {
     PAGE_DASHBOARD: {
         "path": "pages/6_Dashboard.py",
         "label": "Dashboard",
+    },
+    PAGE_RESUMO: {
+        "path": "pages/7_Resumo.py",
+        "label": "Resumo",
     },
     PAGE_CADASTRO: {
         "path": "pages/2_Cadastro_Devolucao.py",

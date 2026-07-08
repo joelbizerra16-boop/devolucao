@@ -16,7 +16,7 @@ TTL_MOTIVOS = 600
 
 def limpar_cache_leitura() -> None:
     """Invalida todos os caches de leitura após alterações no banco."""
-    from services import dashboard_service, devolucao_service, motivo_service, sap_service
+    from services import dashboard_service, devolucao_service, motivo_service, resumo_operacional_service, sap_service
     from services import usuario_service
 
     funcoes = (
@@ -28,6 +28,10 @@ def limpar_cache_leitura() -> None:
         dashboard_service.listar_devolucoes_periodo_cache,
         dashboard_service.export_pdf_dashboard_cache,
         dashboard_service.export_excel_dashboard_cache,
+        resumo_operacional_service.carregar_resumo_cache,
+        resumo_operacional_service.obter_graficos_resumo_cache,
+        resumo_operacional_service.carregar_tabela_resumo_cache,
+        resumo_operacional_service.obter_opcoes_filtros_cache,
         devolucao_service.listar_devolucoes_cache,
         devolucao_service.obter_metricas_cards_cache,
         motivo_service.listar_motivos_cache,
