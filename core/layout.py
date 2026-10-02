@@ -8,6 +8,7 @@ import streamlit as st
 
 from components.sidebar import render_sidebar
 from core.auth import require_auth
+from core.environment import expose_technical_errors
 from core.navigation import register_page_view
 from core.styles import inject_global_css
 from core.system_log import log_event
@@ -57,5 +58,10 @@ def safe_page_run(render_fn, page_name: str) -> None:
         reset_page_config()
         set_page_config_once(page_title="Erro", page_icon="⚠️", layout="wide")
         inject_global_css()
-        st.error(f"Erro ao carregar a página: {exc}")
-        st.code(traceback.format_exc())
+        if expose_technical_errors():
+            st.error(f"Erro ao carregar a página: {exc}")
+            st.code(traceback.format_exc())
+        else:
+            st.error(
+                "Erro ao carregar a página. O detalhe técnico foi registrado no log interno."
+            )

@@ -91,7 +91,9 @@ class DatabaseManager:
             try:
                 with self.engine.connect() as conn:
                     conn.execute(text("SELECT 1"))
-                backend = "PostgreSQL (Supabase)" if is_postgres() else "SQLite (local)"
+                from database.connection import get_backend_label
+
+                backend = get_backend_label()
                 self._last_health_ok = True
                 self._last_health_msg = f"Conexão OK — {backend}"
                 return True, self._last_health_msg

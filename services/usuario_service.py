@@ -26,7 +26,14 @@ def get_user_by_username(username: str):
 
 
 def seed_default_users() -> None:
-    """Cria usuário administrador padrão se não existir."""
+    """Cria usuário administrador padrão se não existir.
+
+    Em production não cria admin/admin123. Usuários já migrados permanecem intactos.
+    """
+    from core.environment import is_production
+
+    if is_production():
+        return
     if usuario_repository.buscar_por_username(USUARIO_PROTEGIDO):
         return
     usuario_repository.inserir(

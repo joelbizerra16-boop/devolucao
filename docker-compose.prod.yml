@@ -1,0 +1,81 @@
+name: devolucao
+
+services:
+  devolucao-postgres:
+    image: postgres:17
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-devolucao}
+      POSTGRES_USER: ${POSTGRES_USER:-devolucao_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - devolucao-postgres-data:/var/lib/postgresql/data
+    networks:
+      - devolucao-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devolucao_user} -d ${POSTGRES_DB:-devolucao}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  devolucao-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: devolucao-app:local
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      devolucao-postgres:
+        condition: service_healthy
+    environment:
+      DEVOLUCAO_ENV: ${DEVOLUCAO_ENV:-production}
+      DATABASE_URL: ${DATABASE_URL}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      DB_CONNECT_TIMEOUT: ${DB_CONNECT_TIMEOUT:-10}
+      DB_POOL_RECYCLE: ${DB_POOL_RECYCLE:-300}
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-5}
+      DB_POOL_MAX_OVERFLOW: ${DB_POOL_MAX_OVERFLOW:-10}
+      DEVOLUCAO_AUTH_SECRET: ${DEVOLUCAO_AUTH_SECRET}
+      PERF_MONITOR: ${PERF_MONITOR:-0}
+      STREAMLIT_CLIENT_SHOW_ERROR_DETAILS: none
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+    ports:
+      - "127.0.0.1:${DEVOLUCAO_HOST_PORT}:8501"
+    volumes:
+      - devolucao-data:/app/data
+      - devolucao-uploads:/app/uploads
+      - devolucao-logs:/app/logs
+    networks:
+      - devolucao-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=4)",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+networks:
+  devolucao-network:
+    name: devolucao-network
+    driver: bridge
+
+volumes:
+  devolucao-postgres-data:
+    name: devolucao-postgres-data
+  devolucao-data:
+    name: devolucao-data
+  devolucao-uploads:
+    name: devolucao-uploads
+  devolucao-logs:
+    name: devolucao-logs

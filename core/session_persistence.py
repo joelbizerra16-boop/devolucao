@@ -10,7 +10,6 @@ import base64
 import hashlib
 import hmac
 import json
-import os
 import time
 from typing import Optional
 
@@ -21,10 +20,12 @@ COOKIE_NAME = "devolucao_auth"
 AUTH_QUERY_KEY = "auth"
 AUTH_TOKEN_SESSION_KEY = "_auth_token"
 COOKIE_MAX_AGE_DAYS = 7
-_AUTH_SECRET = os.environ.get(
-    "DEVOLUCAO_AUTH_SECRET",
-    "devolucao-wms-local-secret-altere-em-producao",
-)
+
+
+def _secret_bytes() -> bytes:
+    from core.environment import resolve_auth_secret
+
+    return resolve_auth_secret().encode("utf-8")
 
 
 def _qp_value(key: str) -> Optional[str]:
@@ -39,7 +40,7 @@ def _qp_value(key: str) -> Optional[str]:
 def _sign(username: str, exp: int) -> str:
     payload = f"{username.lower()}|{exp}"
     sig = hmac.new(
-        _AUTH_SECRET.encode("utf-8"),
+        _secret_bytes(),
         payload.encode("utf-8"),
         hashlib.sha256,
     ).hexdigest()
@@ -53,7 +54,7 @@ def _verify(token: str) -> Optional[str]:
         payload, sig = raw.rsplit("|", 1)
         username, exp_str = payload.split("|", 1)
         expected = hmac.new(
-            _AUTH_SECRET.encode("utf-8"),
+            _secret_bytes(),
             payload.encode("utf-8"),
             hashlib.sha256,
         ).hexdigest()

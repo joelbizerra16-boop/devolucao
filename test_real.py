@@ -13,16 +13,21 @@ print(f".env carregado: {dotenv_ok}")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+from core.environment import resolve_sslmode
+from core.redaction import redact_secrets
+from database.connection import sqlalchemy_url
+
 print()
-print("DATABASE_URL REAL:")
-print(DATABASE_URL)
+print("DATABASE_URL (mascarada):")
+print(redact_secrets(DATABASE_URL or ""))
 print()
 
 engine = create_engine(
-    DATABASE_URL,
+    sqlalchemy_url(DATABASE_URL),
     pool_pre_ping=True,
     connect_args={
-        "sslmode": "require"
+        "sslmode": resolve_sslmode(),
+        "connect_timeout": int(os.getenv("DB_CONNECT_TIMEOUT", "10")),
     }
 )
 

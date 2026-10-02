@@ -6,6 +6,8 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
+from core.redaction import redact_secrets
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_DIR = BASE_DIR / "logs"
 LOG_FILE = LOG_DIR / "import_sap.log"
@@ -28,6 +30,7 @@ def log_import_sap(
         )
         if erro is not None:
             linha += f"\n{traceback.format_exc()}"
+        linha = redact_secrets(linha)
         with LOG_FILE.open("a", encoding="utf-8") as f:
             f.write(linha + "\n")
     except Exception:

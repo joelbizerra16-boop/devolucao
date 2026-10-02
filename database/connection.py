@@ -1,5 +1,7 @@
 """
-Conexão PostgreSQL Supabase — engine e sessões SQLAlchemy.
+Conexão PostgreSQL (Supabase ou instância exclusiva) e fallback SQLite local.
+
+SQLite só existe fora de production. Em production, DATABASE_URL PostgreSQL é obrigatória.
 """
 
 from __future__ import annotations
@@ -16,6 +18,14 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
+
+from core.environment import (
+    ProductionConfigError,
+    database_url_raw,
+    is_production,
+    require_production_database_url,
+    resolve_sslmode,
+)
 
 load_dotenv()
 
@@ -111,13 +121,24 @@ def _normalize_supabase_url(url: str) -> str:
 
 
 def _resolve_database_url() -> str:
-    url = (os.getenv("DATABASE_URL") or "").strip()
+    require_production_database_url()
+    url = database_url_raw()
     if url:
         if url.startswith("postgres://"):
             url = url.replace("postgres://", "postgresql://", 1)
+        if is_production() and not url.startswith("postgresql://"):
+            raise ProductionConfigError(
+                "DATABASE_URL em production deve ser PostgreSQL (postgresql://). "
+                "SQLite é proibido em produção."
+            )
         if url.startswith("postgresql"):
             url = _normalize_supabase_url(url)
         return url
+    if is_production():
+        raise ProductionConfigError(
+            "DATABASE_URL é obrigatória quando DEVOLUCAO_ENV=production "
+            "e está ausente ou vazia. A aplicação não inicia e não utiliza SQLite em produção."
+        )
     return f"sqlite:///{DEFAULT_SQLITE_PATH}"
 
 
@@ -129,7 +150,10 @@ _LAST_LOGGED_BACKEND: str | None = None
 
 def get_backend_label() -> str:
     if is_postgres():
-        return "PostgreSQL (Supabase)"
+        host = (urlparse(DATABASE_URL).hostname or "").lower()
+        if "supabase" in host:
+            return "PostgreSQL (Supabase)"
+        return "PostgreSQL"
     return f"SQLite (local: {DEFAULT_SQLITE_PATH.name})"
 
 
@@ -166,16 +190,31 @@ def _pool_kwargs() -> dict:
     }
 
 
+def postgres_connect_args() -> dict:
+    return {
+        "sslmode": resolve_sslmode(),
+        "connect_timeout": int(os.getenv("DB_CONNECT_TIMEOUT", "10")),
+    }
+
+
+def sqlalchemy_url(url: str) -> str:
+    """Usa o driver psycopg2 já declarado em requirements.txt.
+
+    SQLAlchemy 2.1 interpreta postgresql:// como psycopg 3, que não está instalado.
+    A URL de ambiente permanece postgresql://; só a URL interna do engine muda.
+    """
+    if url.startswith("postgresql://"):
+        return "postgresql+psycopg2://" + url[len("postgresql://") :]
+    return url
+
+
 def _create_engine() -> Engine:
     pool = _pool_kwargs()
     if is_postgres():
         return create_engine(
-            DATABASE_URL,
+            sqlalchemy_url(DATABASE_URL),
             **pool,
-            connect_args={
-                "sslmode": "require",
-                "connect_timeout": int(os.getenv("DB_CONNECT_TIMEOUT", "10")),
-            },
+            connect_args=postgres_connect_args(),
         )
     return create_engine(
         DATABASE_URL,

@@ -16,15 +16,14 @@ from core.paths import (
     MOTIVOS_COLUNAS,
     MOTIVOS_CSV,
     MOTIVOS_PADRAO,
-    DATA_DIR,
     UPLOADS_SAP_DIR,
+    ensure_runtime_dirs,
 )
 
 
 def init_csv_storage() -> None:
-    """Garante pastas de upload; motivos e devoluções ficam no banco (Supabase)."""
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    UPLOADS_SAP_DIR.mkdir(parents=True, exist_ok=True)
+    """Garante pastas de upload; motivos e devoluções ficam no banco."""
+    ensure_runtime_dirs()
 
 
 def _ler_csv(caminho: Path, colunas: list[str]) -> pd.DataFrame:

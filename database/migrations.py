@@ -98,6 +98,11 @@ def seed_motivos_padrao() -> None:
 
 
 def seed_usuario_admin() -> None:
+    from core.environment import is_production
+
+    if is_production():
+        log_event("db", "Seed de administrador padrão ignorado (production).")
+        return
     with get_write_session() as session:
         existe = (
             session.query(Usuario)
